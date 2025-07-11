@@ -1,0 +1,17 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "resolveJsonModule": true,
+    "baseUrl": ".",
+    "paths": {
+      "@assets/*": ["./assets/*"],
+      "@components/*": ["./components/*"],
+      "@/*": ["./*", "*.native", "*.web"]
+    }
+  },
+  "include": ["**/*.ts", "**/*.tsx", "**/*.native.tsx", "**/*.web.tsx"]
+}

@@ -3,6 +3,7 @@
     "name": "mobile-dapp",
     "slug": "mobile-dapp",
     "version": "1.0.0",
+    "plugins": ["expo-dev-client"],
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -13,7 +14,8 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.test.mobiledapp"
     },
     "android": {
       "adaptiveIcon": {

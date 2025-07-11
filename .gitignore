@@ -2,7 +2,7 @@
 
 # dependencies
 node_modules/
-
+.env
 # Expo
 .expo/
 dist/
@@ -10,7 +10,6 @@ web-build/
 expo-env.d.ts
 
 # Native
-.kotlin/
 *.orig.*
 *.jks
 *.p8
@@ -35,3 +34,19 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+
+app-example
+
+# Native iOS / Android build outputs
+ios/build/
+android/app/build/
+
+# CocoaPods
+ios/Pods/
+ios/Podfile.lock
+
+# Gradle
+android/.gradle/
+android/build/
+*.iml
+.gradle/

@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   buttonPressed: {
-    backgroundColor: '#4338ca', // darker when pressed
+    backgroundColor: '#4338ca',
   },
   buttonText: {
     color: '#fff',

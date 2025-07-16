@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Text, TextInput, StyleSheet, ScrollView, Alert, Pressable } from 'react-native';
 import { validateMnemonic } from '../utils';
 
 export default function ImportScreen() {
+  /* State */
   const [mnemonic, setMnemonic] = useState<string>('');
   const [importedMnemonic, setImportedMnemonic] = useState<string>('');
 
-  const handleValidateImport = () => {
+  /* Handlers */
+  const handleValidateImport = useCallback(() => {
     const isValid = validateMnemonic(importedMnemonic.trim());
     if (isValid) {
       setMnemonic(importedMnemonic.trim());
@@ -14,7 +16,7 @@ export default function ImportScreen() {
     } else {
       Alert.alert('Invalid', 'The entered mnemonic is not valid.');
     }
-  };
+  }, [importedMnemonic]);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>

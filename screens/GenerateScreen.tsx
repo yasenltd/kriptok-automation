@@ -1,21 +1,19 @@
 import React, { useCallback, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
-import { deriveWalletFromMnemonic, generateMnemonic } from '../utils';
+import { deriveEVMWalletFromMnemonic, generateMnemonic } from '../utils';
 
 export default function GenerateScreen() {
   /* State */
-
   const [mnemonic, setMnemonic] = useState<string>('');
   const [address, setAddress] = useState<string>('');
   const [privateKey, setPrivateKey] = useState<string>('');
 
   /* Handlers */
-
   const handleGenerateMnemonic = useCallback(() => {
     const newMnemonic = generateMnemonic();
     setMnemonic(newMnemonic);
 
-    const { address, privateKey } = deriveWalletFromMnemonic(newMnemonic);
+    const { address, privateKey } = deriveEVMWalletFromMnemonic(newMnemonic);
     setAddress(address);
     setPrivateKey(privateKey);
   }, []);

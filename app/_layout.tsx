@@ -1,6 +1,4 @@
 import { Stack } from 'expo-router';
-import { Buffer } from 'buffer';
-import 'react-native-get-random-values';
 import Toast from 'react-native-toast-message';
 import { Provider } from 'react-redux';
 import { store, persistor } from '@/stores/store';
@@ -9,10 +7,6 @@ import { Header, HeaderBackButton } from '@react-navigation/elements';
 import { colors } from '@/utils';
 
 const Layout = () => {
-  if (global.Buffer == null) {
-    global.Buffer = Buffer;
-  }
-
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>

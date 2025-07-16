@@ -1,6 +1,5 @@
+import { LanguageType } from '@/types';
 import React, { createContext, useContext, useState } from 'react';
-
-type LanguageType = 'en' | 'tr';
 
 interface LanguageContextType {
   language: LanguageType;

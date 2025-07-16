@@ -2,6 +2,7 @@ import { Stack } from 'expo-router';
 import { Buffer } from 'buffer';
 import 'react-native-get-random-values';
 import Toast from 'react-native-toast-message';
+import { LanguageProvider } from './context/LanguageProvider';
 
 const Layout = () => {
   if (global.Buffer == null) {
@@ -10,19 +11,21 @@ const Layout = () => {
 
   return (
     <>
-      <Stack
-        screenOptions={{
-          headerShown: false,
-        }}
-      >
-        <Stack.Screen
-          name="index"
-          options={{
+      <LanguageProvider>
+        <Stack
+          screenOptions={{
             headerShown: false,
           }}
-        />
-      </Stack>
-      <Toast visibilityTime={5000} position="top" topOffset={60} />
+        >
+          <Stack.Screen
+            name="index"
+            options={{
+              headerShown: false,
+            }}
+          />
+        </Stack>
+        <Toast visibilityTime={5000} position="top" topOffset={60} />
+      </LanguageProvider>
     </>
   );
 };

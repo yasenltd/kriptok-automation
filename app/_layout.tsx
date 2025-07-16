@@ -5,6 +5,8 @@ import Toast from 'react-native-toast-message';
 import { Provider } from 'react-redux';
 import { store, persistor } from '@/stores/store';
 import { PersistGate } from 'redux-persist/integration/react';
+import { Header, HeaderBackButton } from '@react-navigation/elements';
+import { colors } from '@/utils';
 
 const Layout = () => {
   if (global.Buffer == null) {
@@ -16,7 +18,27 @@ const Layout = () => {
       <PersistGate loading={null} persistor={persistor}>
         <Stack
           screenOptions={{
-            headerShown: false,
+            contentStyle: {
+              backgroundColor: colors['primary-white'],
+            },
+            header: props => (
+              <Header
+                {...props}
+                title={props.options.title as string}
+                headerTitleAlign="left"
+                headerBackButtonDisplayMode="minimal"
+                headerLeft={headerProps =>
+                  props.back ? (
+                    <HeaderBackButton
+                      {...headerProps}
+                      onPress={props.navigation.goBack}
+                      label={''}
+                      tintColor={colors['text-black']}
+                    />
+                  ) : null
+                }
+              />
+            ),
           }}
         >
           <Stack.Screen
@@ -27,9 +49,16 @@ const Layout = () => {
           />
 
           <Stack.Screen
-            name="mnemonic"
+            name="generate"
             options={{
-              headerShown: false,
+              headerShown: true,
+            }}
+          />
+
+          <Stack.Screen
+            name="import"
+            options={{
+              headerShown: true,
             }}
           />
         </Stack>

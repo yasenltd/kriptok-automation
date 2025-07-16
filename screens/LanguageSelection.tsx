@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, Pressable } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/stores/store';
-import { setState } from '@/stores/language/languageSlice';
+import { setLanguage } from '@/stores/language/languageSlice';
 
 const LanguageSelectionScreen = () => {
   const language = useSelector((state: RootState) => state.language.language);
@@ -17,7 +17,7 @@ const LanguageSelectionScreen = () => {
   ]);
 
   const handleConfirm = () => {
-    dispatch(setState({ language: selectedLanguage, hasBeenSet: true }));
+    dispatch(setLanguage(selectedLanguage));
   };
 
   return (

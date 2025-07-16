@@ -3,23 +3,21 @@ import { LanguageType } from '@/types';
 
 interface LanguageState {
   language: LanguageType;
-  hasBeenSet: boolean;
 }
 
 const initialState: LanguageState = {
-  language: 'en',
-  hasBeenSet: false,
+  language: 'tr',
 };
 
 const languageSlice = createSlice({
   name: 'language',
   initialState,
   reducers: {
-    setState: (state, action: PayloadAction<Partial<LanguageState>>) => {
-      Object.assign(state, action.payload);
+    setLanguage: (state, action: PayloadAction<LanguageType>) => {
+      state.language = action.payload;
     },
   },
 });
 
-export const { setState } = languageSlice.actions;
+export const { setLanguage } = languageSlice.actions;
 export default languageSlice.reducer;

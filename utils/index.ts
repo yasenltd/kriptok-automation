@@ -1,4 +1,4 @@
-import { generateMnemonic, validateMnemonic } from './mnemonic';
+import { generateMnemonic, validateMnemonic, deriveWalletFromMnemonic } from './mnemonic';
 import { colors } from './constants';
 
-export { generateMnemonic, validateMnemonic, colors };
+export { generateMnemonic, validateMnemonic, colors, deriveWalletFromMnemonic };

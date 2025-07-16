@@ -1,16 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, ScrollView, Alert, Pressable } from 'react-native';
-import { generateMnemonic, validateMnemonic } from '../utils';
+import { Text, TextInput, StyleSheet, ScrollView, Alert, Pressable } from 'react-native';
+import { validateMnemonic } from '../utils';
 
-export default function MnemonicScreen() {
+export default function ImportScreen() {
   const [mnemonic, setMnemonic] = useState<string>('');
   const [importedMnemonic, setImportedMnemonic] = useState<string>('');
-
-  const handleGenerateMnemonic = () => {
-    const newMnemonic = generateMnemonic();
-    setMnemonic(newMnemonic);
-    setImportedMnemonic('');
-  };
 
   const handleValidateImport = () => {
     const isValid = validateMnemonic(importedMnemonic.trim());
@@ -26,22 +20,7 @@ export default function MnemonicScreen() {
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Kriptok Wallet</Text>
 
-      <Pressable
-        style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
-        onPress={handleGenerateMnemonic}
-      >
-        <Text style={styles.buttonText}>Generate New Mnemonic</Text>
-      </Pressable>
-
-      {mnemonic ? (
-        <View style={styles.mnemonicBox}>
-          <Text selectable style={styles.mnemonicText}>
-            {mnemonic}
-          </Text>
-        </View>
-      ) : null}
-
-      <Text style={styles.subtitle}>Or Import Existing Mnemonic</Text>
+      <Text style={styles.subtitle}>Import Existing Mnemonic</Text>
 
       <TextInput
         style={styles.input}
@@ -108,7 +87,8 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 12,
     marginTop: 10,
-    minHeight: 60,
+    minHeight: 80,
+    width: '100%',
     textAlignVertical: 'top',
   },
 });

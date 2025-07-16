@@ -25,7 +25,15 @@ const Layout = () => {
               headerShown: false,
             }}
           />
+
+          <Stack.Screen
+            name="mnemonic"
+            options={{
+              headerShown: false,
+            }}
+          />
         </Stack>
+
         <Toast visibilityTime={5000} position="top" topOffset={60} />
       </PersistGate>
     </Provider>

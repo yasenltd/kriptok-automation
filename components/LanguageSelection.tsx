@@ -26,12 +26,9 @@ const LanguageSelection = () => {
   useEffect(() => {
     if (selectedLanguage !== language) {
       handleChange();
+      i18n.changeLanguage(selectedLanguage);
     }
   }, [selectedLanguage]);
-
-  useEffect(() => {
-    i18n.changeLanguage(language);
-  }, [language]);
 
   return (
     <View>

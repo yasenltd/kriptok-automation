@@ -1,25 +1,29 @@
 import { router } from 'expo-router';
 import { Pressable, StyleSheet, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
+import LanguageSelection from '@components/LanguageSelection';
 
 const WelcomeScreen = () => {
+  const { t } = useTranslation();
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Kriptok Wallet</Text>
-      <Text style={styles.subtitle}>Welcome! What would you like to do?</Text>
+      <LanguageSelection />
+      <Text style={styles.title}>{t('kriptokWallet')}</Text>
+      <Text style={styles.subtitle}>{t('welcome')}</Text>
 
       <Pressable
         style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
         onPress={() => router.push('/generate')}
       >
-        <Text style={styles.buttonText}>Create New Wallet</Text>
+        <Text style={styles.buttonText}>{t('create')}</Text>
       </Pressable>
 
       <Pressable
         style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
         onPress={() => router.push('/import')}
       >
-        <Text style={styles.buttonText}>Import Existing Wallet</Text>
+        <Text style={styles.buttonText}>{t('import')}</Text>
       </Pressable>
     </SafeAreaView>
   );

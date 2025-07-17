@@ -40,6 +40,8 @@ app-example
 # Native iOS / Android build outputs
 ios/build/
 android/app/build/
+android/build/
+android/local.properties
 
 # CocoaPods
 ios/Pods/

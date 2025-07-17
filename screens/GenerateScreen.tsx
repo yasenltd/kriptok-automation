@@ -1,22 +1,72 @@
 import React, { useCallback, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
-import { deriveEVMWalletFromMnemonic, generateMnemonic } from '../utils';
+import { View, Text, StyleSheet, ScrollView, Pressable, TextInput } from 'react-native';
+import {
+  deriveBitcoinWallet,
+  deriveEVMWalletFromMnemonic,
+  deriveSolanaWallet,
+  deriveSuiWallet,
+  generateMnemonic,
+  storeWalletSecurely,
+} from '../utils';
+import AppModal from '@components/ui/AppModal';
+import { useToast } from '@/hooks/useToast';
+import { setPin, validatePin } from '@/utils/secureStore';
 
 export default function GenerateScreen() {
+  /*Hooks */
+  const toast = useToast();
+
   /* State */
   const [mnemonic, setMnemonic] = useState<string>('');
-  const [address, setAddress] = useState<string>('');
-  const [privateKey, setPrivateKey] = useState<string>('');
+
+  const [evmWallet, setEvmWallet] = useState({ address: '', privateKey: '' });
+  const [btcWallet, setBtcWallet] = useState({ address: '', privateKey: '' });
+  const [solWallet, setSolWallet] = useState({ address: '', privateKey: '' });
+  const [suiWallet, setSuiWallet] = useState({ address: '', privateKey: '' });
+
+  const [pinModalVisible, setPinModalVisible] = useState(false);
+  const [pin, setPinInput] = useState('');
+  const [confirmPin, setConfirmPin] = useState('');
 
   /* Handlers */
-  const handleGenerateMnemonic = useCallback(() => {
-    const newMnemonic = generateMnemonic();
-    setMnemonic(newMnemonic);
+  const handleGenerateMnemonic = useCallback(async () => {
+    try {
+      const newMnemonic = generateMnemonic();
+      setMnemonic(newMnemonic);
 
-    const { address, privateKey } = deriveEVMWalletFromMnemonic(newMnemonic);
-    setAddress(address);
-    setPrivateKey(privateKey);
+      const evm = deriveEVMWalletFromMnemonic(newMnemonic);
+      const btc = deriveBitcoinWallet(newMnemonic);
+      const sol = deriveSolanaWallet(newMnemonic);
+      const sui = deriveSuiWallet(newMnemonic);
+
+      setEvmWallet(evm);
+      setBtcWallet(btc);
+      setSolWallet(sol);
+      setSuiWallet(sui);
+
+      await storeWalletSecurely(newMnemonic);
+      setPinModalVisible(true);
+    } catch (err) {
+      console.error('Something went wrong:', err);
+    }
   }, []);
+
+  const handleSavePin = useCallback(async () => {
+    if (pin !== confirmPin) {
+      toast.showError('PINs do not match.');
+
+      return;
+    }
+
+    if (pin.length !== 6 || confirmPin.length !== 6) {
+      toast.showError('PIN must be 6 digits.');
+      return;
+    }
+
+    await setPin(pin);
+    setPinModalVisible(false);
+    toast.showSuccess('Success! Your wallet and PIN are secured.');
+  }, [pin, confirmPin]);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -37,20 +87,91 @@ export default function GenerateScreen() {
               {mnemonic}
             </Text>
           </View>
+
+          {/* EVM */}
+          <Text style={styles.subtitle}>EVM (Ethereum / BNB / Polygon)</Text>
           <View style={styles.mnemonicBox}>
             <Text>Address:</Text>
             <Text selectable style={styles.mnemonicText}>
-              {address}
+              {evmWallet.address}
             </Text>
-          </View>
-          <View style={styles.mnemonicBox}>
             <Text>Private Key:</Text>
             <Text selectable style={styles.mnemonicText}>
-              {privateKey}
+              {evmWallet.privateKey}
+            </Text>
+          </View>
+
+          {/* Bitcoin */}
+          <Text style={styles.subtitle}>Bitcoin</Text>
+          <View style={styles.mnemonicBox}>
+            <Text>Address:</Text>
+            <Text selectable style={styles.mnemonicText}>
+              {btcWallet.address}
+            </Text>
+            <Text>Private Key:</Text>
+            <Text selectable style={styles.mnemonicText}>
+              {btcWallet.privateKey}
+            </Text>
+          </View>
+
+          {/* Solana */}
+          <Text style={styles.subtitle}>Solana</Text>
+          <View style={styles.mnemonicBox}>
+            <Text>Address:</Text>
+            <Text selectable style={styles.mnemonicText}>
+              {solWallet.address}
+            </Text>
+            <Text>Private Key:</Text>
+            <Text selectable style={styles.mnemonicText}>
+              {solWallet.privateKey}
+            </Text>
+          </View>
+
+          {/* Sui */}
+          <Text style={styles.subtitle}>Sui</Text>
+          <View style={styles.mnemonicBox}>
+            <Text>Address:</Text>
+            <Text selectable style={styles.mnemonicText}>
+              {suiWallet.address}
+            </Text>
+            <Text>Private Key:</Text>
+            <Text selectable style={styles.mnemonicText}>
+              {suiWallet.privateKey}
             </Text>
           </View>
         </>
       ) : null}
+
+      <AppModal
+        visible={pinModalVisible}
+        onClose={() => setPinModalVisible(false)}
+        title="Set Your 6-Digit PIN"
+        width="medium"
+        canClose={false}
+      >
+        <Text style={{ marginBottom: 10 }}>Enter a 6-digit PIN to protect your wallet.</Text>
+        <TextInput
+          style={styles.input}
+          keyboardType="number-pad"
+          maxLength={6}
+          secureTextEntry
+          value={pin}
+          onChangeText={setPinInput}
+          placeholder="Enter PIN"
+        />
+        <TextInput
+          style={styles.input}
+          keyboardType="number-pad"
+          maxLength={6}
+          secureTextEntry
+          value={confirmPin}
+          onChangeText={setConfirmPin}
+          placeholder="Confirm PIN"
+        />
+        <Pressable style={styles.button} onPress={handleSavePin}>
+          <Text style={styles.buttonText}>Save PIN</Text>
+        </Pressable>
+      </AppModal>
     </ScrollView>
   );
 }

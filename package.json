@@ -14,6 +14,8 @@
     "@react-native-async-storage/async-storage": "^2.2.0",
     "@react-navigation/elements": "^2.5.2",
     "@reduxjs/toolkit": "^2.8.2",
+    "@scure/base": "^1.2.6",
+    "@scure/bip32": "^1.7.0",
     "@solana/web3.js": "^1.98.2",
     "axios": "^1.10.0",
     "bip32": "5.0.0-rc.0",
@@ -25,6 +27,7 @@
     "expo": "~53.0.17",
     "expo-camera": "^16.1.10",
     "expo-constants": "^17.1.7",
+    "expo-crypto": "^14.1.5",
     "expo-dev-client": "^5.2.4",
     "expo-local-authentication": "^16.0.5",
     "expo-router": "^5.1.3",
@@ -41,7 +44,8 @@
     "react-native-svg": "15.11.2",
     "react-native-toast-message": "^2.3.3",
     "react-redux": "^9.2.0",
-    "redux-persist": "^6.0.0"
+    "redux-persist": "^6.0.0",
+    "tweetnacl": "^1.0.3"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

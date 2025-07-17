@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { LanguageType } from '@/types';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/stores/store';
 import { setLanguage } from '@/stores/language/languageSlice';
+import { useTranslation } from 'react-i18next';
+import i18n from '@/utils/i18n';
 
-const LanguageSelectionScreen = () => {
+const LanguageSelection = () => {
+  const { t } = useTranslation();
   const language = useSelector((state: RootState) => state.language.language);
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
@@ -16,36 +19,35 @@ const LanguageSelectionScreen = () => {
     { label: 'Türkçe', value: 'tr' },
   ]);
 
-  const handleConfirm = () => {
+  const handleChange = () => {
     dispatch(setLanguage(selectedLanguage));
   };
 
+  useEffect(() => {
+    if (selectedLanguage !== language) {
+      handleChange();
+      i18n.changeLanguage(selectedLanguage);
+    }
+  }, [selectedLanguage]);
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Select Language</Text>
+    <View>
+      <Text style={styles.title}>{t('selectLanguage')}</Text>
 
       <View>
         <DropDownPicker
           open={open}
-          value={selectedLanguage}
+          value={language}
           items={items}
           setOpen={setOpen}
           setValue={setSelectedLanguage}
           setItems={setItems}
-          onChangeValue={val => setSelectedLanguage(val as LanguageType)}
           placeholder="Select a language"
           style={styles.dropdown}
           dropDownContainerStyle={styles.dropdownContainer}
           zIndex={1000}
         />
       </View>
-
-      <Pressable
-        style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
-        onPress={handleConfirm}
-      >
-        <Text style={styles.buttonText}>Confirm</Text>
-      </Pressable>
     </View>
   );
 };
@@ -94,4 +96,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LanguageSelectionScreen;
+export default LanguageSelection;

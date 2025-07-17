@@ -1,5 +1,6 @@
 import 'react-native-get-random-values';
 import { Buffer } from 'buffer';
+import '../utils/i18n';
 
 if (typeof global.Buffer === 'undefined') {
   global.Buffer = Buffer;

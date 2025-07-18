@@ -34,17 +34,15 @@ export default function GenerateScreen() {
       setSolWallet(wallets.solana);
       setSuiWallet(wallets.sui);
 
-      await storeWalletSecurely(newMnemonic);
       setPinModalVisible(true);
     } catch (err) {
       console.error('Something went wrong:', err);
     }
   }, []);
 
-  const handleSavePin = useCallback(async () => {
+  const handleSecureSave = useCallback(async () => {
     if (pin !== confirmPin) {
       toast.showError('PINs do not match.');
-
       return;
     }
 
@@ -53,10 +51,16 @@ export default function GenerateScreen() {
       return;
     }
 
-    await setPin(pin);
-    setPinModalVisible(false);
-    toast.showSuccess('Success! Your wallet and PIN are secured.');
-  }, [pin, confirmPin]);
+    try {
+      await setPin(pin);
+      await storeWalletSecurely(mnemonic, pin);
+      setPinModalVisible(false);
+      toast.showSuccess('Success! Your wallet and PIN are secured.');
+    } catch (err) {
+      console.error('Secure store error:', err);
+      toast.showError('Failed to save your wallet.');
+    }
+  }, [pin, confirmPin, mnemonic]);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -158,7 +162,7 @@ export default function GenerateScreen() {
           onChangeText={setConfirmPin}
           placeholder="Confirm PIN"
         />
-        <Pressable style={styles.button} onPress={handleSavePin}>
+        <Pressable style={styles.button} onPress={handleSecureSave}>
           <Text style={styles.buttonText}>Save PIN</Text>
         </Pressable>
       </AppModal>

@@ -1,16 +1,9 @@
 import React, { useCallback, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Pressable, TextInput } from 'react-native';
-import {
-  deriveBitcoinWallet,
-  deriveEVMWalletFromMnemonic,
-  deriveSolanaWallet,
-  deriveSuiWallet,
-  generateMnemonic,
-  storeWalletSecurely,
-} from '../utils';
+import { deriveAllWalletsFromMnemonic, generateMnemonic, storeWalletSecurely } from '../utils';
 import AppModal from '@components/ui/AppModal';
 import { useToast } from '@/hooks/useToast';
-import { setPin, validatePin } from '@/utils/secureStore';
+import { setPin } from '@/utils/secureStore';
 
 export default function GenerateScreen() {
   /*Hooks */
@@ -34,15 +27,12 @@ export default function GenerateScreen() {
       const newMnemonic = generateMnemonic();
       setMnemonic(newMnemonic);
 
-      const evm = deriveEVMWalletFromMnemonic(newMnemonic);
-      const btc = deriveBitcoinWallet(newMnemonic);
-      const sol = deriveSolanaWallet(newMnemonic);
-      const sui = deriveSuiWallet(newMnemonic);
+      const wallets = await deriveAllWalletsFromMnemonic(newMnemonic);
 
-      setEvmWallet(evm);
-      setBtcWallet(btc);
-      setSolWallet(sol);
-      setSuiWallet(sui);
+      setEvmWallet(wallets.evm);
+      setBtcWallet(wallets.bitcoin);
+      setSolWallet(wallets.solana);
+      setSuiWallet(wallets.sui);
 
       await storeWalletSecurely(newMnemonic);
       setPinModalVisible(true);

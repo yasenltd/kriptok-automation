@@ -3,7 +3,7 @@ import * as ecc from '@bitcoinerlab/secp256k1';
 import { BIP32Factory } from 'bip32';
 import * as bitcoin from 'bitcoinjs-lib';
 import { HDNodeWallet } from 'ethers/wallet';
-import { Mnemonic } from 'ethers';
+import { getBytes, Mnemonic } from 'ethers';
 import nacl from 'tweetnacl';
 import { Ed25519Keypair } from '@mysten/sui/keypairs/ed25519';
 import { HDKey } from '@scure/bip32';
@@ -23,7 +23,6 @@ export const deriveEVMWalletFromMnemonic = (mnemonic: string) => {
   const mnemonicObj = Mnemonic.fromPhrase(mnemonic.trim());
   const derivationPath = "m/44'/60'/0'/0/0";
   const hdWallet = HDNodeWallet.fromMnemonic(mnemonicObj, derivationPath);
-
   return {
     address: hdWallet.address,
     privateKey: hdWallet.privateKey,
@@ -73,5 +72,44 @@ export const deriveSuiWallet = (mnemonic: string) => {
   return {
     address,
     privateKey: privateKeyHex,
+  };
+};
+
+export const deriveAllWalletsFromMnemonic = async (mnemonic: string) => {
+  const phrase = mnemonic.trim();
+  if (!bip39.validateMnemonic(phrase)) throw new Error('Invalid mnemonic');
+
+  const mnemonicObj = Mnemonic.fromPhrase(phrase);
+  const seedStr: string = mnemonicObj.computeSeed();
+  const seed: Uint8Array = getBytes(seedStr);
+
+  const rootSecp256k1 = bip32.fromSeed(Buffer.from(seed));
+  const rootEd25519 = HDKey.fromMasterSeed(seed);
+
+  const evmWallet = HDNodeWallet.fromSeed(seed).derivePath("m/44'/60'/0'/0/0");
+
+  const btcChild = rootSecp256k1.derivePath("m/44'/0'/0'/0/0");
+  const btcAddress = bitcoin.payments.p2pkh({
+    pubkey: Buffer.from(btcChild.publicKey),
+    network: bitcoin.networks.bitcoin,
+  }).address;
+
+  const solChild = rootEd25519.derive("m/44'/501'/0'/0'");
+  const solKeypair = nacl.sign.keyPair.fromSeed(solChild.privateKey!);
+
+  const suiChild = rootEd25519.derive("m/44'/784'/0'/0'/0'");
+  const suiKeypair = Ed25519Keypair.fromSecretKey(suiChild.privateKey!.slice(0, 32));
+
+  return {
+    evm: { address: evmWallet.address, privateKey: evmWallet.privateKey },
+    bitcoin: { address: btcAddress ?? '', privateKey: btcChild.toWIF() },
+    solana: {
+      address: base58.encode(solKeypair.publicKey),
+      privateKey: base58.encode(solKeypair.secretKey),
+    },
+    sui: {
+      address: suiKeypair.getPublicKey().toSuiAddress(),
+      privateKey: Buffer.from(suiKeypair.getSecretKey()).toString('hex'),
+    },
   };
 };

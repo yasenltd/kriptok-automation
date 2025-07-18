@@ -5,6 +5,7 @@ import {
   deriveBitcoinWallet,
   deriveSuiWallet,
   deriveSolanaWallet,
+  deriveAllWalletsFromMnemonic,
 } from './mnemonic';
 import { colors } from './constants';
 import {
@@ -24,4 +25,5 @@ export {
   storeWalletSecurely,
   loadWalletSecurelyWithFallback,
   clearWalletSecurely,
+  deriveAllWalletsFromMnemonic,
 };

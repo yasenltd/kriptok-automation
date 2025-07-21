@@ -1,12 +1,36 @@
 import * as SecureStore from 'expo-secure-store';
 import * as LocalAuthentication from 'expo-local-authentication';
 import * as Crypto from 'expo-crypto';
+import Aes from 'react-native-aes-crypto';
+import { EncryptedWalletData } from '@/types';
 
 const WALLET_KEYCHAIN_SERVICE = 'wallet-credentials';
 const PIN_HASH_KEY = 'wallet-pin-hash';
+const PIN_ENCRYPTION_KEY = 'wallet-encryption-key';
 
 export type StoredWalletData = {
-  mnemonic: string;
+  mnemonic: string | null;
+};
+
+const deriveKey = async (pin: string, salt: string): Promise<string> => {
+  const iterations = 100_000;
+  const keyLength = 256;
+  const algorithm: Aes.Algorithms_pbkdf2 = 'sha256';
+
+  return await Aes.pbkdf2(pin, salt, iterations, keyLength, algorithm);
+};
+
+const encryptMnemonic = async (
+  mnemonic: string,
+  key: string,
+): Promise<{ cipher: string; iv: string }> => {
+  const iv = await Aes.randomKey(16);
+  const cipher = await Aes.encrypt(mnemonic, key, iv, 'aes-256-cbc');
+  return { cipher, iv };
+};
+
+const decryptMnemonic = async (cipher: string, key: string, iv: string): Promise<string> => {
+  return await Aes.decrypt(cipher, key, iv, 'aes-256-cbc');
 };
 
 async function hashPin(pin: string): Promise<string> {
@@ -28,53 +52,79 @@ export const validatePin = async (inputPin: string): Promise<boolean> => {
   return storedHash === inputHash;
 };
 
-export const storeWalletSecurely = async (mnemonic: string) => {
-  const data: StoredWalletData = { mnemonic };
-  const serialized = JSON.stringify(data);
+export const storeWalletSecurely = async (mnemonic: string, pin: string) => {
+  const salt = await Aes.randomKey(16);
+  const key = await deriveKey(pin, salt);
+  const { cipher, iv } = await encryptMnemonic(mnemonic, key);
 
-  await SecureStore.setItemAsync(WALLET_KEYCHAIN_SERVICE, serialized, {
-    keychainAccessible: SecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY,
-  });
+  const data: EncryptedWalletData = { cipher, salt, iv };
+  await SecureStore.setItemAsync(WALLET_KEYCHAIN_SERVICE, JSON.stringify(data));
+  await SecureStore.setItemAsync(PIN_ENCRYPTION_KEY, key);
 };
 
-export const loadWalletSecurelyWithFallback = async (
-  promptForPin: () => Promise<string>,
-): Promise<StoredWalletData | null> => {
-  const hasHardware = await LocalAuthentication.hasHardwareAsync();
-  const isEnrolled = await LocalAuthentication.isEnrolledAsync();
+export const loadWalletWithCachedKey = async (): Promise<string | null> => {
+  const stored = await SecureStore.getItemAsync(WALLET_KEYCHAIN_SERVICE);
+  const key = await SecureStore.getItemAsync(PIN_ENCRYPTION_KEY);
+  if (!stored || !key) return null;
 
-  if (hasHardware && isEnrolled) {
+  try {
+    const { cipher, iv } = JSON.parse(stored);
+    return await decryptMnemonic(cipher, key, iv);
+  } catch {
+    return null;
+  }
+};
+
+export const loadWalletSecurely = async (pin: string): Promise<string | null> => {
+  const stored = await SecureStore.getItemAsync('wallet-credentials');
+  if (!stored) return null;
+
+  try {
+    const { cipher, salt, iv } = JSON.parse(stored);
+    const key = await deriveKey(pin, salt);
+    return await decryptMnemonic(cipher, key, iv);
+  } catch {
+    return null;
+  }
+};
+
+export const loadWalletSecurelyWithBiometrics = async () => {
+  try {
+    const hasHardware = await LocalAuthentication.hasHardwareAsync();
+    const isEnrolled = await LocalAuthentication.isEnrolledAsync();
+    if (!hasHardware || !isEnrolled) {
+      return null;
+    }
+
     const result = await LocalAuthentication.authenticateAsync({
       promptMessage: 'Unlock Your Wallet',
       fallbackLabel: 'Use PIN',
       cancelLabel: 'Cancel',
     });
 
-    if (result.success) {
-      return await loadFromSecureStore();
+    if (!result.success) return null;
+    const mnemonic = await loadWalletWithCachedKey();
+    if (mnemonic) {
+      return mnemonic;
+    } else {
+      return null;
     }
+  } catch (error) {
+    console.error(error);
+    return null;
   }
+};
 
-  const pinInput = await promptForPin();
-  if (!pinInput) return null;
-
-  const valid = await validatePin(pinInput);
+export const loadWalletFromPin = async (pin: string) => {
+  const valid = await validatePin(pin);
   if (!valid) return null;
 
-  return await loadFromSecureStore();
+  const mnemonic = await loadWalletSecurely(pin);
+  return mnemonic;
 };
 
 export const clearWalletSecurely = async () => {
   await SecureStore.deleteItemAsync(WALLET_KEYCHAIN_SERVICE);
-};
-
-const loadFromSecureStore = async (): Promise<StoredWalletData | null> => {
-  const stored = await SecureStore.getItemAsync(WALLET_KEYCHAIN_SERVICE);
-  if (!stored) return null;
-
-  try {
-    return JSON.parse(stored);
-  } catch {
-    return null;
-  }
+  await SecureStore.deleteItemAsync(PIN_HASH_KEY);
+  await SecureStore.deleteItemAsync(PIN_ENCRYPTION_KEY);
 };

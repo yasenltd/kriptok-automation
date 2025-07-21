@@ -1,16 +1,10 @@
 import React, { useCallback, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Pressable, TextInput } from 'react-native';
-import {
-  deriveBitcoinWallet,
-  deriveEVMWalletFromMnemonic,
-  deriveSolanaWallet,
-  deriveSuiWallet,
-  generateMnemonic,
-  storeWalletSecurely,
-} from '../utils';
+import { deriveAllWalletsFromMnemonic, generateMnemonic, storeWalletSecurely } from '../utils';
 import AppModal from '@components/ui/AppModal';
 import { useToast } from '@/hooks/useToast';
-import { setPin, validatePin } from '@/utils/secureStore';
+import { setPin } from '@/utils/secureStore';
+import { Wallets } from '@/types';
 
 export default function GenerateScreen() {
   /*Hooks */
@@ -29,32 +23,32 @@ export default function GenerateScreen() {
   const [confirmPin, setConfirmPin] = useState('');
 
   /* Handlers */
+
+  const setWallets = useCallback((wallets: Wallets) => {
+    setEvmWallet(wallets.evm);
+    setBtcWallet(wallets.bitcoin);
+    setSolWallet(wallets.solana);
+    setSuiWallet(wallets.sui);
+  }, []);
+
   const handleGenerateMnemonic = useCallback(async () => {
     try {
       const newMnemonic = generateMnemonic();
       setMnemonic(newMnemonic);
 
-      const evm = deriveEVMWalletFromMnemonic(newMnemonic);
-      const btc = deriveBitcoinWallet(newMnemonic);
-      const sol = deriveSolanaWallet(newMnemonic);
-      const sui = deriveSuiWallet(newMnemonic);
+      const wallets = await deriveAllWalletsFromMnemonic(newMnemonic);
 
-      setEvmWallet(evm);
-      setBtcWallet(btc);
-      setSolWallet(sol);
-      setSuiWallet(sui);
+      setWallets(wallets);
 
-      await storeWalletSecurely(newMnemonic);
       setPinModalVisible(true);
     } catch (err) {
       console.error('Something went wrong:', err);
     }
   }, []);
 
-  const handleSavePin = useCallback(async () => {
+  const handleSecureSave = useCallback(async () => {
     if (pin !== confirmPin) {
       toast.showError('PINs do not match.');
-
       return;
     }
 
@@ -63,10 +57,16 @@ export default function GenerateScreen() {
       return;
     }
 
-    await setPin(pin);
-    setPinModalVisible(false);
-    toast.showSuccess('Success! Your wallet and PIN are secured.');
-  }, [pin, confirmPin]);
+    try {
+      await setPin(pin);
+      await storeWalletSecurely(mnemonic, pin);
+      setPinModalVisible(false);
+      toast.showSuccess('Success! Your wallet and PIN are secured.');
+    } catch (err) {
+      console.error('Secure store error:', err);
+      toast.showError('Failed to save your wallet.');
+    }
+  }, [pin, confirmPin, mnemonic]);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -168,7 +168,7 @@ export default function GenerateScreen() {
           onChangeText={setConfirmPin}
           placeholder="Confirm PIN"
         />
-        <Pressable style={styles.button} onPress={handleSavePin}>
+        <Pressable style={styles.button} onPress={handleSecureSave}>
           <Text style={styles.buttonText}>Save PIN</Text>
         </Pressable>
       </AppModal>

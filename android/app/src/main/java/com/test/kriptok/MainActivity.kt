@@ -1,4 +1,4 @@
-package com.test.mobiledapp
+package com.test.kriptok
 
 import android.os.Build
 import android.os.Bundle

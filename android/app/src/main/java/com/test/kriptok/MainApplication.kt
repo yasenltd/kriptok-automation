@@ -1,4 +1,4 @@
-package com.test.mobiledapp
+package com.test.kriptok
 
 import android.app.Application
 import android.content.res.Configuration

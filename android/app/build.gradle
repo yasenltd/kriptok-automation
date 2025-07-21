@@ -87,9 +87,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.test.mobiledapp'
+    namespace 'com.test.kriptok'
     defaultConfig {
-        applicationId 'com.test.mobiledapp'
+        applicationId 'com.test.kriptok'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

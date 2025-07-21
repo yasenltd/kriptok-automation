@@ -5,12 +5,14 @@ import {
   deriveBitcoinWallet,
   deriveSuiWallet,
   deriveSolanaWallet,
+  deriveAllWalletsFromMnemonic,
 } from './mnemonic';
 import { colors } from './constants';
 import {
   storeWalletSecurely,
-  loadWalletSecurelyWithFallback,
+  loadWalletSecurelyWithBiometrics,
   clearWalletSecurely,
+  loadWalletWithCachedKey,
 } from './secureStore';
 
 export {
@@ -22,6 +24,8 @@ export {
   deriveSuiWallet,
   deriveSolanaWallet,
   storeWalletSecurely,
-  loadWalletSecurelyWithFallback,
+  loadWalletSecurelyWithBiometrics,
   clearWalletSecurely,
+  deriveAllWalletsFromMnemonic,
+  loadWalletWithCachedKey,
 };

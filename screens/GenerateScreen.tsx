@@ -4,6 +4,7 @@ import { deriveAllWalletsFromMnemonic, generateMnemonic, storeWalletSecurely } f
 import AppModal from '@components/ui/AppModal';
 import { useToast } from '@/hooks/useToast';
 import { setPin } from '@/utils/secureStore';
+import { Wallets } from '@/types';
 
 export default function GenerateScreen() {
   /*Hooks */
@@ -22,6 +23,14 @@ export default function GenerateScreen() {
   const [confirmPin, setConfirmPin] = useState('');
 
   /* Handlers */
+
+  const setWallets = useCallback((wallets: Wallets) => {
+    setEvmWallet(wallets.evm);
+    setBtcWallet(wallets.bitcoin);
+    setSolWallet(wallets.solana);
+    setSuiWallet(wallets.sui);
+  }, []);
+
   const handleGenerateMnemonic = useCallback(async () => {
     try {
       const newMnemonic = generateMnemonic();
@@ -29,10 +38,7 @@ export default function GenerateScreen() {
 
       const wallets = await deriveAllWalletsFromMnemonic(newMnemonic);
 
-      setEvmWallet(wallets.evm);
-      setBtcWallet(wallets.bitcoin);
-      setSolWallet(wallets.solana);
-      setSuiWallet(wallets.sui);
+      setWallets(wallets);
 
       setPinModalVisible(true);
     } catch (err) {

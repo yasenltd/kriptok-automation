@@ -89,26 +89,28 @@ export const loadWalletSecurely = async (pin: string): Promise<string | null> =>
 };
 
 export const loadWalletSecurelyWithBiometrics = async () => {
-  const hasHardware = await LocalAuthentication.hasHardwareAsync();
-  const isEnrolled = await LocalAuthentication.isEnrolledAsync();
+  try {
+    const hasHardware = await LocalAuthentication.hasHardwareAsync();
+    const isEnrolled = await LocalAuthentication.isEnrolledAsync();
+    if (!hasHardware || !isEnrolled) {
+      return null;
+    }
 
-  if (hasHardware && isEnrolled) {
     const result = await LocalAuthentication.authenticateAsync({
       promptMessage: 'Unlock Your Wallet',
       fallbackLabel: 'Use PIN',
       cancelLabel: 'Cancel',
     });
 
-    if (result.success) {
-      const mnemonic = await loadWalletWithCachedKey();
-      if (mnemonic) {
-        return mnemonic;
-      }
-      return null;
+    if (!result.success) return null;
+    const mnemonic = await loadWalletWithCachedKey();
+    if (mnemonic) {
+      return mnemonic;
     } else {
       return null;
     }
-  } else {
+  } catch (error) {
+    console.error(error);
     return null;
   }
 };

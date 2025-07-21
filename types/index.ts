@@ -28,3 +28,16 @@ export type Wallets = {
     privateKey: string;
   };
 };
+
+export interface AuthRefreshResponse {
+  access_token: string;
+  expires_in: number;
+  refresh_expires_in: number;
+  refresh_token: string;
+}
+
+export type TokenObj = {
+  refresh_token: string;
+  access_token: string;
+  expires_in: string;
+};

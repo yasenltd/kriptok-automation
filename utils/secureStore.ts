@@ -3,6 +3,7 @@ import * as LocalAuthentication from 'expo-local-authentication';
 import * as Crypto from 'expo-crypto';
 import Aes from 'react-native-aes-crypto';
 import { EncryptedWalletData } from '@/types';
+import Constants from 'expo-constants';
 
 const WALLET_KEYCHAIN_SERVICE = 'wallet-credentials';
 const PIN_HASH_KEY = 'wallet-pin-hash';
@@ -127,4 +128,37 @@ export const clearWalletSecurely = async () => {
   await SecureStore.deleteItemAsync(WALLET_KEYCHAIN_SERVICE);
   await SecureStore.deleteItemAsync(PIN_HASH_KEY);
   await SecureStore.deleteItemAsync(PIN_ENCRYPTION_KEY);
+};
+
+export const secureSave = async (key: string, data: unknown) => {
+  try {
+    const toStore = typeof data === 'string' ? data : JSON.stringify(data);
+    await SecureStore.setItemAsync(key, toStore);
+  } catch (err) {
+    console.error(`secureSave failed for key "${key}":`, err);
+  }
+};
+
+export const secureGet = async <T = any>(key: string): Promise<T | string | null> => {
+  try {
+    const raw = await SecureStore.getItemAsync(key);
+    if (!raw) return null;
+
+    try {
+      return JSON.parse(raw);
+    } catch {
+      return raw;
+    }
+  } catch (err) {
+    console.error(`secureGet failed for key "${key}":`, err);
+    return null;
+  }
+};
+
+export const secureRemove = async (key: string) => {
+  try {
+    await SecureStore.deleteItemAsync(key);
+  } catch (err) {
+    console.error(`secureRemove failed for key "${key}":`, err);
+  }
 };

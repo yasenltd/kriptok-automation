@@ -9,6 +9,13 @@ import { Ed25519Keypair } from '@mysten/sui/keypairs/ed25519';
 import { HDKey } from '@scure/bip32';
 import { base58 } from '@scure/base';
 
+export enum WalletDerivationPath {
+  EVM = "m/44'/60'/0'/0/0",
+  BITCOIN = "m/44'/0'/0'/0/0",
+  SOLANA = "m/44'/501'/0'/0'",
+  SUI = "m/44'/784'/0'/0'/0'",
+}
+
 const bip32 = BIP32Factory(ecc);
 
 export const generateMnemonic = () => {
@@ -21,8 +28,7 @@ export const validateMnemonic = (mnemonic: string) => {
 
 export const deriveEVMWalletFromMnemonic = (mnemonic: string) => {
   const mnemonicObj = Mnemonic.fromPhrase(mnemonic.trim());
-  const derivationPath = "m/44'/60'/0'/0/0";
-  const hdWallet = HDNodeWallet.fromMnemonic(mnemonicObj, derivationPath);
+  const hdWallet = HDNodeWallet.fromMnemonic(mnemonicObj, WalletDerivationPath.EVM);
   return {
     address: hdWallet.address,
     privateKey: hdWallet.privateKey,
@@ -33,8 +39,7 @@ export const deriveBitcoinWallet = (mnemonic: string) => {
   const seed = bip39.mnemonicToSeedSync(mnemonic.trim());
   const root = bip32.fromSeed(seed);
 
-  const path = "m/44'/0'/0'/0/0";
-  const child = root.derivePath(path);
+  const child = root.derivePath(WalletDerivationPath.BITCOIN);
 
   const { address } = bitcoin.payments.p2pkh({
     pubkey: Buffer.from(child.publicKey),
@@ -50,7 +55,7 @@ export const deriveBitcoinWallet = (mnemonic: string) => {
 export const deriveSolanaWallet = (mnemonic: string) => {
   const seed = bip39.mnemonicToSeedSync(mnemonic.trim());
   const root = HDKey.fromMasterSeed(seed);
-  const child = root.derive("m/44'/501'/0'/0'");
+  const child = root.derive(WalletDerivationPath.SOLANA);
   const keypair = nacl.sign.keyPair.fromSeed(child.privateKey!);
 
   const address = base58.encode(keypair.publicKey);
@@ -86,18 +91,18 @@ export const deriveAllWalletsFromMnemonic = async (mnemonic: string) => {
   const rootSecp256k1 = bip32.fromSeed(Buffer.from(seed));
   const rootEd25519 = HDKey.fromMasterSeed(seed);
 
-  const evmWallet = HDNodeWallet.fromSeed(seed).derivePath("m/44'/60'/0'/0/0");
+  const evmWallet = HDNodeWallet.fromSeed(seed).derivePath(WalletDerivationPath.EVM);
 
-  const btcChild = rootSecp256k1.derivePath("m/44'/0'/0'/0/0");
+  const btcChild = rootSecp256k1.derivePath(WalletDerivationPath.BITCOIN);
   const btcAddress = bitcoin.payments.p2pkh({
     pubkey: Buffer.from(btcChild.publicKey),
     network: bitcoin.networks.bitcoin,
   }).address;
 
-  const solChild = rootEd25519.derive("m/44'/501'/0'/0'");
+  const solChild = rootEd25519.derive(WalletDerivationPath.SOLANA);
   const solKeypair = nacl.sign.keyPair.fromSeed(solChild.privateKey!);
 
-  const suiChild = rootEd25519.derive("m/44'/784'/0'/0'/0'");
+  const suiChild = rootEd25519.derive(WalletDerivationPath.SUI);
   const suiKeypair = Ed25519Keypair.fromSecretKey(suiChild.privateKey!.slice(0, 32));
 
   return {

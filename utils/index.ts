@@ -20,6 +20,8 @@ import {
 
 import { getToken, saveToken, removeToken, isTokenExpired } from './tokenStorage';
 
+import { getAuthMessage, verifySignature } from './auth';
+
 export {
   generateMnemonic,
   validateMnemonic,
@@ -40,4 +42,6 @@ export {
   saveToken,
   removeToken,
   isTokenExpired,
+  getAuthMessage,
+  verifySignature,
 };

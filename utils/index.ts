@@ -13,7 +13,12 @@ import {
   loadWalletSecurelyWithBiometrics,
   clearWalletSecurely,
   loadWalletWithCachedKey,
+  secureGet,
+  secureRemove,
+  secureSave,
 } from './secureStore';
+
+import { getToken, saveToken, removeToken, isTokenExpired } from './tokenStorage';
 
 export {
   generateMnemonic,
@@ -28,4 +33,11 @@ export {
   clearWalletSecurely,
   deriveAllWalletsFromMnemonic,
   loadWalletWithCachedKey,
+  secureGet,
+  secureRemove,
+  secureSave,
+  getToken,
+  saveToken,
+  removeToken,
+  isTokenExpired,
 };

@@ -41,3 +41,22 @@ export type TokenObj = {
   access_token: string;
   expires_in: string;
 };
+
+export interface RegisterUserDto {
+  eth: string;
+  btc: string;
+  sui: string;
+  solana: string;
+}
+
+export type IUser = {
+  address: string; // Ethereum
+  btc?: string;
+  sui?: string;
+  solana?: string;
+  nonce?: string;
+  userId?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  _id?: string;
+};

@@ -5,6 +5,7 @@ import AppModal from '@components/ui/AppModal';
 import { useToast } from '@/hooks/useToast';
 import { setPin } from '@/utils/secureStore';
 import { Wallets } from '@/types';
+import { getLoginMessage, signSiweMessage, signup, verifySignature } from '@/utils/auth';
 
 export default function GenerateScreen() {
   /*Hooks */
@@ -25,6 +26,7 @@ export default function GenerateScreen() {
   /* Handlers */
 
   const setWallets = useCallback((wallets: Wallets) => {
+    console.log(wallets);
     setEvmWallet(wallets.evm);
     setBtcWallet(wallets.bitcoin);
     setSolWallet(wallets.solana);
@@ -58,9 +60,27 @@ export default function GenerateScreen() {
     }
 
     try {
+      // we need existing user here, uncomment if you want to test it
+
+      /* await signup({
+        eth: evmWallet.address,
+        btc: btcWallet.address,
+        sui: suiWallet.address,
+        solana: solWallet.address,
+      }); */
+      const { message } = await getLoginMessage(evmWallet.address);
+      const signature = await signSiweMessage(message, evmWallet.privateKey);
+      console.log('🔐 Incoming message:\n', message);
+      console.log('✍️ Incoming signature:\n', signature);
+      const { access_token, expires_in } = await verifySignature(message, signature);
+
+      // TODO: save token and expiration time, handle login and register, clear private keys from memory
+
       await setPin(pin);
       await storeWalletSecurely(mnemonic, pin);
-      setPinModalVisible(false);
+      // setPinModalVisible(false);
+      console.log(access_token);
+      console.log(expires_in);
       toast.showSuccess('Success! Your wallet and PIN are secured.');
     } catch (err) {
       console.error('Secure store error:', err);

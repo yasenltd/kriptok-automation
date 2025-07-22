@@ -60,27 +60,34 @@ export default function GenerateScreen() {
     }
 
     try {
-      // we need existing user here, uncomment if you want to test it
+      // we need existing user here in order to test it
 
-      /* await signup({
+      await signup({
         eth: evmWallet.address,
         btc: btcWallet.address,
         sui: suiWallet.address,
         solana: solWallet.address,
-      }); */
+      });
+
       const { message } = await getLoginMessage(evmWallet.address);
       const signature = await signSiweMessage(message, evmWallet.privateKey);
       console.log('🔐 Incoming message:\n', message);
       console.log('✍️ Incoming signature:\n', signature);
-      const { access_token, expires_in } = await verifySignature(message, signature);
+      const { access_token, expires_in, refresh_token, refresh_expires_in } = await verifySignature(
+        message,
+        signature,
+      );
 
       // TODO: save token and expiration time, handle login and register, clear private keys from memory
 
       await setPin(pin);
       await storeWalletSecurely(mnemonic, pin);
       // setPinModalVisible(false);
-      console.log(access_token);
-      console.log(expires_in);
+      console.log('Access token: ', access_token);
+      console.log('Access expires in', expires_in);
+
+      console.log('Refresh token: ', refresh_token);
+      console.log('Refresh expires in', refresh_expires_in);
       toast.showSuccess('Success! Your wallet and PIN are secured.');
     } catch (err) {
       console.error('Secure store error:', err);

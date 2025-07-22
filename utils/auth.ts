@@ -6,7 +6,12 @@ export const getLoginMessage = (address: string) =>
   get<{ message: string }>(`/users/login/${address}`);
 
 export const verifySignature = (message: string, signature: string) =>
-  post<{ access_token: string; expires_in: number }>(`/auth/verify`, {
+  post<{
+    access_token: string;
+    expires_in: number;
+    refresh_token: string;
+    refresh_expires_in: number;
+  }>(`/auth/verify`, {
     body: { message, signature },
   });
 

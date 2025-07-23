@@ -2,6 +2,7 @@
 
 # dependencies
 node_modules/
+pnpm-lock.yaml
 .env
 # Expo
 .expo/
@@ -35,6 +36,9 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 
+# IDE
+.idea
+
 app-example
 
 # Native iOS / Android build outputs
@@ -49,6 +53,10 @@ ios/Podfile.lock
 
 # Gradle
 android/.gradle/
-android/build/
 *.iml
 .gradle/
+
+# Detox testing
+detox.log
+detox.trace.json
+e2e/artifacts/

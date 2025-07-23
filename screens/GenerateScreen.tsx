@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Pressable, TextInput } from 'react-native';
-import { deriveAllWalletsFromMnemonic, generateMnemonic, storeWalletSecurely } from '../utils';
+import { deriveAllWalletsFromMnemonic, generateMnemonic, storeWalletSecurely } from '@/utils';
 import AppModal from '@components/ui/AppModal';
 import { useToast } from '@/hooks/useToast';
 import { setPin } from '@/utils/secureStore';
@@ -73,6 +73,7 @@ export default function GenerateScreen() {
       <Text style={styles.title}>Kriptok Wallet</Text>
 
       <Pressable
+        testID="generate-new-mnemonic"
         style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
         onPress={handleGenerateMnemonic}
       >
@@ -82,7 +83,7 @@ export default function GenerateScreen() {
       {mnemonic ? (
         <>
           <View style={styles.mnemonicBox}>
-            <Text>Mnemonic:</Text>
+            <Text testID="mnemonic-label">Mnemonic:</Text>
             <Text selectable style={styles.mnemonicText}>
               {mnemonic}
             </Text>
@@ -151,6 +152,7 @@ export default function GenerateScreen() {
       >
         <Text style={{ marginBottom: 10 }}>Enter a 6-digit PIN to protect your wallet.</Text>
         <TextInput
+          testID="enter-pin"
           style={styles.input}
           keyboardType="number-pad"
           maxLength={6}
@@ -160,6 +162,7 @@ export default function GenerateScreen() {
           placeholder="Enter PIN"
         />
         <TextInput
+          testID="confirm-pin"
           style={styles.input}
           keyboardType="number-pad"
           maxLength={6}
@@ -168,7 +171,7 @@ export default function GenerateScreen() {
           onChangeText={setConfirmPin}
           placeholder="Confirm PIN"
         />
-        <Pressable style={styles.button} onPress={handleSecureSave}>
+        <Pressable testID="save-pin" style={styles.button} onPress={handleSecureSave}>
           <Text style={styles.buttonText}>Save PIN</Text>
         </Pressable>
       </AppModal>

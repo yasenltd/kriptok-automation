@@ -3,7 +3,7 @@
     "name": "kriptok-wallet",
     "slug": "kriptok-wallet",
     "version": "1.0.0",
-    "plugins": ["expo-dev-client", "expo-secure-store"],
+    "plugins": ["expo-dev-client", "expo-secure-store", "@config-plugins/detox"],
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",

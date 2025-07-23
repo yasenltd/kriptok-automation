@@ -40,14 +40,15 @@ export type TokenObj = {
   refresh_token: string;
   access_token: string;
   expires_in: string;
+  refresh_expires_in: string;
 };
 
-export interface RegisterUserDto {
+export type RegisterType = {
   eth: string;
   btc: string;
   sui: string;
   solana: string;
-}
+};
 
 export type IUser = {
   address: string; // Ethereum

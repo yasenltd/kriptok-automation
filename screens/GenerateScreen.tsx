@@ -5,7 +5,7 @@ import AppModal from '@components/ui/AppModal';
 import { useToast } from '@/hooks/useToast';
 import { setPin } from '@/utils/secureStore';
 import { Wallets } from '@/types';
-import { getLoginMessage, signSiweMessage, signup, verifySignature } from '@/utils/auth';
+import { getLoginMessage, login, signSiweMessage, signup } from '@/utils/auth';
 
 export default function GenerateScreen() {
   /*Hooks */
@@ -31,6 +31,13 @@ export default function GenerateScreen() {
     setBtcWallet(wallets.bitcoin);
     setSolWallet(wallets.solana);
     setSuiWallet(wallets.sui);
+  }, []);
+
+  const clearPrivateKeys = useCallback(() => {
+    setEvmWallet(prev => ({ ...prev, privateKey: '' }));
+    setBtcWallet(prev => ({ ...prev, privateKey: '' }));
+    setSolWallet(prev => ({ ...prev, privateKey: '' }));
+    setSuiWallet(prev => ({ ...prev, privateKey: '' }));
   }, []);
 
   const handleGenerateMnemonic = useCallback(async () => {
@@ -60,29 +67,31 @@ export default function GenerateScreen() {
     }
 
     try {
-      // we need existing user here in order to test it
-
+      // signup user
       await signup({
         eth: evmWallet.address,
         btc: btcWallet.address,
         sui: suiWallet.address,
         solana: solWallet.address,
       });
-
+      //generate message
       const { message } = await getLoginMessage(evmWallet.address);
+      // sign message
       const signature = await signSiweMessage(message, evmWallet.privateKey);
       console.log('🔐 Incoming message:\n', message);
       console.log('✍️ Incoming signature:\n', signature);
-      const { access_token, expires_in, refresh_token, refresh_expires_in } = await verifySignature(
+
+      //obtain tokens
+      const { access_token, expires_in, refresh_token, refresh_expires_in } = await login(
         message,
         signature,
       );
 
-      // TODO: save token and expiration time, handle login and register, clear private keys from memory
+      clearPrivateKeys();
 
       await setPin(pin);
       await storeWalletSecurely(mnemonic, pin);
-      // setPinModalVisible(false);
+      setPinModalVisible(false);
       console.log('Access token: ', access_token);
       console.log('Access expires in', expires_in);
 

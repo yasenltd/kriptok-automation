@@ -38,6 +38,13 @@ To set up Detox for development in the Kriptok Wallet project:
 
 3. Make sure you have Xcode and iOS simulators installed for running the tests.
 
+4. Build the app for testing.
+   
+   These commands prepare your app for testing:
+   - `npx expo prebuild` (executed in project root): Generates native iOS and Android projects from your Expo project
+   - `pod install --repo-update` (executed in ios directory): Installs iOS dependencies and updates CocoaPods repositories
+   - `detox build -c ios.sim.debug` (executed in project root): Builds the app in debug mode for iOS simulator testing
+
 ## Running Tests
 
 Before running any tests, you need to start the Expo development server:

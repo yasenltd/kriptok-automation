@@ -43,14 +43,8 @@ export const removeToken = async () => {
   ]);
 };
 
-export const isAccessTokenExpired = async (): Promise<boolean> => {
-  const token = await getToken();
-  const exp = Number(token?.expires_in);
-  return !token || !exp || isNaN(exp) || Date.now() >= exp;
-};
-
-export const isRefreshTokenExpired = async (): Promise<boolean> => {
-  const token = await getToken();
-  const exp = Number(token?.refresh_expires_in);
-  return !token || !exp || isNaN(exp) || Date.now() >= exp;
+export const isTokenExpired = async (token: 'access' | 'refresh'): Promise<boolean> => {
+  const data = await getToken();
+  const exp = token === 'access' ? Number(data?.expires_in) : Number(data?.refresh_expires_in);
+  return !data || !exp || isNaN(exp) || Date.now() >= exp;
 };

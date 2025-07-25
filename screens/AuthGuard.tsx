@@ -1,7 +1,7 @@
 import { deriveEVMWalletFromMnemonic, loadWalletSecurelyWithBiometrics, saveToken } from '@/utils';
 import UnlockModal from '@components/UnlockModal';
 import { usePathname, useRouter } from 'expo-router';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import * as SecureStore from 'expo-secure-store';
 import { loadWalletFromPin } from '@/utils/secureStore';
 import AppLoader from '@components/ui/AppLoader';
@@ -9,21 +9,24 @@ import { getLoginMessage, login, signSiweMessage } from '@/utils/auth';
 import { useAuth } from '@/context/AuthContext';
 
 const AuthGuard = ({ children }: { children: React.ReactNode }) => {
+  /* State */
   const [pin, setPin] = useState('');
   const [confirmPin, setConfirmPin] = useState('');
-
-  const { isAuthenticated, setIsAuthenticated, status, setStatus } = useAuth();
-
   const [showPinModal, setShowPinModal] = useState(false);
+
+  /* Hooks */
+  const { isAuthenticated, setIsAuthenticated, status, setStatus } = useAuth();
 
   const router = useRouter();
   const pathname = usePathname();
 
+  /* Memo */
   const isWelcomeScreen = useMemo(() => {
     return pathname === '/';
   }, [pathname]);
 
-  const autoLogin = async (mnemonic: string) => {
+  /* Handlers */
+  const autoLogin = useCallback(async (mnemonic: string) => {
     try {
       const { address, privateKey } = deriveEVMWalletFromMnemonic(mnemonic);
 
@@ -49,14 +52,13 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
         setIsAuthenticated(true);
         setStatus('unlocked');
       }
+      setShowPinModal(false);
     } catch (err) {
       console.error('Auto-login failed:', err);
-    } finally {
-      setShowPinModal(false);
     }
-  };
+  }, []);
 
-  const runGuard = async () => {
+  const runGuard = useCallback(async () => {
     const stored = await SecureStore.getItemAsync('wallet-credentials');
     if (!stored && isWelcomeScreen) {
       setStatus('unlocked');
@@ -71,7 +73,21 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
 
     setStatus('unlocking');
     setShowPinModal(true);
-  };
+  }, [isWelcomeScreen]);
+
+  const handlePinUnlock = useCallback(
+    async (pin: string) => {
+      const mnemonic = await loadWalletFromPin(pin);
+      if (!mnemonic) {
+        //TODO :
+        //retry ?
+        //setStatus('unlocked');
+        return;
+      }
+      await autoLogin(mnemonic);
+    },
+    [autoLogin],
+  );
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -84,18 +100,6 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
       runGuard();
     }
   }, [isAuthenticated]);
-
-  const handlePinUnlock = async (pin: string) => {
-    const mnemonic = await loadWalletFromPin(pin);
-    if (!mnemonic) {
-      //TODO :
-      //retry ?
-      //setStatus('unlocked');
-      return;
-    }
-    await autoLogin(mnemonic);
-    setShowPinModal(false);
-  };
 
   if (status === 'checking') return <AppLoader />;
 

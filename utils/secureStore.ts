@@ -13,12 +13,16 @@ export type StoredWalletData = {
   mnemonic: string | null;
 };
 
-const deriveKey = async (pin: string, salt: string): Promise<string> => {
+const deriveKey = async (salt: string): Promise<string> => {
+  const pass = Constants.expoConfig?.extra?.EXPO_CRYPT_PASSWORD as string;
+  if (!pass) {
+    throw new Error('You need to set EXPO_CRYPT_PASSWORD');
+  }
   const iterations = 100_000;
   const keyLength = 256;
   const algorithm: Aes.Algorithms_pbkdf2 = 'sha256';
 
-  return await Aes.pbkdf2(pin, salt, iterations, keyLength, algorithm);
+  return await Aes.pbkdf2(pass, salt, iterations, keyLength, algorithm);
 };
 
 const encryptMnemonic = async (
@@ -53,9 +57,9 @@ export const validatePin = async (inputPin: string): Promise<boolean> => {
   return storedHash === inputHash;
 };
 
-export const storeWalletSecurely = async (mnemonic: string, pin: string) => {
+export const storeWalletSecurely = async (mnemonic: string) => {
   const salt = await Aes.randomKey(16);
-  const key = await deriveKey(pin, salt);
+  const key = await deriveKey(salt);
   const { cipher, iv } = await encryptMnemonic(mnemonic, key);
 
   const data: EncryptedWalletData = { cipher, salt, iv };
@@ -76,13 +80,13 @@ export const loadWalletWithCachedKey = async (): Promise<string | null> => {
   }
 };
 
-export const loadWalletSecurely = async (pin: string): Promise<string | null> => {
+export const loadWalletSecurely = async (): Promise<string | null> => {
   const stored = await SecureStore.getItemAsync('wallet-credentials');
   if (!stored) return null;
 
   try {
     const { cipher, salt, iv } = JSON.parse(stored);
-    const key = await deriveKey(pin, salt);
+    const key = await deriveKey(salt);
     return await decryptMnemonic(cipher, key, iv);
   } catch {
     return null;
@@ -120,7 +124,7 @@ export const loadWalletFromPin = async (pin: string) => {
   const valid = await validatePin(pin);
   if (!valid) return null;
 
-  const mnemonic = await loadWalletSecurely(pin);
+  const mnemonic = await loadWalletSecurely();
   return mnemonic;
 };
 

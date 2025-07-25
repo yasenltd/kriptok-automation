@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
-import { getToken, saveToken, isTokenExpired } from '@/utils';
+import { getToken, saveToken, isAccessTokenExpired } from '@/utils';
 import { AuthRefreshResponse } from '@/types';
 import Constants from 'expo-constants';
 
@@ -60,9 +60,15 @@ export const refreshAccessToken = async (): Promise<string | null> => {
       return null;
     }
 
-    const { access_token, expires_in, refresh_token } = response.data;
+    const { access_token, expires_in, refresh_token, refresh_expires_in } = response.data;
     const expirationTimestamp = Date.now() + (expires_in - 30) * 1000;
-    const tokenData = { access_token, expires_in: expirationTimestamp.toString(), refresh_token };
+    const refreshExpirationTimestamp = Date.now() + (refresh_expires_in - 30) * 1000;
+    const tokenData = {
+      access_token,
+      refresh_token,
+      expires_in: expirationTimestamp.toString(),
+      refresh_expires_in: refreshExpirationTimestamp.toString(),
+    };
 
     await saveToken(tokenData);
 
@@ -75,7 +81,7 @@ export const refreshAccessToken = async (): Promise<string | null> => {
 api.interceptors.request.use(
   async config => {
     const tokenData = await getToken();
-    const isAccessExpired = await isTokenExpired();
+    const isAccessExpired = await isAccessTokenExpired();
 
     if (isAccessExpired) {
       const newToken = await refreshAccessToken();

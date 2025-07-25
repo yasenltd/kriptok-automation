@@ -61,3 +61,5 @@ export type IUser = {
   updatedAt?: string;
   _id?: string;
 };
+
+export type StatusType = 'checking' | 'unlocking' | 'unlocked';

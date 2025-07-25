@@ -1,15 +1,23 @@
 import React, { useCallback, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Pressable, TextInput } from 'react-native';
-import { deriveAllWalletsFromMnemonic, generateMnemonic, storeWalletSecurely } from '@/utils';
+import {
+  deriveAllWalletsFromMnemonic,
+  generateMnemonic,
+  saveToken,
+  storeWalletSecurely,
+} from '../utils';
 import AppModal from '@components/ui/AppModal';
 import { useToast } from '@/hooks/useToast';
 import { setPin } from '@/utils/secureStore';
 import { Wallets } from '@/types';
 import { getLoginMessage, login, signSiweMessage, signup } from '@/utils/auth';
+import { router } from 'expo-router';
+import { useAuth } from '@/context/AuthContext';
 
 export default function GenerateScreen() {
   /*Hooks */
   const toast = useToast();
+  const { setIsAuthenticated } = useAuth();
 
   /* State */
   const [mnemonic, setMnemonic] = useState<string>('');
@@ -78,8 +86,6 @@ export default function GenerateScreen() {
       const { message } = await getLoginMessage(evmWallet.address);
       // sign message
       const signature = await signSiweMessage(message, evmWallet.privateKey);
-      console.log('🔐 Incoming message:\n', message);
-      console.log('✍️ Incoming signature:\n', signature);
 
       //obtain tokens
       const { access_token, expires_in, refresh_token, refresh_expires_in } = await login(
@@ -87,20 +93,25 @@ export default function GenerateScreen() {
         signature,
       );
 
-      clearPrivateKeys();
+      await saveToken({
+        access_token,
+        refresh_token,
+        expires_in: expires_in.toString(),
+        refresh_expires_in: refresh_expires_in.toString(),
+      });
 
       await setPin(pin);
-      await storeWalletSecurely(mnemonic, pin);
+      await storeWalletSecurely(mnemonic);
       setPinModalVisible(false);
-      console.log('Access token: ', access_token);
-      console.log('Access expires in', expires_in);
+      setIsAuthenticated(true);
+      router.replace('/home');
 
-      console.log('Refresh token: ', refresh_token);
-      console.log('Refresh expires in', refresh_expires_in);
       toast.showSuccess('Success! Your wallet and PIN are secured.');
     } catch (err) {
       console.error('Secure store error:', err);
       toast.showError('Failed to save your wallet.');
+    } finally {
+      clearPrivateKeys();
     }
   }, [pin, confirmPin, mnemonic]);
 

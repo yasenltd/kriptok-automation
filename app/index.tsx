@@ -3,29 +3,32 @@ import { Pressable, StyleSheet, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import LanguageSelection from '@components/LanguageSelection';
+import AuthGuard from '@/screens/AuthGuard';
 
 const WelcomeScreen = () => {
   const { t } = useTranslation();
   return (
-    <SafeAreaView style={styles.container}>
-      <LanguageSelection />
-      <Text style={styles.title}>{t('kriptokWallet')}</Text>
-      <Text style={styles.subtitle}>{t('welcome')}</Text>
+    <AuthGuard>
+      <SafeAreaView style={styles.container}>
+        <LanguageSelection />
+        <Text style={styles.title}>{t('kriptokWallet')}</Text>
+        <Text style={styles.subtitle}>{t('welcome')}</Text>
 
-      <Pressable
-        style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
-        onPress={() => router.push('/generate')}
-      >
-        <Text style={styles.buttonText}>{t('create')}</Text>
-      </Pressable>
+        <Pressable
+          style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
+          onPress={() => router.push('/generate')}
+        >
+          <Text style={styles.buttonText}>{t('create')}</Text>
+        </Pressable>
 
-      <Pressable
-        style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
-        onPress={() => router.push('/import')}
-      >
-        <Text style={styles.buttonText}>{t('import')}</Text>
-      </Pressable>
-    </SafeAreaView>
+        <Pressable
+          style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
+          onPress={() => router.push('/import')}
+        >
+          <Text style={styles.buttonText}>{t('import')}</Text>
+        </Pressable>
+      </SafeAreaView>
+    </AuthGuard>
   );
 };
 

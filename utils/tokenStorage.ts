@@ -9,10 +9,13 @@ const KEYS = {
 };
 
 export const saveToken = async (value: TokenObj) => {
+  const now = Date.now();
+  const accessExpiry = (now + Number(value.expires_in) * 1000).toString();
+  const refreshExpiry = (now + Number(value.refresh_expires_in) * 1000).toString();
   await secureSave(KEYS.access, value.access_token);
   await secureSave(KEYS.refresh, value.refresh_token);
-  await secureSave(KEYS.expires, value.expires_in);
-  await secureSave(KEYS.refresh_expires, value.refresh_expires_in);
+  await secureSave(KEYS.expires, accessExpiry);
+  await secureSave(KEYS.refresh_expires, refreshExpiry);
 };
 
 export const getToken = async (): Promise<TokenObj | null> => {

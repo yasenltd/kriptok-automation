@@ -18,13 +18,7 @@ import {
   secureSave,
 } from './secureStore';
 
-import {
-  getToken,
-  saveToken,
-  removeToken,
-  isAccessTokenExpired,
-  isRefreshTokenExpired,
-} from './tokenStorage';
+import { getToken, saveToken, removeToken, isTokenExpired } from './tokenStorage';
 
 export {
   generateMnemonic,
@@ -45,6 +39,5 @@ export {
   getToken,
   saveToken,
   removeToken,
-  isAccessTokenExpired,
-  isRefreshTokenExpired,
+  isTokenExpired,
 };

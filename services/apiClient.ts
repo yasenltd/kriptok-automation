@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
-import { getToken, saveToken, isAccessTokenExpired } from '@/utils';
+import { getToken, saveToken, isTokenExpired } from '@/utils';
 import { AuthRefreshResponse } from '@/types';
 import Constants from 'expo-constants';
 
@@ -81,7 +81,7 @@ export const refreshAccessToken = async (): Promise<string | null> => {
 api.interceptors.request.use(
   async config => {
     const tokenData = await getToken();
-    const isAccessExpired = await isAccessTokenExpired();
+    const isAccessExpired = await isTokenExpired('access');
 
     if (isAccessExpired) {
       const newToken = await refreshAccessToken();

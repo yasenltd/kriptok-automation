@@ -2,6 +2,7 @@ import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { getToken, saveToken, isTokenExpired } from '@/utils';
 import { AuthRefreshResponse } from '@/types';
 import Constants from 'expo-constants';
+import { externalForceAuth } from '@/context/AuthContext';
 
 export enum REQUEST_METHOD {
   GET = 'GET',
@@ -57,6 +58,9 @@ export const refreshAccessToken = async (): Promise<string | null> => {
 
     if (!response?.data?.access_token) {
       console.error('No access_token in response');
+      if (externalForceAuth) {
+        externalForceAuth();
+      }
       return null;
     }
 
@@ -74,6 +78,9 @@ export const refreshAccessToken = async (): Promise<string | null> => {
 
     return access_token;
   } catch (error) {
+    if (externalForceAuth) {
+      externalForceAuth();
+    }
     return null;
   }
 };

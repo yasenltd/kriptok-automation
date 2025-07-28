@@ -12,6 +12,7 @@ export default ({ config }) => {
       mode,
       EXPO_PUBLIC_DEV_HOST: process.env.EXPO_PUBLIC_DEV_HOST,
       EXPO_PUBLIC_HOST: process.env.EXPO_PUBLIC_HOST,
+      EXPO_CRYPT_PASSWORD: process.env.EXPO_CRYPT_PASSWORD,
     },
   };
 };

@@ -1,18 +1,25 @@
 import { get, post } from '@/services';
-import { IUser, RegisterUserDto } from '@/types';
+import { RegisterType } from '@/types';
 import { Wallet } from 'ethers';
 
 export const getLoginMessage = (address: string) =>
-  get<{ message: string }>(`/users/login/${address}`);
+  get<{ message: string }>(`/auth/message/${address}`);
 
-export const verifySignature = (message: string, signature: string) =>
+export const login = (message: string, signature: string) =>
   post<{
     access_token: string;
     expires_in: number;
     refresh_token: string;
     refresh_expires_in: number;
-  }>(`/auth/verify`, {
+  }>(`/auth/login`, {
     body: { message, signature },
+  });
+
+export const signup = (data: RegisterType) =>
+  post<{
+    success: boolean;
+  }>(`/auth/signup`, {
+    body: data,
   });
 
 export const signSiweMessage = async (message: string, privateKey: string): Promise<string> => {
@@ -20,8 +27,3 @@ export const signSiweMessage = async (message: string, privateKey: string): Prom
   const signature = await wallet.signMessage(message);
   return signature;
 };
-
-export const signup = (data: RegisterUserDto) =>
-  post<IUser>(`/users/signup`, {
-    body: { ...data },
-  });

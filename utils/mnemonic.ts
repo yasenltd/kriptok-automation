@@ -27,11 +27,16 @@ export const validateMnemonic = (mnemonic: string) => {
 };
 
 export const deriveEVMWalletFromMnemonic = (mnemonic: string) => {
-  const mnemonicObj = Mnemonic.fromPhrase(mnemonic.trim());
-  const hdWallet = HDNodeWallet.fromMnemonic(mnemonicObj, WalletDerivationPath.EVM);
+  const phrase = mnemonic.trim();
+  if (!bip39.validateMnemonic(phrase)) throw new Error('Invalid mnemonic');
+
+  const mnemonicObj = Mnemonic.fromPhrase(phrase);
+  const seedStr: string = mnemonicObj.computeSeed();
+  const seed: Uint8Array = getBytes(seedStr);
+  const evmWallet = HDNodeWallet.fromSeed(seed).derivePath(WalletDerivationPath.EVM);
   return {
-    address: hdWallet.address,
-    privateKey: hdWallet.privateKey,
+    address: evmWallet.address,
+    privateKey: evmWallet.privateKey,
   };
 };
 

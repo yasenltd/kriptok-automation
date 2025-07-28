@@ -2,6 +2,7 @@ import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { getToken, saveToken, isTokenExpired } from '@/utils';
 import { AuthRefreshResponse } from '@/types';
 import Constants from 'expo-constants';
+import { externalForceAuth } from '@/context/AuthContext';
 
 export enum REQUEST_METHOD {
   GET = 'GET',
@@ -57,17 +58,29 @@ export const refreshAccessToken = async (): Promise<string | null> => {
 
     if (!response?.data?.access_token) {
       console.error('No access_token in response');
+      if (externalForceAuth) {
+        externalForceAuth();
+      }
       return null;
     }
 
-    const { access_token, expires_in, refresh_token } = response.data;
+    const { access_token, expires_in, refresh_token, refresh_expires_in } = response.data;
     const expirationTimestamp = Date.now() + (expires_in - 30) * 1000;
-    const tokenData = { access_token, expires_in: expirationTimestamp.toString(), refresh_token };
+    const refreshExpirationTimestamp = Date.now() + (refresh_expires_in - 30) * 1000;
+    const tokenData = {
+      access_token,
+      refresh_token,
+      expires_in: expirationTimestamp.toString(),
+      refresh_expires_in: refreshExpirationTimestamp.toString(),
+    };
 
     await saveToken(tokenData);
 
     return access_token;
   } catch (error) {
+    if (externalForceAuth) {
+      externalForceAuth();
+    }
     return null;
   }
 };
@@ -75,7 +88,7 @@ export const refreshAccessToken = async (): Promise<string | null> => {
 api.interceptors.request.use(
   async config => {
     const tokenData = await getToken();
-    const isAccessExpired = await isTokenExpired();
+    const isAccessExpired = await isTokenExpired('access');
 
     if (isAccessExpired) {
       const newToken = await refreshAccessToken();

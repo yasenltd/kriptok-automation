@@ -14,9 +14,9 @@ export type StoredWalletData = {
 };
 
 const deriveKey = async (salt: string): Promise<string> => {
-  const pass = Constants.expoConfig?.extra?.EXPO_PUBLIC_CRYPT_PASSWORD as string;
+  const pass = Constants.expoConfig?.extra?.EXPO_CRYPT_PASSWORD as string;
   if (!pass) {
-    throw new Error('You need to set EXPO_PUBLIC_CRYPT_PASSWORD');
+    throw new Error('You need to set EXPO_CRYPT_PASSWORD');
   }
   const iterations = 100_000;
   const keyLength = 256;

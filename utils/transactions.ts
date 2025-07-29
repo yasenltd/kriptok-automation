@@ -1,5 +1,11 @@
 import { Wallet, JsonRpcProvider, parseEther, ethers } from 'ethers';
-import { ERC20_ABI, isDev, MAIN_ETH_RPC_PROVIDER, TEST_ETH_RPC_PROVIDER } from './constants';
+import {
+  ERC20_ABI,
+  INFURA_ID,
+  isDev,
+  MAIN_ETH_RPC_PROVIDER,
+  TEST_ETH_RPC_PROVIDER,
+} from './constants';
 
 interface SendTxParams {
   to: string;
@@ -110,6 +116,9 @@ export const sendEvmAsset = async (
   params: SendTxParams,
   privateKey: string,
 ): Promise<string> => {
+  if (!INFURA_ID) {
+    throw new Error('You need to set infura id in .env!');
+  }
   return tokenAddress === ethers.ZeroAddress
     ? sendEthereumTx(params, privateKey)
     : sendErc20Tx(tokenAddress, decimals, params, privateKey);

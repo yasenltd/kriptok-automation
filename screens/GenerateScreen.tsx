@@ -13,6 +13,7 @@ import { Wallets } from '@/types';
 import { getLoginMessage, login, signSiweMessage, signup } from '@/utils/auth';
 import { router } from 'expo-router';
 import { useAuth } from '@/context/AuthContext';
+import { setInstalled } from '@/utils/tracking';
 
 export default function GenerateScreen() {
   /*Hooks */
@@ -104,6 +105,7 @@ export default function GenerateScreen() {
       await storeWalletSecurely(mnemonic);
       setPinModalVisible(false);
       setIsAuthenticated(true);
+      await setInstalled();
       router.replace('/home');
 
       toast.showSuccess('Success! Your wallet and PIN are secured.');

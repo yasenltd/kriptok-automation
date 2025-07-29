@@ -63,8 +63,12 @@ export const storeWalletSecurely = async (mnemonic: string) => {
   const { cipher, iv } = await encryptMnemonic(mnemonic, key);
 
   const data: EncryptedWalletData = { cipher, salt, iv };
-  await SecureStore.setItemAsync(WALLET_KEYCHAIN_SERVICE, JSON.stringify(data));
-  await SecureStore.setItemAsync(PIN_ENCRYPTION_KEY, key);
+  await SecureStore.setItemAsync(WALLET_KEYCHAIN_SERVICE, JSON.stringify(data), {
+    keychainAccessible: SecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY,
+  });
+  await SecureStore.setItemAsync(PIN_ENCRYPTION_KEY, key, {
+    keychainAccessible: SecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY,
+  });
 };
 
 export const loadWalletWithCachedKey = async (): Promise<string | null> => {
@@ -137,7 +141,9 @@ export const clearWalletSecurely = async () => {
 export const secureSave = async (key: string, data: unknown) => {
   try {
     const toStore = typeof data === 'string' ? data : JSON.stringify(data);
-    await SecureStore.setItemAsync(key, toStore);
+    await SecureStore.setItemAsync(key, toStore, {
+      keychainAccessible: SecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY,
+    });
   } catch (err) {
     console.error(`secureSave failed for key "${key}":`, err);
   }

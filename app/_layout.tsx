@@ -6,8 +6,24 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { Header, HeaderBackButton } from '@react-navigation/elements';
 import { colors } from '@/utils';
 import { AuthProvider } from '@/context/AuthContext';
+import { useCallback, useEffect, useState } from 'react';
+import { checkFirstInstallAndCleanup } from '@/utils/tracking';
+import AppLoader from '@components/ui/AppLoader';
 
 const Layout = () => {
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  const checkForData = useCallback(async () => {
+    await checkFirstInstallAndCleanup();
+    setIsLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    checkForData();
+  }, []);
+
+  if (!isLoaded) return <AppLoader />;
+
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>

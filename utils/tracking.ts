@@ -8,9 +8,6 @@ export const checkFirstInstallAndCleanup = async () => {
 
   if (!alreadyInstalled) {
     await clearWalletSecurely();
+    await AsyncStorage.setItem(APP_ALREADY_INSTALLED, 'true');
   }
-};
-
-export const setInstalled = async () => {
-  await AsyncStorage.setItem(APP_ALREADY_INSTALLED, 'true');
 };

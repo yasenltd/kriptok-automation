@@ -104,10 +104,7 @@ export default function GenerateScreen() {
       await storeWalletSecurely(mnemonic);
       setPinModalVisible(false);
       setIsAuthenticated(true);
-      router.replace({
-        pathname: '/home',
-        params: { from: 'generate' },
-      });
+      router.replace('/home');
       toast.showSuccess('Success! Your wallet and PIN are secured.');
     } catch (err) {
       console.error('Secure store error:', err);

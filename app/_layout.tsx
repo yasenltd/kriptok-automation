@@ -1,4 +1,4 @@
-import { Stack, useGlobalSearchParams, usePathname } from 'expo-router';
+import { Stack, usePathname } from 'expo-router';
 import Toast from 'react-native-toast-message';
 import { Provider } from 'react-redux';
 import { store, persistor } from '@/stores/store';
@@ -13,7 +13,6 @@ import AppLoader from '@components/ui/AppLoader';
 const Layout = () => {
   const [isLoaded, setIsLoaded] = useState(false);
 
-  const { from } = useGlobalSearchParams();
   const pathname = usePathname();
 
   const checkForData = useCallback(async () => {

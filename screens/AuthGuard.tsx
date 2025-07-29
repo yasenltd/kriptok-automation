@@ -116,7 +116,7 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
           handleUnlock={() => handlePinUnlock(pin)}
         />
       )}
-      {status === 'unlocked' && isAuthenticated && children}
+      {status === 'unlocked' && children}
     </>
   );
 };

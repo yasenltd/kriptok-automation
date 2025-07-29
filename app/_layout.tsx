@@ -1,4 +1,4 @@
-import { Stack } from 'expo-router';
+import { Stack, useGlobalSearchParams, usePathname } from 'expo-router';
 import Toast from 'react-native-toast-message';
 import { Provider } from 'react-redux';
 import { store, persistor } from '@/stores/store';
@@ -6,8 +6,27 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { Header, HeaderBackButton } from '@react-navigation/elements';
 import { colors } from '@/utils';
 import { AuthProvider } from '@/context/AuthContext';
+import { useCallback, useEffect, useState } from 'react';
+import { checkFirstInstallAndCleanup } from '@/utils/tracking';
+import AppLoader from '@components/ui/AppLoader';
 
 const Layout = () => {
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  const { from } = useGlobalSearchParams();
+  const pathname = usePathname();
+
+  const checkForData = useCallback(async () => {
+    await checkFirstInstallAndCleanup();
+    setIsLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    checkForData();
+  }, []);
+
+  if (!isLoaded) return <AppLoader />;
+
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
@@ -24,7 +43,7 @@ const Layout = () => {
                   headerTitleAlign="left"
                   headerBackButtonDisplayMode="minimal"
                   headerLeft={headerProps =>
-                    props.back ? (
+                    props.back && pathname !== '/home' ? (
                       <HeaderBackButton
                         {...headerProps}
                         onPress={props.navigation.goBack}

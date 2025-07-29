@@ -31,6 +31,18 @@ export const getWalletProvider = (chain: 'ethereum', privateKey: string) => {
   return { wallet, provider };
 };
 
+const getFallbackFee = (tokenAddress: string | null): { feeInWei: bigint; feeInEth: string } => {
+  const fallbackGasPrice = ethers.parseUnits('10', 'gwei');
+  const fallbackGasLimit = !tokenAddress || tokenAddress === ethers.ZeroAddress ? 21_000n : 60_000n;
+
+  const fallbackFee = fallbackGasPrice * fallbackGasLimit;
+
+  return {
+    feeInWei: fallbackFee,
+    feeInEth: ethers.formatEther(fallbackFee),
+  };
+};
+
 export const estimateGasFee = async (
   tokenAddress: string | null,
   decimals: number,
@@ -65,18 +77,7 @@ export const estimateGasFee = async (
     };
   } catch (error) {
     console.error(error);
-
-    //fallback
-    const fallbackGasPrice = ethers.parseUnits('10', 'gwei');
-    const fallbackGasLimit =
-      !tokenAddress || tokenAddress === ethers.ZeroAddress ? 21_000n : 60_000n;
-
-    const fallbackFee = fallbackGasPrice * fallbackGasLimit;
-
-    return {
-      feeInWei: fallbackFee,
-      feeInEth: ethers.formatEther(fallbackFee),
-    };
+    return getFallbackFee(tokenAddress);
   }
 };
 

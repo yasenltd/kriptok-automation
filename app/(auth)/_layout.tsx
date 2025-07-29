@@ -36,6 +36,7 @@ const AuthLayout = () => {
           name="home"
           options={{
             headerShown: false,
+            gestureEnabled: false,
           }}
         />
       </Stack>

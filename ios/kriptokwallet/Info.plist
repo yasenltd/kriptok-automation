@@ -27,6 +27,7 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
+          <string>kriptok</string>
           <string>com.test.kriptok</string>
         </array>
       </dict>

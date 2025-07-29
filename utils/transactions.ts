@@ -18,9 +18,15 @@ interface SendTxParams {
 
 type SupportedChain = 'ethereum' | 'bitcoin' | 'sui' | 'solana';
 
+const providerCache: Record<string, JsonRpcProvider> = {};
+
 export const getWalletProvider = (chain: 'ethereum', privateKey: string) => {
   const rpc = isDev ? TEST_ETH_RPC_PROVIDER[chain] : MAIN_ETH_RPC_PROVIDER[chain];
-  const provider = new JsonRpcProvider(rpc);
+  if (!providerCache[rpc]) {
+    providerCache[rpc] = new JsonRpcProvider(rpc);
+  }
+
+  const provider = providerCache[rpc];
   const wallet = new Wallet(privateKey, provider);
   return { wallet, provider };
 };

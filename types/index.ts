@@ -48,6 +48,8 @@ export type RegisterType = {
   btc: string;
   sui: string;
   solana: string;
+  signature: string;
+  message: string;
 };
 
 export type IUser = {

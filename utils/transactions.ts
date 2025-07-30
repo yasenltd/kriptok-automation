@@ -18,6 +18,8 @@ interface SendTxParams {
 
 type SupportedChain = 'ethereum' | 'bitcoin' | 'sui' | 'solana';
 
+type ChainTxHandler = (params: SendTxParams, privateKey: string) => Promise<string>;
+
 const providerCache: Record<string, JsonRpcProvider> = {};
 
 export const getWalletProvider = (chain: 'ethereum', privateKey: string) => {
@@ -81,7 +83,7 @@ export const estimateGasFee = async (
   }
 };
 
-const sendEthereumTx = async (params: SendTxParams, privateKey: string) => {
+const sendNativeEvmTx = async (params: SendTxParams, privateKey: string) => {
   try {
     const { wallet } = getWalletProvider('ethereum', privateKey);
 
@@ -103,9 +105,7 @@ const sendErc20Tx = async (
   privateKey: string,
 ) => {
   try {
-    const rpc = isDev ? TEST_ETH_RPC_PROVIDER['ethereum'] : MAIN_ETH_RPC_PROVIDER['ethereum'];
-    const provider = new JsonRpcProvider(rpc);
-    const wallet = new Wallet(privateKey, provider);
+    const { wallet } = getWalletProvider('ethereum', privateKey);
     const contract = new ethers.Contract(tokenAddress, ERC20_ABI, wallet);
 
     const amount = ethers.parseUnits(params.amount.toString(), decimals);
@@ -127,7 +127,7 @@ export const sendEvmAsset = async (
     throw new Error('You need to set infura id in .env!');
   }
   return tokenAddress === ethers.ZeroAddress
-    ? sendEthereumTx(params, privateKey)
+    ? sendNativeEvmTx(params, privateKey)
     : sendErc20Tx(tokenAddress, decimals, params, privateKey);
 };
 
@@ -143,26 +143,28 @@ const sendSolanaTx = async (params: SendTxParams, privateKey: string) => {
   return '';
 };
 
+const chainTxHandlers: Record<SupportedChain, ChainTxHandler> = {
+  ethereum: (params, privateKey) =>
+    sendEvmAsset(
+      params.tokenAddress ?? ethers.ZeroAddress,
+      params.decimals ?? 18,
+      params,
+      privateKey,
+    ),
+  bitcoin: sendBitcoinTx,
+  sui: sendSuiTx,
+  solana: sendSolanaTx,
+};
+
 export const sendTransaction = async (
   chain: SupportedChain,
   params: SendTxParams,
   privateKey: string,
 ): Promise<string> => {
-  switch (chain) {
-    case 'ethereum':
-      return sendEvmAsset(
-        params.tokenAddress ?? ethers.ZeroAddress,
-        params.decimals ?? 18,
-        params,
-        privateKey,
-      );
-    case 'bitcoin':
-      return sendBitcoinTx(params, privateKey);
-    case 'sui':
-      return sendSuiTx(params, privateKey);
-    case 'solana':
-      return sendSolanaTx(params, privateKey);
-    default:
-      throw new Error('Unsupported chain');
+  const handler = chainTxHandlers[chain];
+  if (!handler) {
+    throw new Error(`Unsupported chain: ${chain}`);
   }
+
+  return handler(params, privateKey);
 };

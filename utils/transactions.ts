@@ -1,24 +1,41 @@
 import { Wallet, JsonRpcProvider, parseEther, ethers } from 'ethers';
+import * as bitcoin from 'bitcoinjs-lib';
+import * as ECPairFactory from 'ecpair';
+import * as ecc from '@bitcoinerlab/secp256k1';
 import {
+  BITCOIN_NETWORK,
   ERC20_ABI,
   INFURA_ID,
   isDev,
   MAIN_ETH_RPC_PROVIDER,
   TEST_ETH_RPC_PROVIDER,
 } from './constants';
+import { getPublicRaw, postPublicRaw } from '@/services/apiClient';
 
-interface SendTxParams {
+interface BaseTxParams {
   to: string;
   amount: string | BigInt;
   tokenAddress?: string;
   decimals?: number;
   fee?: string | number | BigInt;
   memo?: string;
+  fromAddress?: string;
+}
+
+interface BitcoinTxParams extends BaseTxParams {
+  fromAddress: string;
+}
+interface BitcoinUtxo {
+  txid: string;
+  vout: number;
+  value: number;
+  status?: any;
+  scriptpubkey: string;
 }
 
 type SupportedChain = 'ethereum' | 'bitcoin' | 'sui' | 'solana';
 
-type ChainTxHandler = (params: SendTxParams, privateKey: string) => Promise<string>;
+type ChainTxHandler = (params: BaseTxParams, privateKey: string) => Promise<string>;
 
 const providerCache: Record<string, JsonRpcProvider> = {};
 
@@ -48,7 +65,7 @@ const getFallbackFee = (tokenAddress: string | null): { feeInWei: bigint; feeInE
 export const estimateGasFee = async (
   tokenAddress: string | null,
   decimals: number,
-  params: SendTxParams,
+  params: BaseTxParams,
   privateKey: string,
 ): Promise<{ feeInWei: bigint; feeInEth: string }> => {
   try {
@@ -83,7 +100,7 @@ export const estimateGasFee = async (
   }
 };
 
-const sendNativeEvmTx = async (params: SendTxParams, privateKey: string) => {
+const sendNativeEvmTx = async (params: BaseTxParams, privateKey: string) => {
   try {
     const { wallet } = getWalletProvider('ethereum', privateKey);
 
@@ -101,7 +118,7 @@ const sendNativeEvmTx = async (params: SendTxParams, privateKey: string) => {
 const sendErc20Tx = async (
   tokenAddress: string,
   decimals: number,
-  params: SendTxParams,
+  params: BaseTxParams,
   privateKey: string,
 ) => {
   try {
@@ -120,7 +137,7 @@ const sendErc20Tx = async (
 export const sendEvmAsset = async (
   tokenAddress: string,
   decimals: number,
-  params: SendTxParams,
+  params: BaseTxParams,
   privateKey: string,
 ): Promise<string> => {
   if (!INFURA_ID) {
@@ -131,15 +148,72 @@ export const sendEvmAsset = async (
     : sendErc20Tx(tokenAddress, decimals, params, privateKey);
 };
 
-const sendBitcoinTx = async (params: SendTxParams, privateKey: string) => {
+const fetchUtxos = async (address: string): Promise<BitcoinUtxo[]> => {
+  const res = await getPublicRaw(`https://mempool.space/api/address/${address}/utxo`);
+  return res.data as BitcoinUtxo[];
+};
+
+const sendBitcoinTx = async (params: BitcoinTxParams, privateKeyWIF: string): Promise<string> => {
+  try {
+    const ECPair = ECPairFactory.ECPairFactory(ecc);
+    const keyPair = ECPair.fromWIF(privateKeyWIF, BITCOIN_NETWORK);
+    const fromAddress = params.fromAddress;
+    const toAddress = params.to;
+    const amountToSend = BigInt(params.amount.toString());
+    const feeOverride = params.fee ? BigInt(params.fee.toString()) : null;
+
+    const utxos = await fetchUtxos(fromAddress);
+
+    let totalInput = 0n;
+    const psbt = new bitcoin.Psbt({ network: BITCOIN_NETWORK });
+
+    for (const utxo of utxos) {
+      totalInput += BigInt(utxo.value);
+      psbt.addInput({
+        hash: utxo.txid,
+        index: utxo.vout,
+        witnessUtxo: {
+          script: Buffer.from(utxo.scriptpubkey, 'hex'),
+          value: Number(utxo.value),
+        },
+      });
+
+      if (totalInput >= amountToSend + 200n) break;
+    }
+
+    const fee = feeOverride ?? BigInt(10 + psbt.inputCount * 180 + 2 * 34) * 5n;
+
+    const change = totalInput - amountToSend - fee;
+    if (change < 0n) throw new Error('Insufficient funds for fee');
+
+    psbt.addOutput({ address: toAddress, value: Number(amountToSend) });
+
+    if (change > 546n) {
+      psbt.addOutput({ address: fromAddress, value: Number(change) });
+    }
+
+    for (let i = 0; i < psbt.inputCount; i++) {
+      psbt.signInput(i, keyPair as unknown as bitcoin.Signer);
+    }
+
+    psbt.finalizeAllInputs();
+    const rawTx = psbt.extractTransaction().toHex();
+
+    const broadcast = await postPublicRaw(`https://mempool.space/api/tx`, { body: rawTx });
+    console.log(rawTx);
+    console.log(broadcast.data);
+    return broadcast.data as string;
+  } catch (err) {
+    console.error(err);
+    throw new Error('Failed to send Bitcoin transaction');
+  }
+};
+
+const sendSuiTx = async (params: BaseTxParams, privateKey: string) => {
   return '';
 };
 
-const sendSuiTx = async (params: SendTxParams, privateKey: string) => {
-  return '';
-};
-
-const sendSolanaTx = async (params: SendTxParams, privateKey: string) => {
+const sendSolanaTx = async (params: BaseTxParams, privateKey: string) => {
   return '';
 };
 
@@ -151,14 +225,25 @@ const chainTxHandlers: Record<SupportedChain, ChainTxHandler> = {
       params,
       privateKey,
     ),
-  bitcoin: sendBitcoinTx,
+  bitcoin: (params, privateKey) => {
+    if (!params.fromAddress) {
+      throw new Error('Bitcoin transaction requires fromAddress');
+    }
+    return sendBitcoinTx(
+      {
+        ...params,
+        fromAddress: params.fromAddress,
+      },
+      privateKey,
+    );
+  },
   sui: sendSuiTx,
   solana: sendSolanaTx,
 };
 
 export const sendTransaction = async (
   chain: SupportedChain,
-  params: SendTxParams,
+  params: BaseTxParams,
   privateKey: string,
 ): Promise<string> => {
   const handler = chainTxHandlers[chain];

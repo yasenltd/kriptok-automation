@@ -1,4 +1,5 @@
 import Constants from 'expo-constants';
+import * as bitcoin from 'bitcoinjs-lib';
 
 export const colors = {
   'primary-white': '#FFFFFF',
@@ -9,6 +10,8 @@ export const colors = {
 export const INFURA_ID = Constants.expoConfig?.extra?.EXPO_PUBLIC_INFURA_ID as string;
 
 export const isDev = (Constants.expoConfig?.extra?.mode as string) === 'dev';
+
+export const BITCOIN_NETWORK = isDev ? bitcoin.networks.testnet : bitcoin.networks.bitcoin;
 
 export const TEST_ETH_RPC_PROVIDER = {
   ethereum: `https://sepolia.infura.io/v3/${INFURA_ID}`,

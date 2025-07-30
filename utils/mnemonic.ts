@@ -8,6 +8,7 @@ import nacl from 'tweetnacl';
 import { Ed25519Keypair } from '@mysten/sui/keypairs/ed25519';
 import { HDKey } from '@scure/bip32';
 import { base58 } from '@scure/base';
+import { BITCOIN_NETWORK, isDev } from './constants';
 
 export enum WalletDerivationPath {
   EVM = "m/44'/60'/0'/0/0",
@@ -15,6 +16,8 @@ export enum WalletDerivationPath {
   SOLANA = "m/44'/501'/0'/0'",
   SUI = "m/44'/784'/0'/0'/0'",
 }
+
+const BITCOIN_TEST_PATH = "m/84'/1'/0'/0/0";
 
 const bip32 = BIP32Factory(ecc);
 
@@ -41,19 +44,26 @@ export const deriveEVMWalletFromMnemonic = (mnemonic: string) => {
 };
 
 export const deriveBitcoinWallet = (mnemonic: string) => {
-  const seed = bip39.mnemonicToSeedSync(mnemonic.trim());
-  const root = bip32.fromSeed(seed);
+  const phrase = mnemonic.trim();
+  if (!bip39.validateMnemonic(phrase)) throw new Error('Invalid mnemonic');
 
-  const child = root.derivePath(WalletDerivationPath.BITCOIN);
+  const mnemonicObj = Mnemonic.fromPhrase(phrase);
+  const seedStr: string = mnemonicObj.computeSeed();
+  const seed: Uint8Array = getBytes(seedStr);
 
-  const { address } = bitcoin.payments.p2pkh({
-    pubkey: Buffer.from(child.publicKey),
-    network: bitcoin.networks.bitcoin,
-  });
+  const rootSecp256k1 = bip32.fromSeed(Buffer.from(seed));
+
+  const btcChild = rootSecp256k1.derivePath(
+    isDev ? BITCOIN_TEST_PATH : WalletDerivationPath.BITCOIN,
+  );
+  const btcAddress = bitcoin.payments.p2wpkh({
+    pubkey: Buffer.from(btcChild.publicKey),
+    network: BITCOIN_NETWORK,
+  }).address;
 
   return {
-    address: address ?? '',
-    privateKey: child.toWIF(),
+    address: btcAddress ?? '',
+    privateKey: btcChild.toWIF(),
   };
 };
 
@@ -98,10 +108,12 @@ export const deriveAllWalletsFromMnemonic = async (mnemonic: string) => {
 
   const evmWallet = HDNodeWallet.fromSeed(seed).derivePath(WalletDerivationPath.EVM);
 
-  const btcChild = rootSecp256k1.derivePath(WalletDerivationPath.BITCOIN);
-  const btcAddress = bitcoin.payments.p2pkh({
+  const btcChild = rootSecp256k1.derivePath(
+    isDev ? BITCOIN_TEST_PATH : WalletDerivationPath.BITCOIN,
+  );
+  const btcAddress = bitcoin.payments.p2wpkh({
     pubkey: Buffer.from(btcChild.publicKey),
-    network: bitcoin.networks.bitcoin,
+    network: BITCOIN_NETWORK,
   }).address;
 
   const solChild = rootEd25519.derive(WalletDerivationPath.SOLANA);

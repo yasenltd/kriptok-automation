@@ -1,5 +1,6 @@
 import * as bip39 from 'bip39';
 import * as ecc from '@bitcoinerlab/secp256k1';
+import * as wif from 'wif';
 import { BIP32Factory } from 'bip32';
 import * as bitcoin from 'bitcoinjs-lib';
 import { HDNodeWallet } from 'ethers/wallet';
@@ -61,9 +62,15 @@ export const deriveBitcoinWallet = (mnemonic: string) => {
     network: BITCOIN_NETWORK,
   }).address;
 
+  const privateKeyWIF = wif.encode({
+    version: BITCOIN_NETWORK.wif,
+    privateKey: btcChild.privateKey!,
+    compressed: true,
+  });
+
   return {
     address: btcAddress ?? '',
-    privateKey: btcChild.toWIF(),
+    privateKey: privateKeyWIF,
   };
 };
 
@@ -116,6 +123,12 @@ export const deriveAllWalletsFromMnemonic = async (mnemonic: string) => {
     network: BITCOIN_NETWORK,
   }).address;
 
+  const privateKeyWIF = wif.encode({
+    version: BITCOIN_NETWORK.wif,
+    privateKey: btcChild.privateKey!,
+    compressed: true,
+  });
+
   const solChild = rootEd25519.derive(WalletDerivationPath.SOLANA);
   const solKeypair = nacl.sign.keyPair.fromSeed(solChild.privateKey!);
 
@@ -124,7 +137,7 @@ export const deriveAllWalletsFromMnemonic = async (mnemonic: string) => {
 
   return {
     evm: { address: evmWallet.address, privateKey: evmWallet.privateKey },
-    bitcoin: { address: btcAddress ?? '', privateKey: btcChild.toWIF() },
+    bitcoin: { address: btcAddress ?? '', privateKey: privateKeyWIF },
     solana: {
       address: base58.encode(solKeypair.publicKey),
       privateKey: base58.encode(solKeypair.secretKey),

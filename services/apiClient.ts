@@ -52,9 +52,15 @@ export const refreshAccessToken = async (): Promise<string | null> => {
     const savedTokenData: Record<string, any> | null = await getToken();
     if (!savedTokenData) return null;
 
-    const response = await refreshInstance.post<AuthRefreshResponse>('/auth/refresh', {
-      refreshToken: savedTokenData.refresh_token,
-    });
+    const response = await refreshInstance.post<AuthRefreshResponse>(
+      '/auth/refresh',
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${savedTokenData.refresh_token}`,
+        },
+      },
+    );
 
     if (!response?.data?.access_token) {
       console.error('No access_token in response');

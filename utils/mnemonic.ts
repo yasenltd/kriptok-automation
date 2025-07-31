@@ -78,7 +78,8 @@ export const deriveSolanaWallet = (mnemonic: string) => {
   const seed = bip39.mnemonicToSeedSync(mnemonic.trim());
   const root = HDKey.fromMasterSeed(seed);
   const child = root.derive(WalletDerivationPath.SOLANA);
-  const keypair = nacl.sign.keyPair.fromSeed(child.privateKey!);
+  const seed32 = child.privateKey!.slice(0, 32);
+  const keypair = nacl.sign.keyPair.fromSeed(seed32);
 
   const address = base58.encode(keypair.publicKey);
   const privateKey = base58.encode(keypair.secretKey);
@@ -130,7 +131,8 @@ export const deriveAllWalletsFromMnemonic = async (mnemonic: string) => {
   });
 
   const solChild = rootEd25519.derive(WalletDerivationPath.SOLANA);
-  const solKeypair = nacl.sign.keyPair.fromSeed(solChild.privateKey!);
+  const seed32 = solChild.privateKey!.slice(0, 32);
+  const solKeypair = nacl.sign.keyPair.fromSeed(seed32);
 
   const suiChild = rootEd25519.derive(WalletDerivationPath.SUI);
   const suiKeypair = Ed25519Keypair.fromSecretKey(suiChild.privateKey!.slice(0, 32));

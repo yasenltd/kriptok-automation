@@ -2,6 +2,7 @@ import { ethers } from 'ethers';
 import { sendEvmAsset } from './evm';
 import { sendBitcoinTx } from './bitcoin';
 import { sendSolanaTx } from './solana';
+import { sendSuiTx } from './sui';
 
 export interface BaseTxParams {
   to: string;
@@ -22,13 +23,13 @@ export interface SolanaTxParams extends BaseTxParams {
   fromAddress: string;
 }
 
+export interface SuiTxParams extends BaseTxParams {
+  fromAddress: string;
+}
+
 type SupportedChain = 'ethereum' | 'bitcoin' | 'sui' | 'solana';
 
 type ChainTxHandler = (params: BaseTxParams, privateKey: string) => Promise<string>;
-
-const sendSuiTx = async (params: BaseTxParams, privateKey: string) => {
-  return '';
-};
 
 const chainTxHandlers: Record<SupportedChain, ChainTxHandler> = {
   ethereum: (params, privateKey) =>
@@ -52,7 +53,14 @@ const chainTxHandlers: Record<SupportedChain, ChainTxHandler> = {
       privateKey,
     );
   },
-  sui: sendSuiTx,
+  sui: (params, privateKey) => {
+    if (!params.fromAddress) {
+      console.warn('Sui transaction requires fromAddress!');
+
+      throw new Error('Sui transaction requires fromAddress!');
+    }
+    return sendSuiTx({ ...params, fromAddress: params.fromAddress }, privateKey);
+  },
   solana: (params, privateKey) => {
     if (!params.fromAddress) {
       console.warn('Solana transaction requires fromAddress!');

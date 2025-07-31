@@ -95,7 +95,7 @@ export const deriveSuiWallet = (mnemonic: string) => {
 
   const keypair = Ed25519Keypair.deriveKeypair(phrase);
   const address = keypair.getPublicKey().toSuiAddress();
-  const privateKeyHex = Buffer.from(keypair.getSecretKey()).toString('hex');
+  const privateKeyHex = Buffer.from(keypair.getSecretKey().slice(0, 32)).toString('hex');
 
   return {
     address,
@@ -146,7 +146,7 @@ export const deriveAllWalletsFromMnemonic = async (mnemonic: string) => {
     },
     sui: {
       address: suiKeypair.getPublicKey().toSuiAddress(),
-      privateKey: Buffer.from(suiKeypair.getSecretKey()).toString('hex'),
+      privateKey: Buffer.from(suiChild.privateKey!.slice(0, 32)).toString('hex'),
     },
   };
 };

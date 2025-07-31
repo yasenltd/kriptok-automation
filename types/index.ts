@@ -36,6 +36,10 @@ export interface AuthRefreshResponse {
   refresh_token: string;
 }
 
+export interface AuthLogoutResponse {
+  success: boolean;
+}
+
 export type TokenObj = {
   refresh_token: string;
   access_token: string;

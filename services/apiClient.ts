@@ -24,16 +24,16 @@ export const BASE_URL = Constants.expoConfig?.extra?.apiBaseUrl as string;
 if (!BASE_URL) {
   throw new Error('API base URL is not defined. Check your environment variables.');
 }
-
-const api: AxiosInstance = axios.create({
+// TODO: I might think about using a single instance for all requests
+export const api: AxiosInstance = axios.create({
   baseURL: BASE_URL,
   timeout: 13000,
   headers: {
     'Content-Type': 'application/json',
   },
 });
-
-const refreshInstance: AxiosInstance = axios.create({
+// TODO: I might think about using a single instance for all requests
+export const refreshInstance: AxiosInstance = axios.create({
   baseURL: BASE_URL,
   timeout: 6000,
   headers: {

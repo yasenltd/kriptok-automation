@@ -92,13 +92,17 @@ export const deriveSuiWallet = (mnemonic: string) => {
   if (!bip39.validateMnemonic(phrase)) {
     throw new Error('Invalid mnemonic');
   }
+  const mnemonicObj = Mnemonic.fromPhrase(phrase);
+  const seedStr: string = mnemonicObj.computeSeed();
+  const seed: Uint8Array = getBytes(seedStr);
 
-  const keypair = Ed25519Keypair.deriveKeypair(phrase);
-  const address = keypair.getPublicKey().toSuiAddress();
-  const privateKeyHex = Buffer.from(keypair.getSecretKey().slice(0, 32)).toString('hex');
+  const rootEd25519 = HDKey.fromMasterSeed(seed);
+  const suiChild = rootEd25519.derive(WalletDerivationPath.SUI);
+  const suiKeypair = Ed25519Keypair.fromSecretKey(suiChild.privateKey!.slice(0, 32));
+  const privateKeyHex = Buffer.from(suiChild.privateKey!.slice(0, 32)).toString('hex');
 
   return {
-    address,
+    address: suiKeypair.getPublicKey().toSuiAddress(),
     privateKey: privateKeyHex,
   };
 };

@@ -90,7 +90,6 @@ export const sendBitcoinTx = async (
     }
 
     const inputCount = psbt.inputCount;
-    console.log('input coung: ', inputCount);
     const estimatedSize = 10n + BigInt(inputCount) * 148n + 2n * 34n;
     const feeTotal = estimatedSize * feeRate;
 

@@ -1,8 +1,8 @@
 import { ethers } from 'ethers';
 import { sendEvmAsset } from './evm';
 import { sendBitcoinTx } from './bitcoin';
-import { sendSolanaTx } from './solana';
 import { sendSuiTx } from './sui';
+import { sendSolanaAsset } from './solana';
 
 export interface BaseTxParams {
   to: string;
@@ -34,7 +34,7 @@ type ChainTxHandler = (params: BaseTxParams, privateKey: string) => Promise<stri
 const chainTxHandlers: Record<SupportedChain, ChainTxHandler> = {
   ethereum: (params, privateKey) =>
     sendEvmAsset(
-      params.tokenAddress ?? ethers.ZeroAddress,
+      params.tokenAddress ?? ethers.ZeroAddress, // native or erc20 token
       params.decimals ?? 18,
       params,
       privateKey,
@@ -64,10 +64,15 @@ const chainTxHandlers: Record<SupportedChain, ChainTxHandler> = {
   solana: (params, privateKey) => {
     if (!params.fromAddress) {
       console.warn('Solana transaction requires fromAddress!');
-
       throw new Error('Solana transaction requires fromAddress!');
     }
-    return sendSolanaTx({ ...params, fromAddress: params.fromAddress }, privateKey);
+
+    return sendSolanaAsset(
+      params.tokenAddress ?? null, // null means native SOL
+      params.decimals ?? 6,
+      { ...params, fromAddress: params.fromAddress },
+      privateKey,
+    );
   },
 };
 

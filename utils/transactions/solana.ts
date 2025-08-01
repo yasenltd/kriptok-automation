@@ -7,6 +7,11 @@ import {
   SystemProgram,
   Transaction,
 } from '@solana/web3.js';
+import {
+  getAssociatedTokenAddress,
+  createTransferInstruction,
+  TOKEN_PROGRAM_ID,
+} from '@solana/spl-token';
 import { isDev } from '../constants';
 import { base58 } from '@scure/base';
 import { SolanaTxParams } from '.';
@@ -69,4 +74,72 @@ export const sendSolanaTx = async (params: SolanaTxParams, privateKey: string) =
     console.error(error);
     throw new Error('Failed to send SOL!');
   }
+};
+
+export const sendSplToken = async ({
+  fromAddress,
+  to,
+  amount,
+  privateKey,
+  mintAddress,
+}: {
+  fromAddress: string;
+  to: string;
+  amount: number;
+  privateKey: string;
+  mintAddress: string;
+}) => {
+  try {
+    const connection = new Connection(SOLANA_RPC);
+    const senderKeypair = Keypair.fromSecretKey(base58.decode(privateKey));
+    const mint = new PublicKey(mintAddress);
+    const fromPublicKey = new PublicKey(fromAddress);
+    const toPublicKey = new PublicKey(to);
+
+    const fromTokenAccount = await getAssociatedTokenAddress(mint, fromPublicKey);
+    const toTokenAccount = await getAssociatedTokenAddress(mint, toPublicKey);
+
+    const ix = createTransferInstruction(
+      fromTokenAccount,
+      toTokenAccount,
+      fromPublicKey,
+      amount,
+      [],
+      TOKEN_PROGRAM_ID,
+    );
+
+    const tx = new Transaction().add(ix);
+    const latestBlockhash = await connection.getLatestBlockhash();
+    tx.feePayer = senderKeypair.publicKey;
+    tx.recentBlockhash = latestBlockhash.blockhash;
+
+    const sig = await sendAndConfirmTransaction(connection, tx, [senderKeypair]);
+    return sig;
+  } catch (e) {
+    console.error(e);
+    throw new Error('Failed to send SPL token');
+  }
+};
+
+export const sendSolanaAsset = async (
+  tokenMint: string | null,
+  decimals: number | undefined,
+  params: SolanaTxParams,
+  privateKey: string,
+): Promise<string> => {
+  if (!tokenMint) {
+    return sendSolanaTx(params, privateKey);
+  }
+
+  if (decimals === undefined) {
+    throw new Error('Decimals must be provided for SPL token transfers.');
+  }
+
+  return sendSplToken({
+    fromAddress: params.fromAddress,
+    to: params.to,
+    amount: Number(params.amount) * 10 ** decimals,
+    privateKey,
+    mintAddress: tokenMint,
+  });
 };

@@ -1,7 +1,7 @@
 import { getLoginMessage, login, signSiweMessage } from '@/utils/auth';
 import { getToken, saveToken } from '@/utils/tokenStorage';
 import { useState } from 'react';
-import { Button, Text, View } from 'react-native';
+import { Text, View, TouchableOpacity } from 'react-native';
 import { AuthLogoutResponse, AuthRefreshResponse } from '@/types';
 import { refreshInstance, api } from '@/services/apiClient';
 import { loadWalletSecurely } from '@/utils/secureStore';
@@ -98,10 +98,57 @@ const Home = () => {
       >
         Home Page
       </Text>
-      <Button title="Login" onPress={handleLogin} />
-      <Button title="Refresh" onPress={handleRefresh} />
-      <Button title="Logout" onPress={handleLogout} />
-      <Button title="Test access token" onPress={handleTestAccessToken} />
+      <TouchableOpacity
+        style={{
+          backgroundColor: '#4f46e5',
+          padding: 14,
+          borderRadius: 8,
+          marginVertical: 8,
+          alignItems: 'center',
+        }}
+        onPress={handleLogin}
+      >
+        <Text style={{ color: '#fff', fontWeight: '600', fontSize: 16 }}>Login</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={{
+          backgroundColor: '#4f46e5',
+          padding: 14,
+          borderRadius: 8,
+          marginVertical: 8,
+          alignItems: 'center',
+        }}
+        onPress={handleRefresh}
+      >
+        <Text style={{ color: '#fff', fontWeight: '600', fontSize: 16 }}>Refresh</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={{
+          backgroundColor: '#dc2626',
+          padding: 14,
+          borderRadius: 8,
+          marginVertical: 8,
+          alignItems: 'center',
+        }}
+        onPress={handleLogout}
+      >
+        <Text style={{ color: '#fff', fontWeight: '600', fontSize: 16 }}>Logout</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={{
+          backgroundColor: '#6b7280',
+          padding: 14,
+          borderRadius: 8,
+          marginVertical: 8,
+          alignItems: 'center',
+        }}
+        onPress={handleTestAccessToken}
+      >
+        <Text style={{ color: '#fff', fontWeight: '600', fontSize: 16 }}>Test access token</Text>
+      </TouchableOpacity>
       <Text>EVM Wallet: {evmWallet?.address}</Text>
     </View>
   );

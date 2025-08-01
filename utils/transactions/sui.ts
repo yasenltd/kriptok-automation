@@ -10,7 +10,9 @@ const sui = new SuiClient({ url: RPC_URL });
 
 export const getSuiBalance = async (address: string): Promise<number> => {
   const res = await sui.getBalance({ owner: address });
-  return Number(res.totalBalance) / 1_000_000_000;
+  const balanceBigInt = BigInt(res.totalBalance);
+  const suiTotal = Number(balanceBigInt) / 1_000_000_000;
+  return suiTotal;
 };
 
 export const sendSuiTx = async (params: SuiTxParams, privateKey: string): Promise<string> => {

@@ -19,7 +19,7 @@ export const sendSuiTx = async (params: SuiTxParams, privateKey: string): Promis
   if (isNaN(amountSui) || amountSui <= 0) {
     throw new Error('Invalid amount');
   }
-
+  console.log('BALANCE: ', balance);
   if (balance < amountSui) {
     console.error('Not enough SUI balance');
     throw new Error('Insufficient SUI balance');
@@ -38,7 +38,7 @@ export const sendSuiTx = async (params: SuiTxParams, privateKey: string): Promis
       transaction: tx,
       options: { showEffects: true },
     });
-
+    console.log('DIGEST: ', result.digest);
     return result.digest;
   } catch (error) {
     console.error(error);

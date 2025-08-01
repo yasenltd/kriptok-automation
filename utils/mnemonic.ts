@@ -52,7 +52,7 @@ export const deriveBitcoinWallet = (mnemonic: string) => {
   const seedStr: string = mnemonicObj.computeSeed();
   const seed: Uint8Array = getBytes(seedStr);
 
-  const rootSecp256k1 = bip32.fromSeed(Buffer.from(seed));
+  const rootSecp256k1 = bip32.fromSeed(seed);
 
   const btcChild = rootSecp256k1.derivePath(
     isDev ? BITCOIN_TEST_PATH : WalletDerivationPath.BITCOIN,
@@ -103,50 +103,14 @@ export const deriveSuiWallet = (mnemonic: string) => {
   };
 };
 
-export const deriveAllWalletsFromMnemonic = async (mnemonic: string) => {
+export const deriveAllWalletsFromMnemonic = (mnemonic: string) => {
   const phrase = mnemonic.trim();
-  if (!bip39.validateMnemonic(phrase)) throw new Error('Invalid mnemonic');
-
-  const mnemonicObj = Mnemonic.fromPhrase(phrase);
-  const seedStr: string = mnemonicObj.computeSeed();
-  const seed: Uint8Array = getBytes(seedStr);
-
-  const rootSecp256k1 = bip32.fromSeed(Buffer.from(seed));
-  const rootEd25519 = HDKey.fromMasterSeed(seed);
-
-  const evmWallet = HDNodeWallet.fromSeed(seed).derivePath(WalletDerivationPath.EVM);
-
-  const btcChild = rootSecp256k1.derivePath(
-    isDev ? BITCOIN_TEST_PATH : WalletDerivationPath.BITCOIN,
-  );
-  const btcAddress = bitcoin.payments.p2wpkh({
-    pubkey: Buffer.from(btcChild.publicKey),
-    network: BITCOIN_NETWORK,
-  }).address;
-
-  const privateKeyWIF = wif.encode({
-    version: BITCOIN_NETWORK.wif,
-    privateKey: btcChild.privateKey!,
-    compressed: true,
-  });
-
-  const solChild = rootEd25519.derive(WalletDerivationPath.SOLANA);
-  const seed32 = solChild.privateKey!.slice(0, 32);
-  const solKeypair = nacl.sign.keyPair.fromSeed(seed32);
-
-  const suiChild = rootEd25519.derive(WalletDerivationPath.SUI);
-  const suiKeypair = Ed25519Keypair.fromSecretKey(suiChild.privateKey!.slice(0, 32));
+  if (!validateMnemonic(phrase)) throw new Error('Invalid mnemonic');
 
   return {
-    evm: { address: evmWallet.address, privateKey: evmWallet.privateKey },
-    bitcoin: { address: btcAddress ?? '', privateKey: privateKeyWIF },
-    solana: {
-      address: base58.encode(solKeypair.publicKey),
-      privateKey: base58.encode(solKeypair.secretKey),
-    },
-    sui: {
-      address: suiKeypair.getPublicKey().toSuiAddress(),
-      privateKey: Buffer.from(suiChild.privateKey!.slice(0, 32)).toString('hex'),
-    },
+    evm: deriveEVMWalletFromMnemonic(phrase),
+    bitcoin: deriveBitcoinWallet(phrase),
+    solana: deriveSolanaWallet(phrase),
+    sui: deriveSuiWallet(phrase),
   };
 };

@@ -10,7 +10,7 @@ import AppModal from '@components/ui/AppModal';
 import { useToast } from '@/hooks/useToast';
 import { setPin } from '@/utils/secureStore';
 import { Wallets } from '@/types';
-import { getLoginMessage, login, signSiweMessage, signup } from '@/utils/auth';
+import { getLoginMessage, getSignupMessage, login, signSiweMessage, signup } from '@/utils/auth';
 import { router } from 'expo-router';
 import { useAuth } from '@/context/AuthContext';
 
@@ -75,12 +75,16 @@ export default function GenerateScreen() {
     }
 
     try {
+      const { message: signupMessage } = await getSignupMessage(evmWallet.address);
+      const signupSignature = await signSiweMessage(signupMessage, evmWallet.privateKey);
       // signup user
       await signup({
         eth: evmWallet.address,
         btc: btcWallet.address,
         sui: suiWallet.address,
         solana: solWallet.address,
+        signature: signupSignature,
+        message: signupMessage,
       });
       //generate message
       const { message } = await getLoginMessage(evmWallet.address);

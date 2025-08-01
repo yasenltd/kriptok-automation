@@ -24,16 +24,16 @@ export const BASE_URL = Constants.expoConfig?.extra?.apiBaseUrl as string;
 if (!BASE_URL) {
   throw new Error('API base URL is not defined. Check your environment variables.');
 }
-
-const api: AxiosInstance = axios.create({
+// TODO: I might think about using a single instance for all requests
+export const api: AxiosInstance = axios.create({
   baseURL: BASE_URL,
   timeout: 13000,
   headers: {
     'Content-Type': 'application/json',
   },
 });
-
-const refreshInstance: AxiosInstance = axios.create({
+// TODO: I might think about using a single instance for all requests
+export const refreshInstance: AxiosInstance = axios.create({
   baseURL: BASE_URL,
   timeout: 6000,
   headers: {
@@ -52,9 +52,15 @@ export const refreshAccessToken = async (): Promise<string | null> => {
     const savedTokenData: Record<string, any> | null = await getToken();
     if (!savedTokenData) return null;
 
-    const response = await refreshInstance.post<AuthRefreshResponse>('/auth/refresh', {
-      refreshToken: savedTokenData.refresh_token,
-    });
+    const response = await refreshInstance.post<AuthRefreshResponse>(
+      '/auth/refresh',
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${savedTokenData.refresh_token}`,
+        },
+      },
+    );
 
     if (!response?.data?.access_token) {
       console.error('No access_token in response');

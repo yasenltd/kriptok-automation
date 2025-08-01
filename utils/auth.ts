@@ -2,6 +2,9 @@ import { get, post } from '@/services';
 import { RegisterType } from '@/types';
 import { Wallet } from 'ethers';
 
+export const getSignupMessage = (address: string) =>
+  get<{ message: string }>(`/auth/signup-message/${address}`);
+
 export const getLoginMessage = (address: string) =>
   get<{ message: string }>(`/auth/message/${address}`);
 

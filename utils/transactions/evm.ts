@@ -5,20 +5,8 @@ import {
   isDev,
   MAIN_ETH_RPC_PROVIDER,
   TEST_ETH_RPC_PROVIDER,
-} from './constants';
-
-interface SendTxParams {
-  to: string;
-  amount: string | BigInt;
-  tokenAddress?: string;
-  decimals?: number;
-  fee?: string | number | BigInt;
-  memo?: string;
-}
-
-type SupportedChain = 'ethereum' | 'bitcoin' | 'sui' | 'solana';
-
-type ChainTxHandler = (params: SendTxParams, privateKey: string) => Promise<string>;
+} from '../constants';
+import { BaseTxParams } from '.';
 
 const providerCache: Record<string, JsonRpcProvider> = {};
 
@@ -48,7 +36,7 @@ const getFallbackFee = (tokenAddress: string | null): { feeInWei: bigint; feeInE
 export const estimateGasFee = async (
   tokenAddress: string | null,
   decimals: number,
-  params: SendTxParams,
+  params: BaseTxParams,
   privateKey: string,
 ): Promise<{ feeInWei: bigint; feeInEth: string }> => {
   try {
@@ -83,7 +71,7 @@ export const estimateGasFee = async (
   }
 };
 
-const sendNativeEvmTx = async (params: SendTxParams, privateKey: string) => {
+const sendNativeEvmTx = async (params: BaseTxParams, privateKey: string) => {
   try {
     const { wallet } = getWalletProvider('ethereum', privateKey);
 
@@ -101,7 +89,7 @@ const sendNativeEvmTx = async (params: SendTxParams, privateKey: string) => {
 const sendErc20Tx = async (
   tokenAddress: string,
   decimals: number,
-  params: SendTxParams,
+  params: BaseTxParams,
   privateKey: string,
 ) => {
   try {
@@ -120,7 +108,7 @@ const sendErc20Tx = async (
 export const sendEvmAsset = async (
   tokenAddress: string,
   decimals: number,
-  params: SendTxParams,
+  params: BaseTxParams,
   privateKey: string,
 ): Promise<string> => {
   if (!INFURA_ID) {
@@ -129,42 +117,4 @@ export const sendEvmAsset = async (
   return tokenAddress === ethers.ZeroAddress
     ? sendNativeEvmTx(params, privateKey)
     : sendErc20Tx(tokenAddress, decimals, params, privateKey);
-};
-
-const sendBitcoinTx = async (params: SendTxParams, privateKey: string) => {
-  return '';
-};
-
-const sendSuiTx = async (params: SendTxParams, privateKey: string) => {
-  return '';
-};
-
-const sendSolanaTx = async (params: SendTxParams, privateKey: string) => {
-  return '';
-};
-
-const chainTxHandlers: Record<SupportedChain, ChainTxHandler> = {
-  ethereum: (params, privateKey) =>
-    sendEvmAsset(
-      params.tokenAddress ?? ethers.ZeroAddress,
-      params.decimals ?? 18,
-      params,
-      privateKey,
-    ),
-  bitcoin: sendBitcoinTx,
-  sui: sendSuiTx,
-  solana: sendSolanaTx,
-};
-
-export const sendTransaction = async (
-  chain: SupportedChain,
-  params: SendTxParams,
-  privateKey: string,
-): Promise<string> => {
-  const handler = chainTxHandlers[chain];
-  if (!handler) {
-    throw new Error(`Unsupported chain: ${chain}`);
-  }
-
-  return handler(params, privateKey);
 };

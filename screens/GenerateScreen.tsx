@@ -32,7 +32,6 @@ export default function GenerateScreen() {
   const [confirmPin, setConfirmPin] = useState('');
 
   /* Handlers */
-
   const setWallets = useCallback((wallets: Wallets) => {
     console.log(wallets);
     setEvmWallet(wallets.evm);
@@ -48,12 +47,12 @@ export default function GenerateScreen() {
     setSuiWallet(prev => ({ ...prev, privateKey: '' }));
   }, []);
 
-  const handleGenerateMnemonic = useCallback(async () => {
+  const handleGenerateMnemonic = useCallback(() => {
     try {
       const newMnemonic = generateMnemonic();
       setMnemonic(newMnemonic);
 
-      const wallets = await deriveAllWalletsFromMnemonic(newMnemonic);
+      const wallets = deriveAllWalletsFromMnemonic(newMnemonic);
 
       setWallets(wallets);
 
@@ -116,7 +115,7 @@ export default function GenerateScreen() {
     } finally {
       clearPrivateKeys();
     }
-  }, [pin, confirmPin, mnemonic]);
+  }, [pin, confirmPin, mnemonic, evmWallet, btcWallet, suiWallet, solWallet]);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>

@@ -72,8 +72,5 @@ export type IUser = {
 export type StatusType = 'checking' | 'unlocking' | 'unlocked';
 
 export interface UpdateUserDto {
-  btc?: string;
-  sui?: string;
-  solana?: string;
-  hasBackedUp?: boolean;
+  hasBackedUp: boolean;
 }

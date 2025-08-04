@@ -19,8 +19,6 @@ import {
 
 import { getToken, saveToken, removeToken, isTokenExpired } from './tokenStorage';
 
-import { getUser, updateUserMe } from './users';
-
 export {
   generateMnemonic,
   validateMnemonic,
@@ -40,6 +38,4 @@ export {
   saveToken,
   removeToken,
   isTokenExpired,
-  getUser,
-  updateUserMe,
 };

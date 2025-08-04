@@ -13,11 +13,15 @@ import { Wallets } from '@/types';
 import { getLoginMessage, getSignupMessage, login, signSiweMessage, signup } from '@/utils/auth';
 import { router } from 'expo-router';
 import { useAuth } from '@/context/AuthContext';
+import { useDispatch } from 'react-redux';
+import { setUser } from '@/stores/user/userSlice';
+import { getUser } from '@/utils/users';
 
 export default function GenerateScreen() {
   /*Hooks */
   const toast = useToast();
   const { setIsAuthenticated } = useAuth();
+  const dispatch = useDispatch();
 
   /* State */
   const [mnemonic, setMnemonic] = useState<string>('');
@@ -102,6 +106,9 @@ export default function GenerateScreen() {
         expires_in: expires_in.toString(),
         refresh_expires_in: refresh_expires_in.toString(),
       });
+
+      const user = await getUser();
+      dispatch(setUser(user));
 
       await setPin(pin);
       await storeWalletSecurely(mnemonic);

@@ -16,9 +16,8 @@ export enum WalletDerivationPath {
   BITCOIN = "m/44'/0'/0'/0/0",
   SOLANA = "m/44'/501'/0'/0'",
   SUI = "m/44'/784'/0'/0'/0'",
+  BITCOIN_TEST_PATH = "m/84'/1'/0'/0/0",
 }
-
-const BITCOIN_TEST_PATH = "m/84'/1'/0'/0/0";
 
 const bip32 = BIP32Factory(ecc);
 
@@ -55,7 +54,7 @@ export const deriveBitcoinWallet = (mnemonic: string) => {
   const rootSecp256k1 = bip32.fromSeed(seed);
 
   const btcChild = rootSecp256k1.derivePath(
-    isDev ? BITCOIN_TEST_PATH : WalletDerivationPath.BITCOIN,
+    isDev ? WalletDerivationPath.BITCOIN_TEST_PATH : WalletDerivationPath.BITCOIN,
   );
   const btcAddress = bitcoin.payments.p2wpkh({
     pubkey: Buffer.from(btcChild.publicKey),

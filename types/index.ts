@@ -63,9 +63,17 @@ export type IUser = {
   solana?: string;
   nonce?: string;
   userId?: string;
+  hasBackedUp: boolean;
   createdAt?: string;
   updatedAt?: string;
   _id?: string;
 };
 
 export type StatusType = 'checking' | 'unlocking' | 'unlocked';
+
+export interface UpdateUserDto {
+  btc?: string;
+  sui?: string;
+  solana?: string;
+  hasBackedUp?: boolean;
+}

@@ -10,6 +10,8 @@ import { deriveEVMWalletFromMnemonic } from '@/utils';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/stores/store';
 import { useToast } from '@/hooks/useToast';
+import { router } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
 // NOTE: Intended for initial testing and development purposes, to be removed later
 const Home = () => {
   /* Hooks */
@@ -100,71 +102,87 @@ const Home = () => {
   }, [user]);
 
   return (
-    <View style={{ flex: 1, padding: 20 }}>
-      <Text
-        style={{
-          fontSize: 28,
-          fontWeight: 'bold',
-          textAlign: 'center',
-          marginBottom: 30,
-          color: '#333',
-        }}
-      >
-        Home Page
-      </Text>
-      <TouchableOpacity
-        style={{
-          backgroundColor: '#4f46e5',
-          padding: 14,
-          borderRadius: 8,
-          marginVertical: 8,
-          alignItems: 'center',
-        }}
-        onPress={handleLogin}
-      >
-        <Text style={{ color: '#fff', fontWeight: '600', fontSize: 16 }}>Login</Text>
-      </TouchableOpacity>
+    <SafeAreaView style={{ flex: 1 }}>
+      <View style={{ flex: 1, padding: 20 }}>
+        <Text
+          style={{
+            fontSize: 28,
+            fontWeight: 'bold',
+            textAlign: 'center',
+            marginBottom: 30,
+            color: '#333',
+          }}
+        >
+          Home Page
+        </Text>
 
-      <TouchableOpacity
-        style={{
-          backgroundColor: '#4f46e5',
-          padding: 14,
-          borderRadius: 8,
-          marginVertical: 8,
-          alignItems: 'center',
-        }}
-        onPress={handleRefresh}
-      >
-        <Text style={{ color: '#fff', fontWeight: '600', fontSize: 16 }}>Refresh</Text>
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            backgroundColor: '#4f46e5',
+            padding: 14,
+            borderRadius: 8,
+            marginVertical: 8,
+            alignItems: 'center',
+          }}
+          onPress={() => router.push('/backup')}
+        >
+          <Text style={{ color: '#fff', fontWeight: '600', fontSize: 16 }}>Backup</Text>
+        </TouchableOpacity>
 
-      <TouchableOpacity
-        style={{
-          backgroundColor: '#dc2626',
-          padding: 14,
-          borderRadius: 8,
-          marginVertical: 8,
-          alignItems: 'center',
-        }}
-        onPress={handleLogout}
-      >
-        <Text style={{ color: '#fff', fontWeight: '600', fontSize: 16 }}>Logout</Text>
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            backgroundColor: '#4f46e5',
+            padding: 14,
+            borderRadius: 8,
+            marginVertical: 8,
+            alignItems: 'center',
+          }}
+          onPress={handleLogin}
+        >
+          <Text style={{ color: '#fff', fontWeight: '600', fontSize: 16 }}>Login</Text>
+        </TouchableOpacity>
 
-      <TouchableOpacity
-        style={{
-          backgroundColor: '#6b7280',
-          padding: 14,
-          borderRadius: 8,
-          marginVertical: 8,
-          alignItems: 'center',
-        }}
-        onPress={handleTestAccessToken}
-      >
-        <Text style={{ color: '#fff', fontWeight: '600', fontSize: 16 }}>Test access token</Text>
-      </TouchableOpacity>
-      <Text>EVM Wallet: {evmWallet?.address}</Text>
-    </View>
+        <TouchableOpacity
+          style={{
+            backgroundColor: '#4f46e5',
+            padding: 14,
+            borderRadius: 8,
+            marginVertical: 8,
+            alignItems: 'center',
+          }}
+          onPress={handleRefresh}
+        >
+          <Text style={{ color: '#fff', fontWeight: '600', fontSize: 16 }}>Refresh</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={{
+            backgroundColor: '#dc2626',
+            padding: 14,
+            borderRadius: 8,
+            marginVertical: 8,
+            alignItems: 'center',
+          }}
+          onPress={handleLogout}
+        >
+          <Text style={{ color: '#fff', fontWeight: '600', fontSize: 16 }}>Logout</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={{
+            backgroundColor: '#6b7280',
+            padding: 14,
+            borderRadius: 8,
+            marginVertical: 8,
+            alignItems: 'center',
+          }}
+          onPress={handleTestAccessToken}
+        >
+          <Text style={{ color: '#fff', fontWeight: '600', fontSize: 16 }}>Test access token</Text>
+        </TouchableOpacity>
+        <Text>EVM Wallet: {evmWallet?.address}</Text>
+      </View>
+    </SafeAreaView>
   );
 };
 

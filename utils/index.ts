@@ -18,6 +18,7 @@ import {
 } from './secureStore';
 
 import { getToken, saveToken, removeToken, isTokenExpired } from './tokenStorage';
+import { copyToClipboard } from './stringUtils';
 
 export {
   generateMnemonic,
@@ -38,4 +39,5 @@ export {
   saveToken,
   removeToken,
   isTokenExpired,
+  copyToClipboard,
 };

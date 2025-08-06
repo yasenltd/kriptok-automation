@@ -37,8 +37,7 @@ const AuthLayout = () => {
         <Stack.Screen
           name="home"
           options={{
-            headerShown: false,
-            gestureEnabled: false,
+            title: 'Home',
           }}
         />
 

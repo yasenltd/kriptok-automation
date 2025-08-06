@@ -5,6 +5,7 @@ export const colors = {
   'primary-white': '#FFFFFF',
   'text-black': '#323135',
   'primary-blue': '#0162BC',
+  'secondary-black': '#2A2A2A',
 };
 
 export const INFURA_ID = Constants.expoConfig?.extra?.EXPO_PUBLIC_INFURA_ID as string;

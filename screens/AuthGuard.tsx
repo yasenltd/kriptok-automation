@@ -7,15 +7,21 @@ import { loadWalletFromPin } from '@/utils/secureStore';
 import AppLoader from '@components/ui/AppLoader';
 import { getLoginMessage, login, signSiweMessage } from '@/utils/auth';
 import { useAuth } from '@/context/AuthContext';
+import axios from 'axios';
+import { useToast } from '@/hooks/useToast';
+import Constants from 'expo-constants';
+import { View } from 'react-native';
+
+const statusBarHeight = Constants.statusBarHeight;
 
 const AuthGuard = ({ children }: { children: React.ReactNode }) => {
   /* State */
   const [pin, setPin] = useState('');
-  const [confirmPin, setConfirmPin] = useState('');
   const [showPinModal, setShowPinModal] = useState(false);
 
   /* Hooks */
   const { isAuthenticated, setIsAuthenticated, status, setStatus } = useAuth();
+  const toast = useToast();
 
   const router = useRouter();
   const pathname = usePathname();
@@ -54,7 +60,11 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
       }
       setShowPinModal(false);
     } catch (err) {
-      console.error('Auto-login failed:', err);
+      if (axios.isAxiosError(err)) {
+        console.error(err.response?.data);
+      } else {
+        console.error('Auto-login failed:', err);
+      }
     }
   }, []);
 
@@ -79,9 +89,7 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
     async (pin: string) => {
       const mnemonic = await loadWalletFromPin(pin);
       if (!mnemonic) {
-        //TODO :
-        //retry ?
-        //setStatus('unlocked');
+        toast.showError('Wrong pin. Try again.');
         return;
       }
       await autoLogin(mnemonic);
@@ -111,8 +119,6 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
           setModalVisible={setShowPinModal}
           pin={pin}
           setPin={setPin}
-          confirmPin={confirmPin}
-          setConfirmPin={setConfirmPin}
           handleUnlock={() => handlePinUnlock(pin)}
         />
       )}

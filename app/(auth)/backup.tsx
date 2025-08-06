@@ -36,6 +36,7 @@ export default function Backup() {
           setPin={setPin}
           handleUnlock={() => getMnemonicWithPin(pin)}
           text="Enter your PIN to reveal your secret phrase"
+          buttonText="Continue"
         />
       )}
 

@@ -8,6 +8,7 @@ type UnlockModalProps = {
   setPin: (val: string) => void;
   handleUnlock: () => void;
   text?: string;
+  buttonText?: string;
 };
 
 const UnlockModal: React.FC<UnlockModalProps> = ({
@@ -17,6 +18,7 @@ const UnlockModal: React.FC<UnlockModalProps> = ({
   setPin,
   handleUnlock,
   text,
+  buttonText,
 }) => {
   return (
     <AppModal
@@ -37,7 +39,7 @@ const UnlockModal: React.FC<UnlockModalProps> = ({
         placeholder="Enter PIN"
       />
       <Pressable style={styles.button} onPress={handleUnlock}>
-        <Text style={styles.buttonText}>Unlock app</Text>
+        <Text style={styles.buttonText}>{buttonText ?? 'Unlock app'}</Text>
       </Pressable>
     </AppModal>
   );

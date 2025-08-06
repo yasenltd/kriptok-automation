@@ -6,6 +6,15 @@ export const colors = {
   'text-black': '#323135',
   'primary-blue': '#0162BC',
   'secondary-black': '#2A2A2A',
+  'text-secondary': '#77737B',
+  'text-grey': '#555A5E',
+  'primary-grey': '#CBCBCB',
+};
+export const inputSizeMapping = {
+  small: 220,
+  medium: 350,
+  large: 480,
+  screen: '100%' as `${number}%`,
 };
 
 export const INFURA_ID = Constants.expoConfig?.extra?.EXPO_PUBLIC_INFURA_ID as string;
@@ -33,3 +42,11 @@ export const MAIN_ETH_RPC_PROVIDER = {
 };
 
 export const ERC20_ABI = ['function transfer(address to, uint256 amount) returns (bool)'];
+
+export const textSize = {
+  small: 12,
+  medium: 14,
+  mediumWeb: 16,
+  mobileLarge: 20,
+  large: 24,
+};

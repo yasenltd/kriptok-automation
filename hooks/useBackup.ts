@@ -74,7 +74,9 @@ export const useBackup = () => {
         return;
       }
       toast.showSuccess('✅ Seed phrase verified!');
-      router.push('/home');
+
+      setMnemonic(null);
+      router.replace('/home');
     } else {
       toast.showError('❌ One or more words are incorrect. Try again.');
     }

@@ -1,10 +1,12 @@
 import '@/utils/polyfills';
-import { Stack } from 'expo-router';
+import { Stack, usePathname } from 'expo-router';
 import { Header, HeaderBackButton } from '@react-navigation/elements';
 import { colors } from '@/utils';
 import AuthGuard from '@/screens/AuthGuard';
 
 const AuthLayout = () => {
+  const pathname = usePathname();
+
   return (
     <AuthGuard>
       <Stack
@@ -17,9 +19,11 @@ const AuthLayout = () => {
               {...props}
               title={props.options.title as string}
               headerTitleAlign="left"
+              headerTransparent={true}
+              headerStyle={{ borderBottomWidth: 0, shadowOpacity: 0, elevation: 0 }}
               headerBackButtonDisplayMode="minimal"
               headerLeft={headerProps =>
-                props.back ? (
+                props.back && pathname !== '/home' ? (
                   <HeaderBackButton
                     {...headerProps}
                     onPress={props.navigation.goBack}
@@ -35,10 +39,11 @@ const AuthLayout = () => {
         <Stack.Screen
           name="home"
           options={{
-            headerShown: false,
-            gestureEnabled: false,
+            title: 'Home',
           }}
         />
+
+        <Stack.Screen name="backup" />
       </Stack>
     </AuthGuard>
   );

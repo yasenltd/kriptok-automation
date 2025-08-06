@@ -7,8 +7,16 @@ import { refreshInstance, api } from '@/services/apiClient';
 import { loadWalletSecurely } from '@/utils/secureStore';
 import { useEffect } from 'react';
 import { deriveEVMWalletFromMnemonic } from '@/utils';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/stores/store';
+import { useToast } from '@/hooks/useToast';
+import { router } from 'expo-router';
 // NOTE: Intended for initial testing and development purposes, to be removed later
 const Home = () => {
+  /* Hooks */
+  const user = useSelector((state: RootState) => state.user.data);
+  const toast = useToast();
+
   const [evmWallet, setEvmWallet] = useState<{ address: string; privateKey: string } | null>(null);
   const handleLogin = async () => {
     if (!evmWallet) return;
@@ -85,19 +93,28 @@ const Home = () => {
       }
     });
   }, []);
+
+  useEffect(() => {
+    if (user && !user.hasBackedUp) {
+      toast.showInfo('Please, backup your secret recovery phrase!');
+    }
+  }, [user]);
+
   return (
     <View style={{ flex: 1, padding: 20 }}>
-      <Text
+      <TouchableOpacity
         style={{
-          fontSize: 28,
-          fontWeight: 'bold',
-          textAlign: 'center',
-          marginBottom: 30,
-          color: '#333',
+          backgroundColor: '#4f46e5',
+          padding: 14,
+          borderRadius: 8,
+          marginVertical: 8,
+          alignItems: 'center',
         }}
+        onPress={() => router.push('/backup')}
       >
-        Home Page
-      </Text>
+        <Text style={{ color: '#fff', fontWeight: '600', fontSize: 16 }}>Backup</Text>
+      </TouchableOpacity>
+
       <TouchableOpacity
         style={{
           backgroundColor: '#4f46e5',

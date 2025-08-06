@@ -6,9 +6,10 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { Header, HeaderBackButton } from '@react-navigation/elements';
 import { colors } from '@/utils';
 import { AuthProvider } from '@/context/AuthContext';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { checkFirstInstallAndCleanup } from '@/utils/tracking';
 import AppLoader from '@components/ui/AppLoader';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const Layout = () => {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -19,6 +20,11 @@ const Layout = () => {
     await checkFirstInstallAndCleanup();
     setIsLoaded(true);
   }, []);
+
+  const showHeader = useMemo(() => {
+    const headerRoutes = ['/', '/generate', '/import'];
+    return headerRoutes.includes(pathname);
+  }, [pathname]);
 
   useEffect(() => {
     checkForData();
@@ -35,12 +41,15 @@ const Layout = () => {
               contentStyle: {
                 backgroundColor: colors['primary-white'],
               },
+              headerShown: showHeader,
               header: props => (
                 <Header
                   {...props}
                   title={props.options.title as string}
                   headerTitleAlign="left"
                   headerBackButtonDisplayMode="minimal"
+                  headerTransparent={true}
+                  headerStyle={{ borderBottomWidth: 0, shadowOpacity: 0, elevation: 0 }}
                   headerLeft={headerProps =>
                     props.back && pathname !== '/home' ? (
                       <HeaderBackButton

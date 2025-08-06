@@ -13,15 +13,18 @@ export type StoredWalletData = {
 };
 
 export const getOrCreateAesKey = async (): Promise<string> => {
-  let aesKey = await SecureStore.getItemAsync(WALLET_ENCRYPTION_KEY);
-  if (!aesKey) {
-    const keyBuffer = Crypto.getRandomBytes(32);
-    aesKey = Buffer.from(keyBuffer).toString('hex');
-    await SecureStore.setItemAsync(WALLET_ENCRYPTION_KEY, aesKey, {
-      keychainAccessible: SecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY,
-    });
-  }
-  return aesKey;
+  const storedKey = await SecureStore.getItemAsync(WALLET_ENCRYPTION_KEY);
+
+  if (storedKey) return storedKey;
+
+  const keyBuffer = Crypto.getRandomBytes(32);
+  const newKey = Buffer.from(keyBuffer).toString('hex');
+
+  await SecureStore.setItemAsync(WALLET_ENCRYPTION_KEY, newKey, {
+    keychainAccessible: SecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY,
+  });
+
+  return newKey;
 };
 
 const deriveKey = async (salt: string): Promise<string> => {

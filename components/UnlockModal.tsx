@@ -6,9 +6,9 @@ type UnlockModalProps = {
   setModalVisible: (visible: boolean) => void;
   pin: string;
   setPin: (val: string) => void;
-  confirmPin: string;
-  setConfirmPin: (val: string) => void;
   handleUnlock: () => void;
+  text?: string;
+  buttonText?: string;
 };
 
 const UnlockModal: React.FC<UnlockModalProps> = ({
@@ -16,9 +16,9 @@ const UnlockModal: React.FC<UnlockModalProps> = ({
   setModalVisible,
   pin,
   setPin,
-  confirmPin,
-  setConfirmPin,
   handleUnlock,
+  text,
+  buttonText,
 }) => {
   return (
     <AppModal
@@ -28,7 +28,7 @@ const UnlockModal: React.FC<UnlockModalProps> = ({
       width="medium"
       canClose={false}
     >
-      <Text style={{ marginBottom: 10 }}>Enter your PIN to unlock your wallet.</Text>
+      <Text style={{ marginBottom: 10 }}>{text ?? 'Enter your PIN to unlock your wallet.'}</Text>
       <TextInput
         style={styles.input}
         keyboardType="number-pad"
@@ -38,17 +38,8 @@ const UnlockModal: React.FC<UnlockModalProps> = ({
         onChangeText={setPin}
         placeholder="Enter PIN"
       />
-      <TextInput
-        style={styles.input}
-        keyboardType="number-pad"
-        maxLength={6}
-        secureTextEntry
-        value={confirmPin}
-        onChangeText={setConfirmPin}
-        placeholder="Confirm PIN"
-      />
       <Pressable style={styles.button} onPress={handleUnlock}>
-        <Text style={styles.buttonText}>Unlock app</Text>
+        <Text style={styles.buttonText}>{buttonText ?? 'Unlock app'}</Text>
       </Pressable>
     </AppModal>
   );

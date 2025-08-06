@@ -1,10 +1,12 @@
 import '@/utils/polyfills';
-import { Stack } from 'expo-router';
+import { Stack, usePathname } from 'expo-router';
 import { Header, HeaderBackButton } from '@react-navigation/elements';
 import { colors } from '@/utils';
 import AuthGuard from '@/screens/AuthGuard';
 
 const AuthLayout = () => {
+  const pathname = usePathname();
+
   return (
     <AuthGuard>
       <Stack
@@ -21,7 +23,7 @@ const AuthLayout = () => {
               headerStyle={{ borderBottomWidth: 0, shadowOpacity: 0, elevation: 0 }}
               headerBackButtonDisplayMode="minimal"
               headerLeft={headerProps =>
-                props.back ? (
+                props.back && pathname !== '/home' ? (
                   <HeaderBackButton
                     {...headerProps}
                     onPress={props.navigation.goBack}

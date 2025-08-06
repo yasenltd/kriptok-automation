@@ -44,6 +44,13 @@ const AuthLayout = () => {
         />
 
         <Stack.Screen name="backup" />
+
+        <Stack.Screen
+          name="send"
+          options={{
+            title: 'Send',
+          }}
+        />
       </Stack>
     </AuthGuard>
   );

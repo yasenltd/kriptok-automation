@@ -123,6 +123,19 @@ const Home = () => {
           marginVertical: 8,
           alignItems: 'center',
         }}
+        onPress={() => router.push('/send')}
+      >
+        <Text style={{ color: '#fff', fontWeight: '600', fontSize: 16 }}>Send</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={{
+          backgroundColor: '#4f46e5',
+          padding: 14,
+          borderRadius: 8,
+          marginVertical: 8,
+          alignItems: 'center',
+        }}
         onPress={handleLogin}
       >
         <Text style={{ color: '#fff', fontWeight: '600', fontSize: 16 }}>Login</Text>

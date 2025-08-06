@@ -33,6 +33,17 @@ const getFallbackFee = (tokenAddress: string | null): { feeInWei: bigint; feeInE
   };
 };
 
+export const getEthBalance = async (address: string) => {
+  const rpc = isDev ? TEST_ETH_RPC_PROVIDER['ethereum'] : MAIN_ETH_RPC_PROVIDER['ethereum'];
+  if (!providerCache[rpc]) {
+    providerCache[rpc] = new JsonRpcProvider(rpc);
+  }
+
+  const provider = providerCache[rpc];
+  const balanceWei = await provider.getBalance(address);
+  return ethers.formatEther(balanceWei);
+};
+
 export const estimateGasFee = async (
   tokenAddress: string | null,
   decimals: number,

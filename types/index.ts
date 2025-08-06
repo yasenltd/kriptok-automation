@@ -1,3 +1,5 @@
+import { Feather } from '@expo/vector-icons';
+
 export type LanguageType = 'en' | 'tr';
 
 export type User = {
@@ -74,3 +76,5 @@ export type StatusType = 'checking' | 'unlocking' | 'unlocked';
 export interface UpdateUserDto {
   hasBackedUp: boolean;
 }
+
+export type FeatherIconType = keyof typeof Feather.glyphMap;

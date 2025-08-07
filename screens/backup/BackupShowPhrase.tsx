@@ -32,6 +32,16 @@ const BackupStepShowPhrase = ({
     <View>
       {mnemonic && (
         <>
+          {/* This line is for Detox tests only! */}
+          {__DEV__ && (
+            <Text
+              testID="seed-phrase"
+              style={{ opacity: 0, position: 'absolute', height: 0, width: 0 }}
+              accessible={false}
+            >
+              {mnemonic}
+            </Text>
+          )}
           <Text>
             The seed phrase is used to access your wallet. Write it down, preferably offline and
             keep it somewhere safe.
@@ -51,7 +61,7 @@ const BackupStepShowPhrase = ({
                     size={18}
                     color="white"
                   />
-                  <Text style={{ color: 'white' }}>
+                  <Text testID="reveal-seed" style={{ color: 'white' }}>
                     {hideMnemonic ? 'Show' : 'Hide'} seed phrase
                   </Text>
                 </View>
@@ -78,6 +88,7 @@ const BackupStepShowPhrase = ({
 
           <View style={styles.checkboxRow}>
             <AppCheckbox
+              testID='check-backed-seed'
               color="black"
               value={checkmark}
               onChange={() => setCheckmark(!checkmark)}
@@ -85,7 +96,7 @@ const BackupStepShowPhrase = ({
             <Text style={{ color: 'black' }}>I've backed up my Seed Phrase</Text>
           </View>
 
-          <Button onPress={() => setStep(2)} disabled={!checkmark}>
+          <Button testID='confirm' onPress={() => setStep(2)} disabled={!checkmark}>
             <Text>Confirm</Text>
           </Button>
         </>

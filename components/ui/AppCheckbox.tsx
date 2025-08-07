@@ -7,10 +7,16 @@ type CheckboxProps = {
   onChange: (checked: boolean) => void;
   text?: string;
   color?: string;
+  testID?: string;
 };
-const AppCheckbox: React.FC<CheckboxProps> = ({ value, onChange, text, color }) => {
+
+const AppCheckbox: React.FC<CheckboxProps> = ({ value, onChange, text, color, testID }) => {
   return (
-    <Pressable style={{ maxWidth: '100%' }} onPress={() => onChange(!value)}>
+    <Pressable
+      style={{ maxWidth: '100%' }}
+      onPress={() => onChange(!value)}
+      testID={testID}
+    >
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         <MaterialIcons
           name={value ? 'check-box' : 'check-box-outline-blank'}

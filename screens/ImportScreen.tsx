@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { Text, TextInput, StyleSheet, ScrollView, Alert, Pressable } from 'react-native';
-import { validateMnemonic } from '../utils';
+import { validateMnemonic } from '@/utils';
 
 export default function ImportScreen() {
   /* State */
@@ -22,7 +22,7 @@ export default function ImportScreen() {
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Kriptok Wallet</Text>
 
-      <Text style={styles.subtitle}>Import Existing Mnemonic</Text>
+      <Text testID="import-existing-mnemonic" style={styles.subtitle}>Import Existing Mnemonic</Text>
 
       <TextInput
         style={styles.input}

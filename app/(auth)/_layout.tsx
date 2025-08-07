@@ -46,7 +46,14 @@ const AuthLayout = () => {
         <Stack.Screen name="backup" />
 
         <Stack.Screen
-          name="send"
+          name="send/index"
+          options={{
+            title: 'Send',
+          }}
+        />
+
+        <Stack.Screen
+          name="send/transaction"
           options={{
             title: 'Send',
           }}

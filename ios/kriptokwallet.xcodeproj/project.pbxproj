@@ -7,29 +7,29 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0D4DA7F8ED2E7BCF6A28D2CC /* libPods-kriptokwallet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD5182737B1EB5171FDBB66 /* libPods-kriptokwallet.a */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
+		1D6EDE71908ADA9F1E89CB71 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC2A1A43A3BAD012954A6C8 /* ExpoModulesProvider.swift */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		4E9768FD612451D11EAF996C /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 6072C13145AF12C6DE741720 /* PrivacyInfo.xcprivacy */; };
-		6C1A54AFFC9346EDA6D7673B /* libPods-kriptokwallet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D3FB7333F88FEEAF4E73918 /* libPods-kriptokwallet.a */; };
+		42271077E8C29136141E82BD /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = BB41E94B0E2E1EC69F1AED53 /* PrivacyInfo.xcprivacy */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
-		FD5A042E30579B9582E5986F /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2DD1E7BD58CEA011855464B /* ExpoModulesProvider.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		13B07F961A680F5B00A75B9A /* kriptokwallet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = kriptokwallet.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = kriptokwallet/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = kriptokwallet/Info.plist; sourceTree = "<group>"; };
-		38493F5E6C0D654ABA2385CA /* Pods-kriptokwallet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kriptokwallet.debug.xcconfig"; path = "Target Support Files/Pods-kriptokwallet/Pods-kriptokwallet.debug.xcconfig"; sourceTree = "<group>"; };
-		6072C13145AF12C6DE741720 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = kriptokwallet/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		93EEA7F3FD558B43AD968EA0 /* Pods-kriptokwallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kriptokwallet.release.xcconfig"; path = "Target Support Files/Pods-kriptokwallet/Pods-kriptokwallet.release.xcconfig"; sourceTree = "<group>"; };
-		9D3FB7333F88FEEAF4E73918 /* libPods-kriptokwallet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-kriptokwallet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1AD5182737B1EB5171FDBB66 /* libPods-kriptokwallet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-kriptokwallet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		44063E35AA382CDD84B8324A /* Pods-kriptokwallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kriptokwallet.release.xcconfig"; path = "Target Support Files/Pods-kriptokwallet/Pods-kriptokwallet.release.xcconfig"; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = kriptokwallet/SplashScreen.storyboard; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
+		BB41E94B0E2E1EC69F1AED53 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = kriptokwallet/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		DC454CA7998901B1893A40DE /* Pods-kriptokwallet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kriptokwallet.debug.xcconfig"; path = "Target Support Files/Pods-kriptokwallet/Pods-kriptokwallet.debug.xcconfig"; sourceTree = "<group>"; };
+		DDC2A1A43A3BAD012954A6C8 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-kriptokwallet/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = kriptokwallet/AppDelegate.swift; sourceTree = "<group>"; };
 		F11748442D0722820044C1D9 /* kriptokwallet-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "kriptokwallet-Bridging-Header.h"; path = "kriptokwallet/kriptokwallet-Bridging-Header.h"; sourceTree = "<group>"; };
-		F2DD1E7BD58CEA011855464B /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-kriptokwallet/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -37,7 +37,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6C1A54AFFC9346EDA6D7673B /* libPods-kriptokwallet.a in Frameworks */,
+				0D4DA7F8ED2E7BCF6A28D2CC /* libPods-kriptokwallet.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -53,26 +53,44 @@
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				6072C13145AF12C6DE741720 /* PrivacyInfo.xcprivacy */,
+				BB41E94B0E2E1EC69F1AED53 /* PrivacyInfo.xcprivacy */,
 			);
 			name = kriptokwallet;
-			sourceTree = "<group>";
-		};
-		18D06C65150D6E6FC21AF6BC /* ExpoModulesProviders */ = {
-			isa = PBXGroup;
-			children = (
-				C16F27EF141408AD64C9CF6A /* kriptokwallet */,
-			);
-			name = ExpoModulesProviders;
 			sourceTree = "<group>";
 		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				9D3FB7333F88FEEAF4E73918 /* libPods-kriptokwallet.a */,
+				1AD5182737B1EB5171FDBB66 /* libPods-kriptokwallet.a */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		30252F37829F9AE5D19D1C1E /* kriptokwallet */ = {
+			isa = PBXGroup;
+			children = (
+				DDC2A1A43A3BAD012954A6C8 /* ExpoModulesProvider.swift */,
+			);
+			name = kriptokwallet;
+			sourceTree = "<group>";
+		};
+		32F3B0C4BBFC60134D62B28D /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				DC454CA7998901B1893A40DE /* Pods-kriptokwallet.debug.xcconfig */,
+				44063E35AA382CDD84B8324A /* Pods-kriptokwallet.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		38671D17BBC35AD67FACAA44 /* ExpoModulesProviders */ = {
+			isa = PBXGroup;
+			children = (
+				30252F37829F9AE5D19D1C1E /* kriptokwallet */,
+			);
+			name = ExpoModulesProviders;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -89,8 +107,8 @@
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
-				D60D95EF31E9D866F8A5BA16 /* Pods */,
-				18D06C65150D6E6FC21AF6BC /* ExpoModulesProviders */,
+				32F3B0C4BBFC60134D62B28D /* Pods */,
+				38671D17BBC35AD67FACAA44 /* ExpoModulesProviders */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -114,24 +132,6 @@
 			path = kriptokwallet/Supporting;
 			sourceTree = "<group>";
 		};
-		C16F27EF141408AD64C9CF6A /* kriptokwallet */ = {
-			isa = PBXGroup;
-			children = (
-				F2DD1E7BD58CEA011855464B /* ExpoModulesProvider.swift */,
-			);
-			name = kriptokwallet;
-			sourceTree = "<group>";
-		};
-		D60D95EF31E9D866F8A5BA16 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				38493F5E6C0D654ABA2385CA /* Pods-kriptokwallet.debug.xcconfig */,
-				93EEA7F3FD558B43AD968EA0 /* Pods-kriptokwallet.release.xcconfig */,
-			);
-			name = Pods;
-			path = Pods;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -140,13 +140,13 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "kriptokwallet" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
-				17B465F380525D723A812B7D /* [Expo] Configure project */,
+				50A996B2CD54BB91B2DF7410 /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
-				4889DF268ABBC518FD5F9495 /* [CP] Embed Pods Frameworks */,
+				F00299A1D3A6EBF0E7BD2F39 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -196,7 +196,7 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				4E9768FD612451D11EAF996C /* PrivacyInfo.xcprivacy in Resources */,
+				42271077E8C29136141E82BD /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -240,7 +240,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		17B465F380525D723A812B7D /* [Expo] Configure project */ = {
+		50A996B2CD54BB91B2DF7410 /* [Expo] Configure project */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -258,24 +258,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-kriptokwallet/expo-configure-project.sh\"\n";
-		};
-		4889DF268ABBC518FD5F9495 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-kriptokwallet/Pods-kriptokwallet-frameworks.sh",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-kriptokwallet/Pods-kriptokwallet-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
 		};
 		800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -319,6 +301,24 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-kriptokwallet/Pods-kriptokwallet-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		F00299A1D3A6EBF0E7BD2F39 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-kriptokwallet/Pods-kriptokwallet-frameworks.sh",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-kriptokwallet/Pods-kriptokwallet-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -327,7 +327,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */,
-				FD5A042E30579B9582E5986F /* ExpoModulesProvider.swift in Sources */,
+				1D6EDE71908ADA9F1E89CB71 /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -336,7 +336,7 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 38493F5E6C0D654ABA2385CA /* Pods-kriptokwallet.debug.xcconfig */;
+			baseConfigurationReference = DC454CA7998901B1893A40DE /* Pods-kriptokwallet.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -372,7 +372,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 93EEA7F3FD558B43AD968EA0 /* Pods-kriptokwallet.release.xcconfig */;
+			baseConfigurationReference = 44063E35AA382CDD84B8324A /* Pods-kriptokwallet.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;

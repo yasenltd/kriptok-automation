@@ -1,17 +1,28 @@
-import { Stack, usePathname } from 'expo-router';
-import Toast from 'react-native-toast-message';
-import { Provider } from 'react-redux';
-import { store, persistor } from '@/stores/store';
-import { PersistGate } from 'redux-persist/integration/react';
-import { Header, HeaderBackButton } from '@react-navigation/elements';
-import { colors } from '@/utils';
 import { AuthProvider } from '@/context/AuthContext';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { persistor, store } from '@/stores/store';
+import { colors } from '@/utils';
 import { checkFirstInstallAndCleanup } from '@/utils/tracking';
 import AppLoader from '@components/ui/AppLoader';
+import { Header, HeaderBackButton } from '@react-navigation/elements';
+import { useFonts } from 'expo-font';
+import { SplashScreen, Stack, usePathname } from 'expo-router';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import Toast from 'react-native-toast-message';
+import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
+
+// prevent the splash screen from auto-hiding
+// when fonts are loading
+SplashScreen.preventAutoHideAsync();
 
 const Layout = () => {
   const [isLoaded, setIsLoaded] = useState(false);
+  const [fontsLoaded, fontError] = useFonts({
+    // add other font configurations here
+    // should the font weights change
+    'Satoshi-Regular': require('@/assets/fonts/Satoshi-Regular.otf'),
+    'Satoshi-Bold': require('@/assets/fonts/Satoshi-Bold.otf'),
+  });
 
   const pathname = usePathname();
 
@@ -26,10 +37,16 @@ const Layout = () => {
   }, [pathname]);
 
   useEffect(() => {
+    if (fontsLoaded || fontError) {
+      SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded, fontError]);
+
+  useEffect(() => {
     checkForData();
   }, []);
 
-  if (!isLoaded) return <AppLoader />;
+  if (!isLoaded || !fontsLoaded) return <AppLoader />;
 
   return (
     <Provider store={store}>

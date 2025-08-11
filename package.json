@@ -7,7 +7,8 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "e2e:ios": "detox test -c ios.sim.debug"
+    "e2e:setup": "detox test -c ios.sim.debug e2e/tests/setup.test.js",
+    "e2e:tests": "npm run e2e:setup && detox test -c ios.sim.debug --reuse e2e/tests/createWallet.test.js && detox test -c ios.sim.debug --reuse e2e/tests/seedBackup.test.js"
   },
   "dependencies": {
     "@bitcoinerlab/secp256k1": "^1.2.0",

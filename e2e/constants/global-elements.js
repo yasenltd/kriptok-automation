@@ -1,10 +1,10 @@
 const GLOBAL_TEXT = {
   SERVER_URL: 'http://localhost:8081',
   APP_TITLE: 'Kriptok Wallet',
+  CONTINUE: 'Continue',
   SELECT_LANGUAGE: 'Select Language',
   CREATE_NEW_WALLET: 'Create New Wallet',
   IMPORT_EXISTING_WALLET: 'Import Existing Wallet',
-  CONTINUE: 'Continue',
 };
 
 const GLOBAL_ELEMENT_ID = {
@@ -14,6 +14,7 @@ const GLOBAL_ELEMENT_ID = {
   LOGOUT: 'logout',
   REFRESH: 'refresh',
   TEST_TOKEN: 'test-token',
+  UNLOCK_APP: 'unlock-app',
   ENTER_PIN_UNLOCK: 'enter-pin-unlock',
 };
 

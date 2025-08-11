@@ -10,14 +10,17 @@ export const Theme = {
   // Button
   button: {
     ghost: {
+      default: colors.transparent,
       pressed: colors.grey.opacity[25],
       loading: colors.grey.opacity[50],
+      disabled: colors.transparent,
     },
     outline: {
       stroke: colors.grey.opacity[50],
+      default: colors.transparent,
       pressed: colors.grey.opacity[10],
       loading: colors.grey.opacity[25],
-      disabled: colors.grey[100],
+      disabled: colors.transparent,
     },
     secondary: {
       default: colors.blue[40],

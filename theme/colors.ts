@@ -1,4 +1,6 @@
 export const colors = {
+  transparent: 'transparent',
+
   // Neutral Colors
   black: {
     100: '#050505',

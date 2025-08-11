@@ -54,4 +54,21 @@ export const typography = {
     fontWeight: '400' as const,
     lineHeight: 12,
   },
+
+  button: {
+    xsToL: {
+      fontFamily: 'Satoshi-Medium', // fontWeight: 500 = Medium
+      fontSize: 14,
+      fontWeight: '500' as const,
+      lineHeight: 20,
+      letterSpacing: 0,
+    },
+    xl: {
+      fontFamily: 'Satoshi-Medium', // fontWeight: 500 = Medium
+      fontSize: 16,
+      fontWeight: '500' as const,
+      lineHeight: 24, // 150% of 16px = 24px
+      letterSpacing: 0,
+    },
+  },
 };

@@ -88,4 +88,13 @@ export type AssetMeta = {
   isNative: boolean;
   tokenAddress?: string;
   decimals: number;
+  balance: string;
+};
+
+export type txInfo = {
+  amount: string;
+  txHash: string;
+  to: string;
+  icon: string;
+  assetLabel: string;
 };

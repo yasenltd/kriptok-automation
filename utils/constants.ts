@@ -50,3 +50,19 @@ export const textSize = {
   mobileLarge: 20,
   large: 24,
 };
+
+export const EXPLORER_URLS: Record<string, (txHash: string) => string> = {
+  ETH: hash =>
+    isDev ? `https://sepolia.etherscan.io/tx/${hash}` : `https://etherscan.io/tx/${hash}`,
+
+  BTC: hash =>
+    isDev ? `https://mempool.space/testnet/tx/${hash}` : `https://mempool.space/tx/${hash}`,
+
+  SOL: hash =>
+    isDev ? `https://solscan.io/tx/${hash}?cluster=testnet` : `https://solscan.io/tx/${hash}`,
+
+  SUI: hash =>
+    isDev
+      ? `https://suiexplorer.com/txblock/${hash}?network=testnet`
+      : `https://suiexplorer.com/txblock/${hash}`,
+};

@@ -1,6 +1,6 @@
 import { useToast } from '@/hooks/useToast';
 import { RootState } from '@/stores/store';
-import { AssetMeta } from '@/types';
+import { AssetMeta, txInfo } from '@/types';
 import {
   deriveBitcoinWallet,
   deriveEVMWalletFromMnemonic,
@@ -25,7 +25,11 @@ const walletDerivationMap: Record<
   sui: deriveSuiWallet,
 };
 
-const TransactionScreen = () => {
+type Props = {
+  onComplete: (data: txInfo) => void;
+};
+
+const TransactionScreen = ({ onComplete }: Props) => {
   /* Hooks */
   const { token } = useLocalSearchParams();
   const user = useSelector((state: RootState) => state.user.data);
@@ -34,7 +38,6 @@ const TransactionScreen = () => {
 
   /* State */
   const [values, setValues] = useState({ to: '', amount: '', fee: '' });
-  const [txHash, setTxHash] = useState('');
 
   const deriveWallet = useMemo(() => {
     return walletDerivationMap[parsedToken.ledgerId];
@@ -78,8 +81,14 @@ const TransactionScreen = () => {
 
   const handleTransaction = useCallback(async () => {
     const amountNum = parseFloat(values.amount);
+    const balanceNum = parseFloat(parsedToken.balance ?? '0');
+
     if (!values.amount || isNaN(amountNum) || amountNum <= 0) {
       toast.showError('Enter a valid amount!');
+      return;
+    }
+    if (amountNum > balanceNum) {
+      toast.showError('Insufficient balance!');
       return;
     }
     if (!values.to) {
@@ -90,16 +99,21 @@ const TransactionScreen = () => {
       const mnemonic = await loadWalletSecurely();
       if (mnemonic) {
         const { privateKey } = deriveWallet(mnemonic);
-        const txParams = buildTxParams(values.to, values.amount, values.fee);
+        const txParams = buildTxParams(values.to, values.amount, values.fee); //TODO : TRANSACTION FEE
         const txHash = await sendTransaction(parsedToken.ledgerId, txParams, privateKey);
-        setTxHash(txHash);
+        onComplete({
+          amount: values.amount,
+          txHash: txHash,
+          to: values.to,
+          icon: parsedToken.ledgerId,
+          assetLabel: parsedToken.label,
+        });
       }
-      toast.showSuccess('Transaction successful.');
     } catch (error) {
       toast.showError('Transaction failed. Please try again.');
       console.error(error);
     }
-  }, [parsedToken, user, values]);
+  }, [parsedToken, user, values, onComplete]);
 
   return (
     <View>

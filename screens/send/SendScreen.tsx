@@ -5,38 +5,40 @@ import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSelector } from 'react-redux';
 import { useHeaderHeight } from '@react-navigation/elements';
 import AppInput from '@components/ui/AppInput';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import CryptoIcon from '@ledgerhq/crypto-icons/native';
 import { router } from 'expo-router';
 import { AssetMeta } from '@/types';
 
-const assetsMeta: AssetMeta[] = [
-  { key: 'eth', label: 'ETH', ledgerId: 'ethereum', isNative: true, decimals: 18 },
-  { key: 'btc', label: 'BTC', ledgerId: 'bitcoin', isNative: true, decimals: 8 },
-  { key: 'sol', label: 'SOL', ledgerId: 'solana', isNative: true, decimals: 9 },
-  { key: 'sui', label: 'SUI', ledgerId: 'sui', isNative: true, decimals: 9 },
-  {
-    key: 'usdt-eth',
-    label: 'USDT',
-    ledgerId: 'ethereum',
-    isNative: false,
-    tokenAddress: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
-    decimals: 6,
-  },
-];
 const SendScreen = () => {
   /* Hooks */
   const user = useSelector((state: RootState) => state.user.data);
   const { balances, balancesLoading } = useAllBalances({
-    eth: user?.address ?? '',
-    btc: user?.btc ?? '',
-    sol: user?.solana ?? '',
-    sui: user?.sui ?? '',
+    eth: user?.address,
+    btc: user?.btc,
+    sol: user?.solana,
+    sui: user?.sui,
   });
   const headerHeight = useHeaderHeight();
 
   /* State */
   const [searchValue, setSearchValue] = useState('');
+
+  const [assetsMeta, setAssetsMeta] = useState<AssetMeta[]>([
+    { key: 'eth', label: 'ETH', ledgerId: 'ethereum', isNative: true, decimals: 18, balance: '' },
+    { key: 'btc', label: 'BTC', ledgerId: 'bitcoin', isNative: true, decimals: 8, balance: '' },
+    { key: 'sol', label: 'SOL', ledgerId: 'solana', isNative: true, decimals: 9, balance: '' },
+    { key: 'sui', label: 'SUI', ledgerId: 'sui', isNative: true, decimals: 9, balance: '' },
+    {
+      key: 'usdt-eth',
+      label: 'USDT',
+      ledgerId: 'ethereum',
+      isNative: false,
+      tokenAddress: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
+      decimals: 6,
+      balance: '',
+    },
+  ]);
 
   const filteredAssets = useMemo(
     () =>
@@ -45,20 +47,37 @@ const SendScreen = () => {
           searchValue.trim() === '' ||
           asset.label.toLowerCase().startsWith(searchValue.toLowerCase()),
       ),
-    [searchValue],
+    [searchValue, assetsMeta],
   );
 
   /* Handlers */
-  const handleNavigate = useCallback((asset: AssetMeta) => {
-    router.push({
-      pathname: '/send/transaction',
-      params: {
-        token: JSON.stringify(asset),
-      },
-    });
-  }, []);
+  const handleNavigate = useCallback(
+    (asset: AssetMeta) => {
+      router.push({
+        pathname: '/send/transaction',
+        params: {
+          token: JSON.stringify(asset),
+        },
+      });
+    },
+    [balances],
+  );
 
-  if (balancesLoading) {
+  useEffect(() => {
+    if (!balancesLoading && balances) {
+      setAssetsMeta(prev =>
+        prev.map(asset => {
+          const key = asset.key as keyof BalancesType;
+          return {
+            ...asset,
+            balance: balances[key]?.toFixed(6) ?? '0.000000',
+          };
+        }),
+      );
+    }
+  }, [balancesLoading, balances]);
+
+  if (balancesLoading || !balances) {
     return (
       <View style={{ flex: 1, marginBottom: headerHeight }}>
         <AppLoader />
@@ -93,7 +112,7 @@ const SendScreen = () => {
 
             <Text style={styles.assetBalance}>
               {typeof balances[asset.key as keyof BalancesType] === 'number'
-                ? balances[asset.key as keyof BalancesType].toFixed(6)
+                ? balances[asset.key as keyof BalancesType].toFixed(6).toString()
                 : '0.000000'}
             </Text>
           </Pressable>

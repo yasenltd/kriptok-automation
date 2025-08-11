@@ -71,4 +71,19 @@ export const typography = {
       letterSpacing: 0,
     },
   },
+
+  checkbox: {
+    label: {
+      fontFamily: 'Satoshi-Medium',
+      fontSize: 14,
+      fontWeight: '500' as const,
+      lineHeight: 20,
+    },
+    description: {
+      fontFamily: 'Satoshi-Regular',
+      fontSize: 14,
+      fontWeight: '400' as const,
+      lineHeight: 20,
+    },
+  },
 };

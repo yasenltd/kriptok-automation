@@ -93,7 +93,7 @@ export const Theme = {
     active: colors.grey[5],
     inactive: colors.grey[40],
     pressed: colors.grey.opacity[25],
-    'nav-link-bg': colors.grey.opacity[50],
+    background: colors.grey.opacity[50],
   },
 
   // Overlay

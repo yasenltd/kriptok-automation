@@ -1,19 +1,19 @@
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import { default as React, useState } from 'react';
-import { ColorValue, Text, TouchableOpacity, View } from 'react-native';
+import { ColorValue, Pressable, Text, View } from 'react-native';
 import { buttonStyles } from '../../theme/buttonStyle';
 import { colors } from '../../theme/colors';
 import { Theme } from '../../theme/theme';
 import { typography } from '../../theme/typography';
-import LoaderIcon from './LoaderIcon';
+import LoaderIcon from '../icons/LoaderIcon';
 
 interface ButtonProps {
     label: string;
     disabled?: boolean;
     loading?: boolean;
     style?: "accent" | "secondary" | "tertiary" | "outline" | "ghost";
-    size?: "XS" | "S" | "M" | "L" | "XL";
+    size?: "XS" | "M" | "L" | "XL" | { width: number, height: number, fontSize?: number, iconSize?: number };
     onPress?: () => void;
     icon?: React.JSX.Element | { size: number, style: 'micro' | 'mini' | 'outline' | 'solid' };
     showLeftIcon?: boolean;
@@ -34,28 +34,29 @@ const Button: React.FC<ButtonProps> = ({
     const [isPressed, setIsPressed] = useState(false);
 
     const getSizeStyles = () => {
+        if (typeof size === 'object') {
+            return {
+                width: size.width,
+                height: size.height,
+                paddingHorizontal: 8,
+                paddingVertical: 4,
+            };
+        }
         switch (size) {
             case "XS":
-                return style == 'tertiary' ?
-                    { width: 107, height: 44, paddingHorizontal: 4, paddingVertical: 4 } :
-                    { width: 115, height: 44, paddingHorizontal: 8, paddingVertical: 4 };
-            case "S":
-                return { width: 120, height: 36, paddingHorizontal: 8, paddingVertical: 4 };
+                return { width: 99, height: 20, paddingHorizontal: 8, paddingVertical: 4 }
             case "M":
                 return { width: 140, height: 40, paddingHorizontal: 8, paddingVertical: 4 };
             case "L":
                 return { width: 160, height: 44, paddingHorizontal: 8, paddingVertical: 8 };
             case "XL":
                 return { width: 184, height: 52, paddingHorizontal: 8, paddingVertical: 12 };
-            default:
-                return { width: 140, height: 40, paddingHorizontal: 8, paddingVertical: 4 };
-        }
+        };
     };
 
     const getTextStyles = () => {
         switch (size) {
             case "XS":
-            case "S":
             case "M":
             case "L":
                 return typography.button.xsToL;
@@ -65,6 +66,13 @@ const Button: React.FC<ButtonProps> = ({
                 return typography.button.xsToL;
         }
     };
+
+    const getIconSize = () => {
+        if (typeof size === 'object' && size.iconSize) {
+            return size.iconSize;
+        }
+        return getTextStyles().fontSize;
+    }
 
     const getTextColor = () => {
         if (disabled) {
@@ -103,15 +111,20 @@ const Button: React.FC<ButtonProps> = ({
                     style={[buttonStyles.gradient, getSizeStyles(), getAccentBackground()]}
                 >
                     <View style={buttonStyles.content}>
+                        {/* <ActivityIndicator
+                            animating={loading}
+                            color={getTextColor().color}
+                            size={getTextStyles().fontSize}
+                        /> */}
                         {showLeftIcon && loading && (
                             <LoaderIcon
-                                size={getTextStyles().fontSize}
+                                size={getIconSize()}
                                 color={getTextColor().color}
                             />
                         )}
                         {showLeftIcon && !loading && React.isValidElement(icon) &&
                             React.cloneElement(icon as React.ReactElement<any>, {
-                                size: getTextStyles().fontSize,
+                                size: getIconSize(),
                                 color: getTextColor().color
                             })
                         }
@@ -123,13 +136,13 @@ const Button: React.FC<ButtonProps> = ({
                         </Text>
                         {showRightIcon && loading && (
                             <LoaderIcon
-                                size={getTextStyles().fontSize}
+                                size={getIconSize()}
                                 color={getTextColor().color}
                             />
                         )}
                         {showRightIcon && !loading && React.isValidElement(icon) &&
                             React.cloneElement(icon as React.ReactElement<any>, {
-                                size: getTextStyles().fontSize,
+                                size: getIconSize(),
                                 color: getTextColor().color
                             })
                         }
@@ -140,20 +153,20 @@ const Button: React.FC<ButtonProps> = ({
 
         // this is the best way to handle the blur effect
         // without needing huge third party libraries
-        const needsBlur = (style === "outline" || style === "ghost") && (loading || isPressed);
+        const needsBlur = ((style === "outline" || style === "ghost") && (loading || isPressed)) || (style === "tertiary" && !loading && !disabled && !isPressed);
         if (needsBlur) {
             return (
                 <BlurView intensity={20} style={[buttonStyles.button, getSizeStyles(), getNonAccentStyles(), buttonStyles.blurContainer]}>
                     <View style={buttonStyles.content}>
                         {showLeftIcon && loading && (
                             <LoaderIcon
-                                size={getTextStyles().fontSize}
+                                size={getIconSize()}
                                 color={getTextColor().color}
                             />
                         )}
                         {showLeftIcon && !loading && React.isValidElement(icon) &&
                             React.cloneElement(icon as React.ReactElement<any>, {
-                                size: getTextStyles().fontSize,
+                                size: getIconSize(),
                                 color: getTextColor().color
                             })
                         }
@@ -165,13 +178,13 @@ const Button: React.FC<ButtonProps> = ({
                         </Text>
                         {showRightIcon && loading && (
                             <LoaderIcon
-                                size={getTextStyles().fontSize}
+                                size={getIconSize()}
                                 color={getTextColor().color}
                             />
                         )}
                         {showRightIcon && !loading && React.isValidElement(icon) &&
                             React.cloneElement(icon as React.ReactElement<any>, {
-                                size: getTextStyles().fontSize,
+                                size: getIconSize(),
                                 color: getTextColor().color
                             })
                         }
@@ -186,13 +199,13 @@ const Button: React.FC<ButtonProps> = ({
                 <View style={buttonStyles.content}>
                     {showLeftIcon && loading && (
                         <LoaderIcon
-                            size={getTextStyles().fontSize}
+                            size={getIconSize()}
                             color={getTextColor().color}
                         />
                     )}
                     {showLeftIcon && !loading && React.isValidElement(icon) &&
                         React.cloneElement(icon as React.ReactElement<any>, {
-                            size: getTextStyles().fontSize,
+                            size: getIconSize(),
                             color: getTextColor().color
                         })
                     }
@@ -204,13 +217,13 @@ const Button: React.FC<ButtonProps> = ({
                     </Text>
                     {showRightIcon && loading && (
                         <LoaderIcon
-                            size={getTextStyles().fontSize}
+                            size={getIconSize()}
                             color={getTextColor().color}
                         />
                     )}
                     {showRightIcon && !loading && React.isValidElement(icon) &&
                         React.cloneElement(icon as React.ReactElement<any>, {
-                            size: getTextStyles().fontSize,
+                            size: getIconSize(),
                             color: getTextColor().color
                         })
                     }
@@ -270,16 +283,15 @@ const Button: React.FC<ButtonProps> = ({
     };
 
     return (
-        <TouchableOpacity
+        <Pressable
             onPress={onPress}
             disabled={disabled || loading}
-            activeOpacity={1}
             style={getButtonStyle()}
             onPressIn={() => setIsPressed(true)}
             onPressOut={() => setIsPressed(false)}
         >
             {getButtonContent()}
-        </TouchableOpacity>
+        </Pressable>
     );
 };
 

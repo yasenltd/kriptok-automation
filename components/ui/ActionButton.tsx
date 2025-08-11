@@ -1,6 +1,6 @@
 import { BlurView } from 'expo-blur';
 import { default as React, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Theme } from '../../theme/theme';
 import { typography } from '../../theme/typography';
 
@@ -79,16 +79,15 @@ const ActionButton: React.FC<ActionButtonProps> = ({
     };
 
     return (
-        <TouchableOpacity
+        <Pressable
             onPress={onPress}
             disabled={disabled || loading}
-            activeOpacity={1}
             style={getActionButtonStyle()}
             onPressIn={() => setIsPressed(true)}
             onPressOut={() => setIsPressed(false)}
         >
             {getActionButtonContent()}
-        </TouchableOpacity>
+        </Pressable>
     );
 };
 

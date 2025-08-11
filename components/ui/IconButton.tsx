@@ -1,7 +1,7 @@
 import BlurView from 'expo-blur/build/BlurView';
 import { LinearGradient } from 'expo-linear-gradient';
 import { default as React, useState } from 'react';
-import { ColorValue, TouchableOpacity, View } from 'react-native';
+import { ColorValue, Pressable, View } from 'react-native';
 import { buttonStyles } from '../../theme/buttonStyle';
 import { colors } from '../../theme/colors';
 import { Theme } from '../../theme/theme';
@@ -179,16 +179,15 @@ const IconButton: React.FC<IconButtonProps> = ({
     };
 
     return (
-        <TouchableOpacity
+        <Pressable
             onPress={onPress}
             disabled={disabled || loading}
-            activeOpacity={1}
             style={getIconButtonStyle()}
             onPressIn={() => setIsPressed(true)}
             onPressOut={() => setIsPressed(false)}
         >
             {getIconButtonContent()}
-        </TouchableOpacity>
+        </Pressable>
     );
 };
 

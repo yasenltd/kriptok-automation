@@ -19,6 +19,7 @@ import {
 
 import { getToken, saveToken, removeToken, isTokenExpired } from './tokenStorage';
 import { copyToClipboard } from './stringUtils';
+import { formatAddress } from './stringUtils';
 
 export {
   generateMnemonic,
@@ -42,4 +43,5 @@ export {
   copyToClipboard,
   textSize,
   inputSizeMapping,
+  formatAddress,
 };

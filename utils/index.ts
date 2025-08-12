@@ -15,11 +15,14 @@ import {
   secureGet,
   secureRemove,
   secureSave,
+  loadPrivKeySecurely,
+  storePrivKeySecurely,
+  storeAllPrivKeys,
 } from './secureStore';
 
 import { getToken, saveToken, removeToken, isTokenExpired } from './tokenStorage';
 import { copyToClipboard } from './stringUtils';
-import { formatAddress } from './stringUtils';
+import { formatAddress, shareText } from './stringUtils';
 
 export {
   generateMnemonic,
@@ -44,4 +47,8 @@ export {
   textSize,
   inputSizeMapping,
   formatAddress,
+  loadPrivKeySecurely,
+  storePrivKeySecurely,
+  storeAllPrivKeys,
+  shareText,
 };

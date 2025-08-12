@@ -29,7 +29,7 @@ export const TEST_ETH_RPC_PROVIDER = {
   polygon: `https://polygon-amoy.infura.io/v3/${INFURA_ID}`,
   base: `https://base-sepolia.infura.io/v3/${INFURA_ID}`,
   optimism: `https://optimism-sepolia.infura.io/v3/${INFURA_ID}`,
-  arbitrum: `https://arbitrum-sepolia.infura.io/${INFURA_ID}`,
+  arbitrum: `https://arbitrum-sepolia.infura.io/v3/${INFURA_ID}`,
   bnb: `https://bsc-testnet.infura.io/v3/${INFURA_ID}`,
 };
 

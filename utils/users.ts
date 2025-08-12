@@ -4,6 +4,6 @@ import { IUser, UpdateUserDto } from '@/types';
 export const getUser = async () => get<IUser>(`/users/me`);
 
 export const updateUserMe = (data: UpdateUserDto) =>
-  put<boolean>(`/users/me/update`, {
+  put<boolean>(`/users/me/updateHasBackedUp`, {
     body: data,
   });

@@ -1,20 +1,20 @@
-import { StyleSheet } from 'react-native';
-import { useTheme } from '../context/ThemeContext';
-
-const { theme } = useTheme();
+import { useTheme } from '@/context/ThemeContext';
+import { colors } from '@/theme/colors';
+import { ButtonState, ButtonStyle } from '@/utils/types';
+import { ColorValue, StyleSheet, ViewStyle } from 'react-native';
 
 export const useButtonStyles = () => {
   const { theme } = useTheme();
 
-  return StyleSheet.create({
+  const buttonStyles = StyleSheet.create({
     button: {
       borderRadius: 9999,
       justifyContent: 'center',
       alignItems: 'center',
-      textAlign: 'center',
     },
     blurContainer: {
       borderRadius: 9999,
+      justifyContent: 'center',
       overflow: 'hidden',
     },
     gradient: {
@@ -28,109 +28,144 @@ export const useButtonStyles = () => {
       justifyContent: 'center',
       gap: 4,
     },
+  });
 
-    // Accent button states
-    accentDefault: {
+  const accentStyles = StyleSheet.create({
+    default: {
       elevation: 2,
       boxShadow: '0px 0px 10px 0px #FFFFFF80 inset, 0px 0px 5px 0px #FFFFFF inset',
-      color: theme.text.inverted,
     },
-    accentPressed: {
+    pressed: {
       boxShadow: '0px 0px 5px 0px #A3BDED80, 0px 4px 10px 0px #A3BDED3D',
       elevation: 5,
-      color: theme.text.inverted,
     },
-    accentLoading: {
+    loading: {
       boxShadow:
         '0px 0px 10px 0px #FFFFFF80 inset, 0px 0px 10px 0px #FFFFFF80 inset, 0px 0px 5px 0px #FFFFFF inset, 0px 0px 15px 0px #FFFFFF inset, 0px 0px 5px 0px #A3BDED80, 0px 4px 10px 0px #A3BDED3D',
       elevation: 3,
-      color: theme.text.inverted,
     },
-    accentDisabled: {
+    disabled: {
       elevation: 0,
-      color: theme.text.disabled,
     },
+  });
 
-    // Secondary button states
-    secondaryDefault: {
+  const accentGradients = {
+    default: [colors.blue[30], colors.blue[60]],
+    disabled: [theme.button.secondary.disabled, theme.button.secondary.disabled],
+    loading: [colors.blue[10], colors.blue[40]],
+    pressed: [colors.blue[10], colors.blue[10]],
+  };
+
+  const secondaryStyles = StyleSheet.create({
+    default: {
       backgroundColor: theme.button.secondary.default,
-      color: theme.text.inverted,
     },
-    secondaryPressed: {
+    pressed: {
       backgroundColor: theme.button.secondary.pressed,
-      color: theme.text.inverted,
     },
-    secondaryLoading: {
+    loading: {
       backgroundColor: theme.button.secondary.loading,
-      color: theme.text.inverted,
     },
-    secondaryDisabled: {
+    disabled: {
       backgroundColor: theme.button.secondary.disabled,
-      color: theme.text.disabled,
     },
+  });
 
-    // Tertiary button states
-    tertiaryDefault: {
+  const tertiaryStyles = StyleSheet.create({
+    default: {
       backgroundColor: theme.button.tertiary.default,
-      color: theme.text.primary,
     },
-    tertiaryPressed: {
+    pressed: {
       backgroundColor: theme.button.tertiary.pressed,
-      color: theme.text.primary,
     },
-    tertiaryLoading: {
+    loading: {
       backgroundColor: theme.button.tertiary.loading,
-      color: theme.text.primary,
     },
-    tertiaryDisabled: {
+    disabled: {
       backgroundColor: theme.button.tertiary.disabled,
-      color: theme.text.disabled,
     },
+  });
 
-    // Outline button states
-    outlineDefault: {
+  const outlineStyles = StyleSheet.create({
+    default: {
       backgroundColor: theme.button.outline.default,
-      color: theme.text.primary,
       borderWidth: 1,
       borderColor: theme.button.outline.stroke,
     },
-    outlinePressed: {
+    pressed: {
       backgroundColor: theme.button.outline.pressed,
-      color: theme.text.primary,
       borderWidth: 1,
       borderColor: theme.button.outline.stroke,
     },
-    outlineLoading: {
+    loading: {
       backgroundColor: theme.button.outline.loading,
-      color: theme.text.primary,
       borderWidth: 1,
       borderColor: theme.button.outline.stroke,
     },
-    outlineDisabled: {
+    disabled: {
       backgroundColor: theme.button.outline.disabled,
-      color: theme.text.disabled,
       borderWidth: 1,
       borderColor: theme.button.secondary.disabled,
     },
+  });
 
-    // Ghost button states
-    ghostDefault: {
+  const ghostStyles = StyleSheet.create({
+    default: {
       backgroundColor: theme.button.ghost.default,
-      color: theme.text.primary,
     },
-    ghostPressed: {
+    pressed: {
       backgroundColor: theme.button.ghost.pressed,
-      color: theme.text.primary,
-      filter: 'blur(10px)',
     },
-    ghostLoading: {
+    loading: {
       backgroundColor: theme.button.ghost.loading,
-      color: theme.text.primary,
-      filter: 'blur(10px)',
     },
-    ghostDisabled: {
+    disabled: {
       backgroundColor: theme.button.ghost.disabled,
-      color: theme.text.disabled,
     },
   });
+
+  const getAccentGradientColors: (state: ButtonState) => [ColorValue, ColorValue] = state => {
+    return accentGradients[state] as [ColorValue, ColorValue];
+  };
+
+  const getButtonTextColor: (state: ButtonState, style: ButtonStyle) => ColorValue = (
+    state,
+    style,
+  ) => {
+    if (state === 'disabled') {
+      return theme.text.disabled;
+    }
+
+    switch (style) {
+      case 'accent':
+      case 'secondary':
+        return theme.text.inverted;
+      case 'tertiary':
+      case 'outline':
+      case 'ghost':
+      default:
+        return theme.text.primary;
+    }
+  };
+
+  const getStyles: (state: ButtonState, style: ButtonStyle) => ViewStyle = (state, style) => {
+    return specificStyles[style][state];
+  };
+
+  const specificStyles = {
+    accent: accentStyles,
+    accentGradients: accentGradients,
+    secondary: secondaryStyles,
+    tertiary: tertiaryStyles,
+    outline: outlineStyles,
+    ghost: ghostStyles,
+  };
+
+  return {
+    buttonStyles,
+    specificStyles,
+    getAccentGradientColors,
+    getButtonTextColor,
+    getStyles,
+  };
 };

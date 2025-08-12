@@ -1,8 +1,8 @@
+import { useTheme } from '@/context/ThemeContext';
+import { typography } from '@/theme/typography';
 import { BlurView } from 'expo-blur';
 import { default as React, useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { useTheme } from '../../context/ThemeContext';
-import { typography } from '../../theme/typography';
 
 interface ActionButtonProps {
     label: string;

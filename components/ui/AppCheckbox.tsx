@@ -1,8 +1,8 @@
+import { useTheme } from '@/context/ThemeContext';
+import { typography } from '@/theme/typography';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { useTheme } from '../../context/ThemeContext';
-import { typography } from '../../theme/typography';
 
 type CheckboxProps = {
   value: boolean;

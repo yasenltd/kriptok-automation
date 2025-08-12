@@ -1,29 +1,25 @@
-import { BlurView } from 'expo-blur';
+import LoaderIcon from '@/components/icons/LoaderIcon';
+import { useButtonStyles } from '@/hooks/useButtonStyles';
+import { typography } from '@/theme/typography';
+import { ButtonSize, ButtonState, ButtonStyle, Icon, SelectableButtonState } from '@/utils/types';
 import { LinearGradient } from 'expo-linear-gradient';
 import { default as React, useState } from 'react';
-import { ColorValue, Pressable, Text, View } from 'react-native';
-import { buttonStyles } from '../../hooks/useButtonStyles';
-import { colors } from '../../theme/colors';
-import { Theme } from '../../theme/DarkTheme';
-import { typography } from '../../theme/typography';
-import LoaderIcon from '../icons/LoaderIcon';
+import { ColorValue, Pressable, Text, TextStyle, View } from 'react-native';
 
 interface ButtonProps {
     label: string;
-    disabled?: boolean;
-    loading?: boolean;
-    style?: "accent" | "secondary" | "tertiary" | "outline" | "ghost";
-    size?: "XS" | "M" | "L" | "XL" | { width: number, height: number, fontSize?: number, iconSize?: number };
+    state?: SelectableButtonState;
+    style?: ButtonStyle
+    size?: ButtonSize | { width: number, height: number, fontSize?: number, iconSize?: number };
     onPress?: () => void;
-    icon?: React.JSX.Element | { size: number, style: 'micro' | 'mini' | 'outline' | 'solid' };
+    icon?: Icon;
     showLeftIcon?: boolean;
     showRightIcon?: boolean;
 }
 
 const Button: React.FC<ButtonProps> = ({
-    label,
-    disabled = false,
-    loading = false,
+    label = "",
+    state = 'default',
     style = "accent",
     size = 'M',
     onPress,
@@ -31,7 +27,8 @@ const Button: React.FC<ButtonProps> = ({
     showLeftIcon,
     showRightIcon
 }) => {
-    const [isPressed, setIsPressed] = useState(false);
+    const { buttonStyles, getAccentGradientColors, getButtonTextColor, getStyles } = useButtonStyles();
+    const [currentState, setCurrentState] = useState<ButtonState>(state);
 
     const getSizeStyles = () => {
         if (typeof size === 'object') {
@@ -42,16 +39,11 @@ const Button: React.FC<ButtonProps> = ({
                 paddingVertical: 4,
             };
         }
-        switch (size) {
-            case "XS":
-                return { width: 99, height: 20, paddingHorizontal: 8, paddingVertical: 4 }
-            case "M":
-                return { width: 140, height: 40, paddingHorizontal: 8, paddingVertical: 4 };
-            case "L":
-                return { width: 160, height: 44, paddingHorizontal: 8, paddingVertical: 8 };
-            case "XL":
-                return { width: 184, height: 52, paddingHorizontal: 8, paddingVertical: 12 };
-        };
+        return sizeStyles[size];
+    };
+
+    const getTextColor = () => {
+        return getButtonTextColor(currentState, style);
     };
 
     const getTextStyles = () => {
@@ -74,225 +66,131 @@ const Button: React.FC<ButtonProps> = ({
         return getTextStyles().fontSize;
     }
 
-    const getTextColor = () => {
-        if (disabled) {
-            return { color: Theme.text.disabled };
-        }
-
-        switch (style) {
-            case "accent":
-            case "secondary":
-                return { color: Theme.text.inverted };
-            case "tertiary":
-            case "outline":
-            case "ghost":
-            default:
-                return { color: Theme.text.primary };
-        }
-    };
+    const getButtonStyles = () => {
+        return getStyles(currentState, style);
+    }
 
     const getButtonContent = () => {
         if (style === "accent") {
-            let gradientColors = [colors.blue[30], colors.blue[60]] as [ColorValue, ColorValue];
-
-            if (disabled) {
-                gradientColors = [Theme.button.secondary.disabled, Theme.button.secondary.disabled];
-            } else if (loading) {
-                gradientColors = [colors.blue[10], colors.blue[40]];
-            } else if (isPressed) {
-                gradientColors = [colors.blue[10], colors.blue[10]];
-            }
+            let gradientColors = getAccentGradientColors(currentState);
 
             return (
                 <LinearGradient
                     colors={gradientColors}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 1 }}
-                    style={[buttonStyles.gradient, getSizeStyles(), getAccentBackground()]}
+                    style={[buttonStyles.gradient, getSizeStyles(), getButtonStyles()]}
                 >
-                    <View style={buttonStyles.content}>
-                        {/* <ActivityIndicator
-                            animating={loading}
-                            color={getTextColor().color}
-                            size={getTextStyles().fontSize}
-                        /> */}
-                        {showLeftIcon && loading && (
-                            <LoaderIcon
-                                size={getIconSize()}
-                                color={getTextColor().color}
-                            />
-                        )}
-                        {showLeftIcon && !loading && React.isValidElement(icon) &&
-                            React.cloneElement(icon as React.ReactElement<any>, {
-                                size: getIconSize(),
-                                color: getTextColor().color
-                            })
-                        }
-                        <Text style={[
-                            getTextStyles(),
-                            getTextColor(),
-                        ]}>
-                            {label}
-                        </Text>
-                        {showRightIcon && loading && (
-                            <LoaderIcon
-                                size={getIconSize()}
-                                color={getTextColor().color}
-                            />
-                        )}
-                        {showRightIcon && !loading && React.isValidElement(icon) &&
-                            React.cloneElement(icon as React.ReactElement<any>, {
-                                size: getIconSize(),
-                                color: getTextColor().color
-                            })
-                        }
-                    </View>
+                    <ButtonContents
+                        state={currentState}
+                        icon={icon}
+                        iconSize={getIconSize()}
+                        textStyles={getTextStyles()}
+                        textColor={getTextColor()}
+                        label={label}
+                        showLeftIcon={showLeftIcon}
+                        showRightIcon={showRightIcon}
+                    />
                 </LinearGradient>
             );
         }
 
-        // this is the best way to handle the blur effect
-        // without needing huge third party libraries
-        const needsBlur = ((style === "outline" || style === "ghost") && (loading || isPressed)) || (style === "tertiary" && !loading && !disabled && !isPressed);
-        if (needsBlur) {
-            return (
-                <BlurView intensity={20} style={[buttonStyles.button, getSizeStyles(), getNonAccentStyles(), buttonStyles.blurContainer]}>
-                    <View style={buttonStyles.content}>
-                        {showLeftIcon && loading && (
-                            <LoaderIcon
-                                size={getIconSize()}
-                                color={getTextColor().color}
-                            />
-                        )}
-                        {showLeftIcon && !loading && React.isValidElement(icon) &&
-                            React.cloneElement(icon as React.ReactElement<any>, {
-                                size: getIconSize(),
-                                color: getTextColor().color
-                            })
-                        }
-                        <Text style={[
-                            getTextStyles(),
-                            getTextColor(),
-                        ]}>
-                            {label}
-                        </Text>
-                        {showRightIcon && loading && (
-                            <LoaderIcon
-                                size={getIconSize()}
-                                color={getTextColor().color}
-                            />
-                        )}
-                        {showRightIcon && !loading && React.isValidElement(icon) &&
-                            React.cloneElement(icon as React.ReactElement<any>, {
-                                size: getIconSize(),
-                                color: getTextColor().color
-                            })
-                        }
-                    </View>
-                </BlurView>
-            );
-        }
+        // this code causes the following error:
+        // "Warning: Text strings must be rendered within a <Text> component."
+        // const isDefault = (currentState === 'default');
+        // const loading = (currentState === 'loading');
+        // const pressed = (currentState === 'pressed');
+        // const disabled = (currentState === 'disabled');
+        // const needsBlur =
+        //     ((style === "outline" || style === "ghost") && (loading || pressed)) ||
+        //     (style === "tertiary" && isDefault);
+        // if (needsBlur) {
+        //     return (
+        //         <BlurView intensity={20} style={[getSizeStyles(), buttonStyles.blurContainer]}>
+        //             <ButtonContents
+        //                 state={currentState}
+        //                 icon={icon}
+        //                 iconSize={getIconSize()}
+        //                 textStyles={getTextStyles()}
+        //                 textColor={getTextColor()}
+        //                 label={label}
+        //                 showLeftIcon={showLeftIcon}
+        //                 showRightIcon={showRightIcon}
+        //             />
+        //         </BlurView>
+        //     );
+        // }
 
-        // Non-accent button styles
         return (
-            <View style={[buttonStyles.button, getSizeStyles(), getNonAccentStyles()]}>
-                <View style={buttonStyles.content}>
-                    {showLeftIcon && loading && (
-                        <LoaderIcon
-                            size={getIconSize()}
-                            color={getTextColor().color}
-                        />
-                    )}
-                    {showLeftIcon && !loading && React.isValidElement(icon) &&
-                        React.cloneElement(icon as React.ReactElement<any>, {
-                            size: getIconSize(),
-                            color: getTextColor().color
-                        })
-                    }
-                    <Text style={[
-                        getTextStyles(),
-                        getTextColor(),
-                    ]}>
-                        {label}
-                    </Text>
-                    {showRightIcon && loading && (
-                        <LoaderIcon
-                            size={getIconSize()}
-                            color={getTextColor().color}
-                        />
-                    )}
-                    {showRightIcon && !loading && React.isValidElement(icon) &&
-                        React.cloneElement(icon as React.ReactElement<any>, {
-                            size: getIconSize(),
-                            color: getTextColor().color
-                        })
-                    }
-                </View>
-            </View>
+            <View style={[buttonStyles.button, getSizeStyles(), getStyles(currentState, style)]}>
+                <ButtonContents
+                    state={currentState}
+                    icon={icon}
+                    iconSize={getIconSize()}
+                    textStyles={getTextStyles()}
+                    textColor={getTextColor()}
+                    label={label}
+                    showLeftIcon={showLeftIcon}
+                    showRightIcon={showRightIcon}
+                />            </View>
         );
-    };
-
-    const getAccentBackground = () => {
-        if (style !== "accent") return {};
-
-        if (disabled) {
-            return buttonStyles.accentDisabled;
-        } else if (loading) {
-            return buttonStyles.accentLoading;
-        } else if (isPressed) {
-            return buttonStyles.accentPressed;
-        } else {
-            return buttonStyles.accentDefault;
-        }
-    };
-
-    const getNonAccentStyles = () => {
-        if (style === "secondary") {
-            if (disabled) return buttonStyles.secondaryDisabled;
-            if (loading) return buttonStyles.secondaryLoading;
-            if (isPressed) return buttonStyles.secondaryPressed;
-            return buttonStyles.secondaryDefault;
-        }
-
-        if (style === "tertiary") {
-            if (disabled) return buttonStyles.tertiaryDisabled;
-            if (loading) return buttonStyles.tertiaryLoading;
-            if (isPressed) return buttonStyles.tertiaryPressed;
-            return buttonStyles.tertiaryDefault;
-        }
-
-        if (style === "outline") {
-            if (disabled) return buttonStyles.outlineDisabled;
-            if (loading) return buttonStyles.outlineLoading;
-            if (isPressed) return buttonStyles.outlinePressed;
-            return buttonStyles.outlineDefault;
-        }
-
-        if (style === "ghost") {
-            if (disabled) return buttonStyles.ghostDisabled;
-            if (loading) return buttonStyles.ghostLoading;
-            if (isPressed) return buttonStyles.ghostPressed;
-            return buttonStyles.ghostDefault;
-        }
-
-        return {};
-    };
-
-    const getButtonStyle = () => {
-        return [buttonStyles.button];
     };
 
     return (
         <Pressable
             onPress={onPress}
-            disabled={disabled || loading}
-            style={getButtonStyle()}
-            onPressIn={() => setIsPressed(true)}
-            onPressOut={() => setIsPressed(false)}
+            disabled={currentState === 'disabled' || currentState === 'loading'}
+            style={buttonStyles.button}
+            onPressIn={() => setCurrentState('pressed')}
+            onPressOut={() => setCurrentState('default')}
         >
             {getButtonContent()}
         </Pressable>
     );
 };
 
+interface ButtonContentsProps {
+    state: ButtonState;
+    icon?: Icon;
+    iconSize: number;
+    textStyles: TextStyle;
+    textColor: ColorValue;
+    label: string;
+    showLeftIcon?: boolean;
+    showRightIcon?: boolean;
+};
+
+
+const ButtonContents: React.FC<ButtonContentsProps> = ({ state, icon, iconSize, textStyles, textColor, label, showLeftIcon, showRightIcon }) => {
+    const { buttonStyles } = useButtonStyles();
+
+    const loading = (state === 'loading');
+    return (
+        <View style={buttonStyles.content}>
+            {showLeftIcon && loading && <LoaderIcon size={iconSize} color={textColor} />}
+            {showLeftIcon && !loading && icon && React.isValidElement(icon) && React.cloneElement((icon as React.ReactElement<any>), {
+                size: iconSize,
+                color: textColor
+            })}
+            <Text style={[textStyles, { color: textColor }]}>
+                {label}
+            </Text>
+            {showRightIcon && loading && <LoaderIcon size={iconSize} color={textColor} />}
+            {showRightIcon && !loading && icon && React.isValidElement(icon) && React.cloneElement((icon as React.ReactElement<any>), {
+                size: iconSize,
+                color: textColor
+            })}
+        </View>
+    );
+}
+
+const sizeStyles = {
+    XS: { width: 99, height: 20, paddingHorizontal: 8, paddingVertical: 4 },
+    S: { width: 120, height: 32, paddingHorizontal: 8, paddingVertical: 4 },
+    M: { width: 140, height: 40, paddingHorizontal: 8, paddingVertical: 4 },
+    L: { width: 160, height: 44, paddingHorizontal: 8, paddingVertical: 8 },
+    XL: { width: 184, height: 52, paddingHorizontal: 8, paddingVertical: 12 }
+};
+
 export default Button;
+

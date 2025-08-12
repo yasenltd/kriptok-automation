@@ -1,6 +1,6 @@
 // import { Switch as ReactNativeSwitch } from "react-native";
+import { useTheme } from "@/context/ThemeContext";
 import { Switch as ReactNativeSwitch } from "react-native-paper";
-import { useTheme } from "../../context/ThemeContext";
 
 interface SwitchProps {
     onValueChange: (value: boolean) => void;

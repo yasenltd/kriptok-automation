@@ -102,6 +102,13 @@ const Layout = () => {
                   headerShown: true,
                 }}
               />
+
+              <Stack.Screen
+                name="(auth)"
+                options={{
+                  headerShown: false,
+                }}
+              />
             </Stack>
 
             <Toast visibilityTime={5000} position="top" topOffset={60} />

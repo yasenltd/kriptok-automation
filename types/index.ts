@@ -98,3 +98,16 @@ export type txInfo = {
   icon: string;
   assetLabel: string;
 };
+
+export type BalancesType = {
+  eth: number;
+  linea: number;
+  polygon: number;
+  base: number;
+  optimism: number;
+  arbitrum: number;
+  bnb: number;
+  btc: number;
+  sol: number;
+  sui: number;
+};

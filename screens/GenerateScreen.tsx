@@ -51,13 +51,20 @@ export default function GenerateScreen() {
     setSuiWallet(prev => ({ ...prev, privateKey: '' }));
   }, []);
 
-  const handleGenerateMnemonic = useCallback(() => {
+  const handleGenerateMnemonic = useCallback(async () => {
     try {
       const newMnemonic = generateMnemonic();
       setMnemonic(newMnemonic);
 
       const wallets = deriveAllWalletsFromMnemonic(newMnemonic);
 
+      //store priv keys
+      await storeAllPrivKeys({
+        eth: wallets.evm.privateKey,
+        sol: wallets.solana.privateKey,
+        sui: wallets.sui.privateKey,
+        btc: wallets.bitcoin.privateKey,
+      });
       setWallets(wallets);
 
       setPinModalVisible(true);
@@ -99,14 +106,6 @@ export default function GenerateScreen() {
         message,
         signature,
       );
-
-      //store priv keys
-      await storeAllPrivKeys({
-        eth: evmWallet.privateKey,
-        sol: solWallet.privateKey,
-        sui: suiWallet.privateKey,
-        btc: btcWallet.privateKey,
-      });
 
       await saveToken({
         access_token,

@@ -1,6 +1,6 @@
 import { colors } from './colors';
 
-export const Theme = {
+export const DarkTheme = {
   // Action Sheet
   actionSheet: {
     toggle: colors.grey[90],

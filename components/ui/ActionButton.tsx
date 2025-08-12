@@ -1,7 +1,7 @@
 import { BlurView } from 'expo-blur';
-import { default as React, useState } from 'react';
+import { default as React, useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { Theme } from '../../theme/theme';
+import { useTheme } from '../../context/ThemeContext';
 import { typography } from '../../theme/typography';
 
 interface ActionButtonProps {
@@ -19,15 +19,17 @@ const ActionButton: React.FC<ActionButtonProps> = ({
     onPress,
     icon
 }) => {
-    const [isPressed, setIsPressed] = useState(false);
+    const { theme } = useTheme();
+    const styles = useActionButtonStyles();
 
+    const [isPressed, setIsPressed] = useState(false);
 
     const getTextColor = () => {
         if (disabled) {
-            return { color: Theme.text.disabled };
+            return { color: theme.text.disabled };
         }
         return {
-            color: Theme.text.primary,
+            color: theme.text.primary,
         }
     };
 
@@ -91,47 +93,48 @@ const ActionButton: React.FC<ActionButtonProps> = ({
     );
 };
 
-const styles = StyleSheet.create({
-    button: {
-        borderRadius: 9999,
-        justifyContent: 'center',
-        alignItems: 'center',
-        textAlign: 'center',
-        width: 110,
-        height: 64,
-        paddingHorizontal: 24,
-        paddingVertical: 12,
-    },
-    content: {
-        width: 110,
-        height: 64,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 4,
-    },
-    blurContainer: {
-        borderRadius: 9999,
-        overflow: 'hidden',
-    },
+const useActionButtonStyles = () => {
+    const { theme } = useTheme();
 
-    default: {
-        backgroundColor: Theme.button.tertiary.default,
-        color: Theme.text.inverted
-    },
-    loading: {
-        backgroundColor: Theme.button.tertiary.loading,
-        color: Theme.text.inverted
-    },
-    pressed: {
-        backgroundColor: Theme.button.tertiary.pressed,
-        color: Theme.text.inverted
-    },
-    disabled: {
-        backgroundColor: Theme.button.tertiary.disabled,
-        color: Theme.text.disabled
-    },
-
-});
-
+    return useMemo(() => StyleSheet.create({
+        button: {
+            borderRadius: 9999,
+            justifyContent: 'center',
+            alignItems: 'center',
+            textAlign: 'center',
+            width: 110,
+            height: 64,
+            paddingHorizontal: 24,
+            paddingVertical: 12,
+        },
+        content: {
+            width: 110,
+            height: 64,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 4,
+        },
+        blurContainer: {
+            borderRadius: 9999,
+            overflow: 'hidden',
+        },
+        default: {
+            backgroundColor: theme.button.tertiary.default,
+            color: theme.text.inverted
+        },
+        loading: {
+            backgroundColor: theme.button.tertiary.loading,
+            color: theme.text.inverted
+        },
+        pressed: {
+            backgroundColor: theme.button.tertiary.pressed,
+            color: theme.text.inverted
+        },
+        disabled: {
+            backgroundColor: theme.button.tertiary.disabled,
+            color: theme.text.disabled
+        },
+    }), [theme]);
+};
 export default ActionButton;

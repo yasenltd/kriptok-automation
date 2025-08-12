@@ -10,6 +10,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import Toast from 'react-native-toast-message';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
+import { ThemeProvider } from '../context/ThemeContext';
 
 // prevent the splash screen from auto-hiding
 // when fonts are loading
@@ -51,59 +52,61 @@ const Layout = () => {
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <AuthProvider>
-          <Stack
-            screenOptions={{
-              contentStyle: {
-                backgroundColor: colors['primary-white'],
-              },
-              headerShown: showHeader,
-              header: props => (
-                <Header
-                  {...props}
-                  title={props.options.title as string}
-                  headerTitleAlign="left"
-                  headerBackButtonDisplayMode="minimal"
-                  headerTransparent={true}
-                  headerStyle={{ borderBottomWidth: 0, shadowOpacity: 0, elevation: 0 }}
-                  headerLeft={headerProps =>
-                    props.back && pathname !== '/home' ? (
-                      <HeaderBackButton
-                        {...headerProps}
-                        onPress={props.navigation.goBack}
-                        label={''}
-                        tintColor={colors['text-black']}
-                      />
-                    ) : null
-                  }
-                />
-              ),
-            }}
-          >
-            <Stack.Screen
-              name="index"
-              options={{
-                headerShown: false,
+        <ThemeProvider>
+          <AuthProvider>
+            <Stack
+              screenOptions={{
+                contentStyle: {
+                  backgroundColor: colors['primary-white'],
+                },
+                headerShown: showHeader,
+                header: props => (
+                  <Header
+                    {...props}
+                    title={props.options.title as string}
+                    headerTitleAlign="left"
+                    headerBackButtonDisplayMode="minimal"
+                    headerTransparent={true}
+                    headerStyle={{ borderBottomWidth: 0, shadowOpacity: 0, elevation: 0 }}
+                    headerLeft={headerProps =>
+                      props.back && pathname !== '/home' ? (
+                        <HeaderBackButton
+                          {...headerProps}
+                          onPress={props.navigation.goBack}
+                          label={''}
+                          tintColor={colors['text-black']}
+                        />
+                      ) : null
+                    }
+                  />
+                ),
               }}
-            />
+            >
+              <Stack.Screen
+                name="index"
+                options={{
+                  headerShown: false,
+                }}
+              />
 
-            <Stack.Screen
-              name="generate"
-              options={{
-                headerShown: true,
-              }}
-            />
+              <Stack.Screen
+                name="generate"
+                options={{
+                  headerShown: true,
+                }}
+              />
 
-            <Stack.Screen
-              name="import"
-              options={{
-                headerShown: true,
-              }}
-            />
-          </Stack>
+              <Stack.Screen
+                name="import"
+                options={{
+                  headerShown: true,
+                }}
+              />
+            </Stack>
 
-          <Toast visibilityTime={5000} position="top" topOffset={60} />
-        </AuthProvider>
+            <Toast visibilityTime={5000} position="top" topOffset={60} />
+          </AuthProvider>
+        </ThemeProvider>
       </PersistGate>
     </Provider>
   );

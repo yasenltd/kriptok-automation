@@ -2,9 +2,9 @@ import BlurView from 'expo-blur/build/BlurView';
 import { LinearGradient } from 'expo-linear-gradient';
 import { default as React, useState } from 'react';
 import { ColorValue, Pressable, View } from 'react-native';
-import { buttonStyles } from '../../theme/buttonStyle';
+import { buttonStyles } from '../../hooks/useButtonStyles';
 import { colors } from '../../theme/colors';
-import { Theme } from '../../theme/theme';
+import { Theme } from '../../theme/DarkTheme';
 import { typography } from '../../theme/typography';
 
 interface IconButtonProps {

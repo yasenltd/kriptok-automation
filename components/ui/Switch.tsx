@@ -1,20 +1,21 @@
 // import { Switch as ReactNativeSwitch } from "react-native";
 import { Switch as ReactNativeSwitch } from "react-native-paper";
-import { Theme } from "../../theme/theme";
+import { useTheme } from "../../context/ThemeContext";
 
 interface SwitchProps {
     onValueChange: (value: boolean) => void;
     value: boolean;
     disabled?: boolean;
-    size: 'L' | 'S';
+    size?: 'L' | 'S';
 }
 
 const Switch: React.FC<SwitchProps> = ({
     onValueChange,
     value,
     disabled = false,
-    size
+    size = 'L'
 }) => {
+    const { theme } = useTheme();
 
     function getSizeStyles() {
         // react native paper switch is 50x28 by default
@@ -29,21 +30,21 @@ const Switch: React.FC<SwitchProps> = ({
     function getTrackColor() {
         if (disabled) {
             return {
-                false: Theme.switch.off.inactive,
-                true: Theme.switch.on.inactive
+                false: theme.switch.off.inactive,
+                true: theme.switch.on.inactive
             }
         }
         return {
-            false: Theme.switch.off.default,
-            true: Theme.switch.on.default
+            false: theme.switch.off.default,
+            true: theme.switch.on.default
         }
     }
 
     function getThumbColor() {
         if (disabled) {
-            return value ? Theme.switch.on.circleInactive : Theme.switch.off.circleInactive;
+            return value ? theme.switch.on.circleInactive : theme.switch.off.circleInactive;
         }
-        return value ? Theme.switch.on.circleActive : Theme.switch.off.circleActive;
+        return value ? theme.switch.on.circleActive : theme.switch.off.circleActive;
     }
 
     return (
@@ -53,7 +54,7 @@ const Switch: React.FC<SwitchProps> = ({
             disabled={disabled}
             trackColor={getTrackColor()}
             thumbColor={getThumbColor()}
-            ios_backgroundColor={disabled ? Theme.switch.off.inactive : Theme.switch.off.default}
+            ios_backgroundColor={disabled ? theme.switch.off.inactive : theme.switch.off.default}
             style={[getSizeStyles()]}
         />
     );

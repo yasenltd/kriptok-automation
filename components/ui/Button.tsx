@@ -1,10 +1,11 @@
-import LoaderIcon from '@/components/icons/LoaderIcon';
 import { useButtonStyles } from '@/hooks/useButtonStyles';
 import { typography } from '@/theme/typography';
 import { ButtonSize, ButtonState, ButtonStyle, Icon, SelectableButtonState } from '@/utils/types';
+import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import { default as React, useState } from 'react';
 import { ColorValue, Pressable, Text, TextStyle, View } from 'react-native';
+import LoaderIcon from '../icons/LoaderIcon';
 
 interface ButtonProps {
     label: string;
@@ -95,31 +96,29 @@ const Button: React.FC<ButtonProps> = ({
             );
         }
 
-        // this code causes the following error:
-        // "Warning: Text strings must be rendered within a <Text> component."
-        // const isDefault = (currentState === 'default');
-        // const loading = (currentState === 'loading');
-        // const pressed = (currentState === 'pressed');
-        // const disabled = (currentState === 'disabled');
-        // const needsBlur =
-        //     ((style === "outline" || style === "ghost") && (loading || pressed)) ||
-        //     (style === "tertiary" && isDefault);
-        // if (needsBlur) {
-        //     return (
-        //         <BlurView intensity={20} style={[getSizeStyles(), buttonStyles.blurContainer]}>
-        //             <ButtonContents
-        //                 state={currentState}
-        //                 icon={icon}
-        //                 iconSize={getIconSize()}
-        //                 textStyles={getTextStyles()}
-        //                 textColor={getTextColor()}
-        //                 label={label}
-        //                 showLeftIcon={showLeftIcon}
-        //                 showRightIcon={showRightIcon}
-        //             />
-        //         </BlurView>
-        //     );
-        // }
+        const isDefault = (currentState === 'default');
+        const loading = (currentState === 'loading');
+        const pressed = (currentState === 'pressed');
+        const disabled = (currentState === 'disabled');
+        const needsBlur =
+            ((style === "outline" || style === "ghost") && (loading || pressed)) ||
+            (style === "tertiary" && isDefault);
+        if (needsBlur) {
+            return (
+                <BlurView intensity={20} style={[getSizeStyles(), buttonStyles.blurContainer]}>
+                    <ButtonContents
+                        state={currentState}
+                        icon={icon}
+                        iconSize={getIconSize()}
+                        textStyles={getTextStyles()}
+                        textColor={getTextColor()}
+                        label={label}
+                        showLeftIcon={showLeftIcon}
+                        showRightIcon={showRightIcon}
+                    />
+                </BlurView>
+            );
+        }
 
         return (
             <View style={[buttonStyles.button, getSizeStyles(), getStyles(currentState, style)]}>
@@ -132,7 +131,8 @@ const Button: React.FC<ButtonProps> = ({
                     label={label}
                     showLeftIcon={showLeftIcon}
                     showRightIcon={showRightIcon}
-                />            </View>
+                />
+            </View>
         );
     };
 

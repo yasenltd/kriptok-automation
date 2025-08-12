@@ -15,6 +15,9 @@ import {
   secureGet,
   secureRemove,
   secureSave,
+  loadPrivKeySecurely,
+  storePrivKeySecurely,
+  storeAllPrivKeys,
 } from './secureStore';
 
 import { getToken, saveToken, removeToken, isTokenExpired } from './tokenStorage';
@@ -44,4 +47,7 @@ export {
   textSize,
   inputSizeMapping,
   formatAddress,
+  loadPrivKeySecurely,
+  storePrivKeySecurely,
+  storeAllPrivKeys,
 };

@@ -8,7 +8,7 @@ import {
 } from '../utils';
 import AppModal from '@components/ui/AppModal';
 import { useToast } from '@/hooks/useToast';
-import { setPin } from '@/utils/secureStore';
+import { setPin, storeAllPrivKeys } from '@/utils/secureStore';
 import { Wallets } from '@/types';
 import { getLoginMessage, getSignupMessage, login, signSiweMessage, signup } from '@/utils/auth';
 import { router } from 'expo-router';
@@ -99,6 +99,14 @@ export default function GenerateScreen() {
         message,
         signature,
       );
+
+      //store priv keys
+      await storeAllPrivKeys({
+        eth: evmWallet.privateKey,
+        sol: solWallet.privateKey,
+        sui: suiWallet.privateKey,
+        btc: btcWallet.privateKey,
+      });
 
       await saveToken({
         access_token,

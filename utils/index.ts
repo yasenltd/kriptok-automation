@@ -22,7 +22,7 @@ import {
 
 import { getToken, saveToken, removeToken, isTokenExpired } from './tokenStorage';
 import { copyToClipboard } from './stringUtils';
-import { formatAddress } from './stringUtils';
+import { formatAddress, shareText } from './stringUtils';
 
 export {
   generateMnemonic,
@@ -50,4 +50,5 @@ export {
   loadPrivKeySecurely,
   storePrivKeySecurely,
   storeAllPrivKeys,
+  shareText,
 };

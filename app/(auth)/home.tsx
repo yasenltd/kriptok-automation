@@ -1,16 +1,17 @@
 import { getLoginMessage, login, signSiweMessage } from '@/utils/auth';
 import { getToken, saveToken } from '@/utils/tokenStorage';
 import { useState } from 'react';
-import { Text, View, TouchableOpacity } from 'react-native';
+import { Text, View, TouchableOpacity, Pressable, ScrollView } from 'react-native';
 import { AuthLogoutResponse, AuthRefreshResponse } from '@/types';
 import { refreshInstance, api } from '@/services/apiClient';
 import { loadWalletSecurely } from '@/utils/secureStore';
 import { useEffect } from 'react';
-import { deriveEVMWalletFromMnemonic } from '@/utils';
+import { deriveEVMWalletFromMnemonic, shareText } from '@/utils';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/stores/store';
 import { useToast } from '@/hooks/useToast';
 import { router } from 'expo-router';
+import WalletQr from '@components/WalletQr';
 // NOTE: Intended for initial testing and development purposes, to be removed later
 const Home = () => {
   /* Hooks */
@@ -85,6 +86,10 @@ const Home = () => {
     console.log('response', response.data);
   };
 
+  const onShare = async (text: string) => {
+    await shareText(text, 'Share wallet address');
+  };
+
   useEffect(() => {
     loadWalletSecurely().then(mnemonic => {
       if (mnemonic) {
@@ -101,7 +106,7 @@ const Home = () => {
   }, [user]);
 
   return (
-    <View style={{ flex: 1, padding: 20 }}>
+    <ScrollView style={{ flex: 1, padding: 20 }}>
       <TouchableOpacity
         style={{
           backgroundColor: '#4f46e5',
@@ -180,7 +185,16 @@ const Home = () => {
         <Text style={{ color: '#fff', fontWeight: '600', fontSize: 16 }}>Test access token</Text>
       </TouchableOpacity>
       <Text>EVM Wallet: {evmWallet?.address}</Text>
-    </View>
+
+      {evmWallet && evmWallet.address && (
+        <View style={{ gap: 5, marginTop: 5, alignItems: 'center' }}>
+          <WalletQr address={evmWallet.address} />
+          <Pressable onPress={() => onShare(evmWallet.address)} style={{ padding: 12 }}>
+            <Text>Share Address</Text>
+          </Pressable>
+        </View>
+      )}
+    </ScrollView>
   );
 };
 

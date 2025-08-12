@@ -30,6 +30,7 @@ export const TEST_ETH_RPC_PROVIDER = {
   base: `https://base-sepolia.infura.io/v3/${INFURA_ID}`,
   optimism: `https://optimism-sepolia.infura.io/v3/${INFURA_ID}`,
   arbitrum: `https://arbitrum-sepolia.infura.io/${INFURA_ID}`,
+  bnb: `https://bsc-testnet.infura.io/v3/${INFURA_ID}`,
 };
 
 export const MAIN_ETH_RPC_PROVIDER = {
@@ -39,6 +40,7 @@ export const MAIN_ETH_RPC_PROVIDER = {
   base: `https://base-mainnet.infura.io/v3/${INFURA_ID}`,
   optimism: `https://optimism-mainnet.infura.io/v3/${INFURA_ID}`,
   arbitrum: `https://arbitrum-mainnet.infura.io/v3/${INFURA_ID}`,
+  bnb: `https://bsc-mainnet.infura.io/v3/${INFURA_ID}`,
 };
 
 export const ERC20_ABI = ['function transfer(address to, uint256 amount) returns (bool)'];

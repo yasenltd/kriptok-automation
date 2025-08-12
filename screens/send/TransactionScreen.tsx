@@ -1,11 +1,7 @@
 import { useToast } from '@/hooks/useToast';
 import { RootState } from '@/stores/store';
 import { AssetMeta, txInfo } from '@/types';
-import {
-  loadPrivkeyFromPin,
-  loadPrivKeySecurely,
-  loadPrivKeyWithBiometrics,
-} from '@/utils/secureStore';
+import { loadPrivkeyFromPin, loadPrivKeyWithBiometrics } from '@/utils/secureStore';
 import { BaseTxParams, sendTransaction } from '@/utils/transactions';
 import AppInput from '@components/ui/AppInput';
 import UnlockModal from '@components/UnlockModal';

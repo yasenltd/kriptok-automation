@@ -18,7 +18,9 @@ import { loadWalletSecurely } from '@/utils/secureStore';
 import { getToken, saveToken } from '@/utils/tokenStorage';
 import { router } from 'expo-router';
 import WalletQr from '@components/WalletQr';
-import { PlusIcon } from 'react-native-heroicons/micro';
+import { ArrowUpIcon, PlusIcon } from 'react-native-heroicons/micro';
+import ActionButton from '../../components/ui/ActionButton';
+import Toggle from '../../components/ui/Toggle';
 
 // NOTE: Intended for initial testing and development purposes, to be removed later
 const Home = () => {
@@ -28,6 +30,8 @@ const Home = () => {
   const { theme, colorScheme, toggleTheme } = useTheme();
 
   const [evmWallet, setEvmWallet] = useState<{ address: string; privateKey: string } | null>(null);
+  const [checkboxValue, setCheckboxValue] = useState(false);
+
   const handleLogin = async () => {
     if (!evmWallet) return;
     const { message } = await getLoginMessage(evmWallet.address);
@@ -272,16 +276,30 @@ const Home = () => {
           <IconButton state="loading" style="ghost" icon={<PlusIcon />} />
           <IconButton state="disabled" style="ghost" icon={<PlusIcon />} />
         </View>
-      </View>
-      {/* 
-        <Toggle options={[
-          { label: 'Label', key: 'option1', icon: <PlusIcon /> },
-          { label: 'Label', key: 'option2', icon: <PlusIcon /> },
-          { label: 'Label', key: 'option3', icon: <PlusIcon /> },
-        ]}></Toggle> */}
 
-      <Checkbox label="Label" description="Description" value={false} onChange={() => {}} />
-      <Checkbox label="Label" description="Description" value={true} onChange={() => {}} />
+        <View style={{ flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+          <ActionButton label="Default" state="default" icon={<ArrowUpIcon />} />
+          <ActionButton label="Loading" state="loading" icon={<ArrowUpIcon />} />
+          <ActionButton label="Disabled" state="disabled" icon={<ArrowUpIcon />} />
+
+          <Toggle
+            options={[
+              { label: 'Label', key: 'option1', icon: <PlusIcon /> },
+              { label: 'Label', key: 'option2', icon: <PlusIcon /> },
+              { label: 'Label', key: 'option3', icon: <PlusIcon /> },
+            ]}
+          ></Toggle>
+
+          <Checkbox label="Label" description="Description" value={false} onChange={() => {}} />
+          <Checkbox label="Label" description="Description" value={true} onChange={() => {}} />
+          <Checkbox
+            label="Label"
+            description="Description"
+            value={checkboxValue}
+            onChange={newValue => setCheckboxValue(newValue)}
+          />
+        </View>
+      </View>
     </ScrollView>
   );
 };

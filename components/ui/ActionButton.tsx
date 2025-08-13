@@ -2,94 +2,107 @@ import { useTheme } from '@/context/ThemeContext';
 import { typography } from '@/theme/typography';
 import { BlurView } from 'expo-blur';
 import { default as React, useMemo, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { ColorValue, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ButtonState, Icon } from '../../utils/types';
 
 interface ActionButtonProps {
     label: string;
-    disabled?: boolean;
-    loading?: boolean;
+    state: ButtonState;
     onPress?: () => void;
-    icon?: React.ReactNode;
+    icon?: Icon;
 }
 
 const ActionButton: React.FC<ActionButtonProps> = ({
     label,
-    disabled = false,
-    loading = false,
+    state = 'default',
     onPress,
     icon
 }) => {
     const { theme } = useTheme();
     const styles = useActionButtonStyles();
-
-    const [isPressed, setIsPressed] = useState(false);
+    const [currentState, setCurrentState] = useState<ButtonState>(state);
 
     const getTextColor = () => {
-        if (disabled) {
-            return { color: theme.text.disabled };
+        if (currentState === 'disabled') {
+            return theme.text.disabled;
         }
-        return {
-            color: theme.text.primary,
-        }
+        return theme.text.primary;
     };
 
     const getActionButtonContent = () => {
         // this is the best way to handle the blur effect
         // without needing huge third party libraries
-        const needsBlur = (loading || isPressed);
+        const needsBlur = (currentState === 'loading' || currentState === 'pressed');
         if (needsBlur) {
             return (
                 <BlurView intensity={20} style={[styles.button, styles.blurContainer]}>
-                    <View style={styles.content}>
-                        {React.cloneElement(icon as React.ReactElement<any>, {
-                            size: 24,
-                            style: 'outline',
-                            color: getTextColor().color
-                        })}
-                        <Text style={[
-                            typography.button.xsToL,
-                            getTextColor(),
-                        ]}>
-                            {label}
-                        </Text>
-                    </View>
+                    <ActionButtonContents
+                        label={label}
+                        textColor={getTextColor()}
+                        icon={icon}
+                    />
                 </BlurView>
             );
         }
         return (
             <View style={[styles.button]}>
-                <View style={styles.content}>
-                    {React.cloneElement(icon as React.ReactElement<any>, {
-                        size: 24,
-                        style: 'outline',
-                        color: getTextColor().color
-                    })}
-                    <Text style={[
-                        typography.button.xsToL,
-                        getTextColor(),
-                    ]}>
-                        {label}
-                    </Text>
-                </View>
+                <ActionButtonContents
+                    label={label}
+                    textColor={getTextColor()}
+                    icon={icon}
+                />
             </View>
         );
     };
 
 
     const getActionButtonStyle = () => {
-        return [styles.button, loading ? styles.loading : disabled ? styles.disabled : isPressed ? styles.pressed : styles.default];
+        return [styles.button, styles[currentState]];
     };
 
     return (
         <Pressable
             onPress={onPress}
-            disabled={disabled || loading}
+            disabled={currentState === 'disabled' || currentState === 'loading'}
             style={getActionButtonStyle()}
-            onPressIn={() => setIsPressed(true)}
-            onPressOut={() => setIsPressed(false)}
+            onPressIn={() => setCurrentState('pressed')}
+            onPressOut={() => setCurrentState('default')}
         >
             {getActionButtonContent()}
         </Pressable>
+    );
+};
+
+
+interface ActionButtonContentsProps {
+    label: string;
+    textColor: ColorValue;
+    icon?: Icon;
+}
+
+const ActionButtonContents: React.FC<ActionButtonContentsProps> = ({
+    label,
+    textColor,
+    icon
+}) => {
+    const styles = useActionButtonStyles();
+    return (
+        <View style={styles.content} >
+            {
+                React.cloneElement(icon as React.ReactElement<any>, {
+                    size: 24,
+                    style: 'outline',
+                    color: textColor
+                })
+            }
+            < Text style={
+                [
+                    typography.button.xsToL,
+                    { color: textColor }
+                ]}>
+                {label}
+            </Text >
+        </View >
     );
 };
 

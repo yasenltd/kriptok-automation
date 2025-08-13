@@ -197,7 +197,7 @@ const Home = () => {
       >
         <Text style={{ color: '#fff', fontWeight: '600', fontSize: 16 }}>Test access token</Text>
       </TouchableOpacity>
-      <Text>EVM Wallet: {evmWallet?.address}</Text>
+      <Text style={{ color: theme.text.primary }}>EVM Wallet: {evmWallet?.address}</Text>
 
       {evmWallet && evmWallet.address && (
         <View style={{ gap: 5, marginTop: 5, alignItems: 'center' }}>

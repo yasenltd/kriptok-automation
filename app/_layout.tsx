@@ -1,17 +1,15 @@
 import { AuthProvider } from '@/context/AuthContext';
 import { persistor, store } from '@/stores/store';
-import { colors } from '@/utils';
 import { checkFirstInstallAndCleanup } from '@/utils/tracking';
 import AppLoader from '@components/ui/AppLoader';
-import { Header, HeaderBackButton } from '@react-navigation/elements';
 import { useFonts } from 'expo-font';
-import { SplashScreen, Stack, usePathname } from 'expo-router';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { SplashScreen } from 'expo-router';
+import { useCallback, useEffect, useState } from 'react';
 import Toast from 'react-native-toast-message';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { ThemeProvider } from '../context/ThemeContext';
-
+import ThemedStack from '@components/ThemedStack';
 // prevent the splash screen from auto-hiding
 // when fonts are loading
 SplashScreen.preventAutoHideAsync();
@@ -25,17 +23,10 @@ const Layout = () => {
     'Satoshi-Bold': require('@/assets/fonts/Satoshi-Bold.otf'),
   });
 
-  const pathname = usePathname();
-
   const checkForData = useCallback(async () => {
     await checkFirstInstallAndCleanup();
     setIsLoaded(true);
   }, []);
-
-  const showHeader = useMemo(() => {
-    const headerRoutes = ['/', '/generate', '/import'];
-    return headerRoutes.includes(pathname);
-  }, [pathname]);
 
   useEffect(() => {
     if (fontsLoaded || fontError) {
@@ -54,62 +45,7 @@ const Layout = () => {
       <PersistGate loading={null} persistor={persistor}>
         <ThemeProvider>
           <AuthProvider>
-            <Stack
-              screenOptions={{
-                contentStyle: {
-                  backgroundColor: colors['primary-white'],
-                },
-                headerShown: showHeader,
-                header: props => (
-                  <Header
-                    {...props}
-                    title={props.options.title as string}
-                    headerTitleAlign="left"
-                    headerBackButtonDisplayMode="minimal"
-                    headerTransparent={true}
-                    headerStyle={{ borderBottomWidth: 0, shadowOpacity: 0, elevation: 0 }}
-                    headerLeft={headerProps =>
-                      props.back && pathname !== '/home' ? (
-                        <HeaderBackButton
-                          {...headerProps}
-                          onPress={props.navigation.goBack}
-                          label={''}
-                          tintColor={colors['text-black']}
-                        />
-                      ) : null
-                    }
-                  />
-                ),
-              }}
-            >
-              <Stack.Screen
-                name="index"
-                options={{
-                  headerShown: false,
-                }}
-              />
-
-              <Stack.Screen
-                name="generate"
-                options={{
-                  headerShown: true,
-                }}
-              />
-
-              <Stack.Screen
-                name="import"
-                options={{
-                  headerShown: true,
-                }}
-              />
-
-              <Stack.Screen
-                name="(auth)"
-                options={{
-                  headerShown: false,
-                }}
-              />
-            </Stack>
+            <ThemedStack />
 
             <Toast visibilityTime={5000} position="top" topOffset={60} />
           </AuthProvider>

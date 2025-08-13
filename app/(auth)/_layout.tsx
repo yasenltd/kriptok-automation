@@ -3,6 +3,7 @@ import { Stack, usePathname } from 'expo-router';
 import { Header, HeaderBackButton } from '@react-navigation/elements';
 import { colors } from '@/utils';
 import AuthGuard from '@/screens/AuthGuard';
+<<<<<<< HEAD
 import { useSelector } from 'react-redux';
 import { RootState } from '@/stores/store';
 import { useMemo } from 'react';
@@ -22,13 +23,20 @@ const AuthLayout = () => {
   );
 
   //useBalancePollingAll(addresses);
+=======
+import { useTheme } from '@/context/ThemeContext';
+
+const AuthLayout = () => {
+  const pathname = usePathname();
+  const { theme } = useTheme();
+>>>>>>> 681f0d4 (fix: global theme switch)
 
   return (
     <AuthGuard>
       <Stack
         screenOptions={{
           contentStyle: {
-            backgroundColor: colors['primary-white'],
+            backgroundColor: theme.surface.primary,
           },
           header: props => (
             <Header
@@ -36,7 +44,12 @@ const AuthLayout = () => {
               title={props.options.title as string}
               headerTitleAlign="left"
               headerTransparent={true}
-              headerStyle={{ borderBottomWidth: 0, shadowOpacity: 0, elevation: 0 }}
+              headerStyle={{
+                borderBottomWidth: 0,
+                shadowOpacity: 0,
+                elevation: 0,
+              }}
+              headerTitleStyle={{ color: theme.text.primary }}
               headerBackButtonDisplayMode="minimal"
               headerLeft={headerProps =>
                 props.back && pathname !== '/home' ? (
@@ -44,7 +57,7 @@ const AuthLayout = () => {
                     {...headerProps}
                     onPress={props.navigation.goBack}
                     label={''}
-                    tintColor={colors['text-black']}
+                    tintColor={theme.text.primary}
                   />
                 ) : null
               }

@@ -9,7 +9,6 @@ import { AuthProvider } from '@/context/AuthContext';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { checkFirstInstallAndCleanup } from '@/utils/tracking';
 import AppLoader from '@components/ui/AppLoader';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 const Layout = () => {
   const [isLoaded, setIsLoaded] = useState(false);

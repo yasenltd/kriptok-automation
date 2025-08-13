@@ -3,9 +3,25 @@ import { Stack, usePathname } from 'expo-router';
 import { Header, HeaderBackButton } from '@react-navigation/elements';
 import { colors } from '@/utils';
 import AuthGuard from '@/screens/AuthGuard';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/stores/store';
+import { useMemo } from 'react';
+import { useBalancePollingAll } from '@/hooks/useBalancePolling';
 
 const AuthLayout = () => {
   const pathname = usePathname();
+  const user = useSelector((s: RootState) => s.user.data);
+  const addresses = useMemo(
+    () => ({
+      eth: user?.address,
+      btc: user?.btc,
+      sol: user?.solana,
+      sui: user?.sui,
+    }),
+    [user?.address, user?.btc, user?.solana, user?.sui],
+  );
+
+  useBalancePollingAll(addresses);
 
   return (
     <AuthGuard>

@@ -6,148 +6,125 @@ import { ColorValue, Pressable, StyleSheet, Text, View } from 'react-native';
 import { ButtonState, Icon } from '../../utils/types';
 
 interface ActionButtonProps {
-    label: string;
-    state: ButtonState;
-    onPress?: () => void;
-    icon?: Icon;
+  label: string;
+  state: ButtonState;
+  onPress?: () => void;
+  icon?: Icon;
 }
 
-const ActionButton: React.FC<ActionButtonProps> = ({
-    label,
-    state = 'default',
-    onPress,
-    icon
-}) => {
-    const { theme } = useTheme();
-    const styles = useActionButtonStyles();
-    const [currentState, setCurrentState] = useState<ButtonState>(state);
+const ActionButton: React.FC<ActionButtonProps> = ({ label, state = 'default', onPress, icon }) => {
+  const { theme } = useTheme();
+  const styles = useActionButtonStyles();
+  const [currentState, setCurrentState] = useState<ButtonState>(state);
 
-    const getTextColor = () => {
-        if (currentState === 'disabled') {
-            return theme.text.disabled;
-        }
-        return theme.text.primary;
-    };
+  const getTextColor = () => {
+    if (currentState === 'disabled') {
+      return theme.text.disabled;
+    }
+    return theme.text.primary;
+  };
 
-    const getActionButtonContent = () => {
-        // this is the best way to handle the blur effect
-        // without needing huge third party libraries
-        const needsBlur = (currentState === 'loading' || currentState === 'pressed');
-        if (needsBlur) {
-            return (
-                <BlurView intensity={20} style={[styles.button, styles.blurContainer]}>
-                    <ActionButtonContents
-                        label={label}
-                        textColor={getTextColor()}
-                        icon={icon}
-                    />
-                </BlurView>
-            );
-        }
-        return (
-            <View style={[styles.button]}>
-                <ActionButtonContents
-                    label={label}
-                    textColor={getTextColor()}
-                    icon={icon}
-                />
-            </View>
-        );
-    };
-
-
-    const getActionButtonStyle = () => {
-        return [styles.button, styles[currentState]];
-    };
-
+  const getActionButtonContent = () => {
+    // this is the best way to handle the blur effect
+    // without needing huge third party libraries
+    const needsBlur = currentState === 'loading' || currentState === 'pressed';
+    if (needsBlur) {
+      return (
+        <BlurView intensity={20} style={[styles.button, styles.blurContainer]}>
+          <ActionButtonContents label={label} textColor={getTextColor()} icon={icon} />
+        </BlurView>
+      );
+    }
     return (
-        <Pressable
-            onPress={onPress}
-            disabled={currentState === 'disabled' || currentState === 'loading'}
-            style={getActionButtonStyle()}
-            onPressIn={() => setCurrentState('pressed')}
-            onPressOut={() => setCurrentState('default')}
-        >
-            {getActionButtonContent()}
-        </Pressable>
+      <View style={[styles.button]}>
+        <ActionButtonContents label={label} textColor={getTextColor()} icon={icon} />
+      </View>
     );
+  };
+
+  const getActionButtonStyle = () => {
+    return [styles.button, styles[currentState]];
+  };
+
+  return (
+    <Pressable
+      onPress={onPress}
+      disabled={currentState === 'disabled' || currentState === 'loading'}
+      style={getActionButtonStyle()}
+      onPressIn={() => setCurrentState('pressed')}
+      onPressOut={() => setCurrentState('default')}
+    >
+      {getActionButtonContent()}
+    </Pressable>
+  );
 };
 
-
 interface ActionButtonContentsProps {
-    label: string;
-    textColor: ColorValue;
-    icon?: Icon;
+  label: string;
+  textColor: ColorValue;
+  icon?: Icon;
 }
 
-const ActionButtonContents: React.FC<ActionButtonContentsProps> = ({
-    label,
-    textColor,
-    icon
-}) => {
-    const styles = useActionButtonStyles();
-    return (
-        <View style={styles.content} >
-            {
-                React.cloneElement(icon as React.ReactElement<any>, {
-                    size: 24,
-                    style: 'outline',
-                    color: textColor
-                })
-            }
-            < Text style={
-                [
-                    typography.button.xsToL,
-                    { color: textColor }
-                ]}>
-                {label}
-            </Text >
-        </View >
-    );
+const ActionButtonContents: React.FC<ActionButtonContentsProps> = ({ label, textColor, icon }) => {
+  const styles = useActionButtonStyles();
+  return (
+    <View style={styles.content}>
+      {React.cloneElement(icon as React.ReactElement<any>, {
+        size: 24,
+        style: 'outline',
+        color: textColor,
+      })}
+      <Text style={[typography.button.xsToL, { color: textColor }]}>{label}</Text>
+    </View>
+  );
 };
 
 const useActionButtonStyles = () => {
-    const { theme } = useTheme();
+  const { theme } = useTheme();
 
-    return useMemo(() => StyleSheet.create({
+  return useMemo(
+    () =>
+      StyleSheet.create({
         button: {
-            borderRadius: 9999,
-            justifyContent: 'center',
-            alignItems: 'center',
-            textAlign: 'center',
-            width: 110,
-            height: 64,
-            paddingHorizontal: 24,
-            paddingVertical: 12,
+          borderRadius: 9999,
+          justifyContent: 'center',
+          alignItems: 'center',
+          textAlign: 'center',
+          width: 110,
+          height: 64,
+          paddingHorizontal: 24,
+          paddingVertical: 12,
         },
         content: {
-            width: 110,
-            height: 64,
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 4,
+          width: 110,
+          height: 64,
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 4,
         },
         blurContainer: {
-            borderRadius: 9999,
-            overflow: 'hidden',
+          borderRadius: 9999,
+          overflow: 'hidden',
         },
         default: {
-            backgroundColor: theme.button.tertiary.default,
-            color: theme.text.inverted
+          backgroundColor: theme.button.tertiary.default,
+          color: theme.text.inverted,
         },
         loading: {
-            backgroundColor: theme.button.tertiary.loading,
-            color: theme.text.inverted
+          backgroundColor: theme.button.tertiary.loading,
+          color: theme.text.inverted,
         },
         pressed: {
-            backgroundColor: theme.button.tertiary.pressed,
-            color: theme.text.inverted
+          backgroundColor: theme.button.tertiary.pressed,
+          color: theme.text.inverted,
         },
         disabled: {
-            backgroundColor: theme.button.tertiary.disabled,
-            color: theme.text.disabled
+          backgroundColor: theme.button.tertiary.disabled,
+          color: theme.text.disabled,
         },
-    }), [theme]);
+      }),
+    [theme],
+  );
 };
 export default ActionButton;

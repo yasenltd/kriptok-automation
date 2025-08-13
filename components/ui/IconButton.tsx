@@ -1,147 +1,164 @@
 import { useButtonStyles } from '@/hooks/useButtonStyles';
-import { ButtonState, ButtonStyle, Icon, IconButtonSize, SelectableButtonState } from '@/utils/types';
-import BlurView from 'expo-blur/build/BlurView';
+import {
+  ButtonState,
+  ButtonStyle,
+  Icon,
+  IconButtonSize,
+  SelectableButtonState,
+} from '@/utils/types';
+import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
-import { default as React, useState } from 'react';
-import { Pressable, View } from 'react-native';
-
+import React, { useMemo, useState } from 'react';
+import { ColorValue, Pressable, View } from 'react-native';
 
 interface IconButtonProps {
-    state?: SelectableButtonState;
-    style?: ButtonStyle;
-    size?: IconButtonSize
-    onPress?: () => void;
-    icon: Icon;
+  state?: SelectableButtonState;
+  style?: ButtonStyle;
+  size?: IconButtonSize;
+  onPress?: () => void;
+  icon: Icon;
 }
 
+const ICON_SIZE_STYLES = {
+  XS: { width: 16, height: 16, iconSize: 16, iconStyle: 'micro' },
+  S: { width: 32, height: 32, iconSize: 16, iconStyle: 'micro' },
+  M: { width: 40, height: 40, iconSize: 20, iconStyle: 'outline' },
+  L: { width: 48, height: 48, iconSize: 24, iconStyle: 'outline' },
+} as const;
+
+type PresetKey = keyof typeof ICON_SIZE_STYLES;
+
 const IconButton: React.FC<IconButtonProps> = ({
-    state = 'default',
-    style = "accent",
-    size = 'M',
-    onPress,
-    icon
+  state = 'default',
+  style = 'accent',
+  size = 'M',
+  onPress,
+  icon,
 }) => {
-    const { buttonStyles, getAccentGradientColors, getButtonTextColor, getStyles } = useButtonStyles();
-    const [currentState, setCurrentState] = useState<ButtonState>(state);
+  const { buttonStyles, getAccentGradientColors, getButtonTextColor, getStyles } =
+    useButtonStyles();
+  const [currentState, setCurrentState] = useState<ButtonState>(state as ButtonState);
 
-    const getSizeStyles = () => {
-        return sizeStyles[size];
+  const { sizeStyle, iconSize, iconStyle } = useMemo(() => {
+    const key = (size as PresetKey) in ICON_SIZE_STYLES ? (size as PresetKey) : ('M' as PresetKey);
+    const preset = ICON_SIZE_STYLES[key];
+    return {
+      sizeKey: key,
+      sizeStyle: {
+        width: preset.width,
+        height: preset.height,
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+      },
+      iconSize: preset.iconSize,
+      iconStyle: preset.iconStyle,
     };
+  }, [size]);
 
-    const getTextColor = () => {
-        return getButtonTextColor(currentState, style);
+  const variant = style;
+
+  const variantStyle = useMemo(
+    () => getStyles(currentState, variant),
+    [currentState, variant, getStyles],
+  );
+
+  const textColor = useMemo<ColorValue>(
+    () => getButtonTextColor(currentState, variant),
+    [currentState, variant, getButtonTextColor],
+  );
+
+  const flags = useMemo(() => {
+    const loading = currentState === 'loading';
+    const pressed = currentState === 'pressed';
+    const disabled = currentState === 'disabled';
+    const needsBlur = (variant === 'outline' || variant === 'ghost') && (loading || pressed);
+    const isAccent = variant === 'accent';
+    return { loading, pressed, disabled, needsBlur, isAccent };
+  }, [currentState, variant]);
+
+  const wrapper = useMemo(() => {
+    if (flags.isAccent) {
+      return {
+        Component: LinearGradient as React.ComponentType<any>,
+        props: {
+          colors: getAccentGradientColors(currentState),
+          start: { x: 0, y: 0 },
+          end: { x: 1, y: 1 },
+          style: [buttonStyles.gradient, sizeStyle, variantStyle],
+        },
+      };
+    }
+    if (flags.needsBlur) {
+      return {
+        Component: BlurView as React.ComponentType<any>,
+        props: {
+          intensity: 20,
+          style: [sizeStyle, buttonStyles.blurContainer, buttonStyles.button, variantStyle],
+        },
+      };
+    }
+    return {
+      Component: View as React.ComponentType<any>,
+      props: { style: [buttonStyles.button, sizeStyle, variantStyle] },
     };
+  }, [
+    flags.isAccent,
+    flags.needsBlur,
+    currentState,
+    getAccentGradientColors,
+    buttonStyles,
+    sizeStyle,
+    variantStyle,
+  ]);
 
-    const getIconButtonStyles = () => {
-        return getStyles(currentState, style);
-    };
-
-    const getIconButtonContent = () => {
-        if (style === "accent") {
-            let gradientColors = getAccentGradientColors(currentState);
-
-            return (
-                <LinearGradient
-                    colors={gradientColors}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                    style={[buttonStyles.gradient, getSizeStyles()]}
-                >
-                    <View style={buttonStyles.content}>
-                        {React.cloneElement(icon as React.ReactElement<any>, {
-                            size: sizeStyles[size].icon.size,
-                            style: sizeStyles[size].icon.style,
-                            color: getTextColor()
-                        })}
-                    </View>
-                </LinearGradient>
-            );
-        }
-
-        // this is the best way to handle the blur effect
-        // without needing huge third party libraries
-        const needsBlur = (style === "outline" || style === "ghost") && (currentState == 'loading' || currentState == 'pressed');
-        if (needsBlur) {
-            return (
-                <BlurView intensity={20} style={[buttonStyles.button, getSizeStyles(), getIconButtonStyles(), buttonStyles.blurContainer]}>
-                    <View style={buttonStyles.content}>
-                        {React.cloneElement(icon as React.ReactElement<any>, {
-                            size: sizeStyles[size].icon.size,
-                            style: sizeStyles[size].icon.style,
-                            color: getTextColor()
-                        })}
-                    </View>
-                </BlurView>)
-        }
-
-        // Non-accent button styles
-        return (
-            <View style={[buttonStyles.button, getSizeStyles(), getIconButtonStyles()]}>
-                <View style={buttonStyles.content}>
-                    {React.cloneElement(icon as React.ReactElement<any>, {
-                        size: sizeStyles[size].icon.size,
-                        style: sizeStyles[size].icon.style,
-                        color: getTextColor()
-                    })}
-                </View>
-            </View>
-        );
-    };
-
-    return (
-        <Pressable
-            onPress={onPress}
-            disabled={currentState === 'disabled' || currentState === 'loading'}
-            style={buttonStyles.button}
-            onPressIn={() => setCurrentState('pressed')}
-            onPressOut={() => setCurrentState('default')}
-        >
-            {getIconButtonContent()}
-        </Pressable>
-    );
+  return (
+    <Pressable
+      onPress={onPress}
+      disabled={flags.disabled || flags.loading}
+      style={[buttonStyles.button, sizeStyle]}
+      onPressIn={() => setCurrentState('pressed')}
+      onPressOut={() => setCurrentState('default')}
+    >
+      <wrapper.Component {...wrapper.props}>
+        <IconButtonContents
+          state={currentState}
+          icon={icon}
+          iconSize={iconSize}
+          iconStyle={iconStyle}
+          textColor={textColor}
+        />
+      </wrapper.Component>
+    </Pressable>
+  );
 };
 
-const sizeStyles = {
-    XS: {
-        width: 16,
-        height: 16,
-        paddingHorizontal: 8,
-        paddingVertical: 4,
-        icon: {
-            size: 16,
-            style: 'micro',
-        }
-    },
-    S: {
-        width: 32,
-        height: 32,
-        paddingHorizontal: 8,
-        paddingVertical: 4,
-        icon: {
-            size: 16,
-            style: 'micro',
-        }
-    },
-    M: {
-        width: 40,
-        height: 40,
-        paddingHorizontal: 8,
-        paddingVertical: 4,
-        icon: {
-            size: 20,
-            style: 'outline',
-        }
-    },
-    L: {
-        width: 48,
-        height: 48,
-        paddingHorizontal: 8,
-        paddingVertical: 8,
-        icon: {
-            size: 24,
-            style: 'outline',
-        }
-    },
+interface IconButtonContentsProps {
+  state: ButtonState;
+  icon: Icon;
+  iconSize: number;
+  iconStyle: string;
+  textColor: ColorValue;
+}
+
+const IconButtonContents: React.FC<IconButtonContentsProps> = ({
+  state,
+  icon,
+  iconSize,
+  iconStyle,
+  textColor,
+}) => {
+  const { buttonStyles } = useButtonStyles();
+  // Optionally, you can add a loader here if you want to show loading state
+
+  return (
+    <View style={buttonStyles.content}>
+      {React.cloneElement(icon as React.ReactElement<any>, {
+        size: iconSize,
+        style: iconStyle,
+        color: textColor,
+      })}
+    </View>
+  );
 };
 
 export default IconButton;

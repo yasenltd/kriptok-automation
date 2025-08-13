@@ -4,8 +4,25 @@ import { ButtonSize, ButtonState, ButtonStyle, Icon, SelectableButtonState } fro
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useMemo, useState } from 'react';
-import { ColorValue, Pressable, Text, TextStyle, View } from 'react-native';
+import { ColorValue, Pressable, Text, TextStyle, View, type ViewProps } from 'react-native';
 import LoaderIcon from '../icons/LoaderIcon';
+import type { BlurViewProps } from 'expo-blur';
+import type { LinearGradientProps } from 'expo-linear-gradient';
+
+type GradientWrapper = {
+  kind: 'gradient';
+  props: Omit<LinearGradientProps, 'children'>;
+};
+type BlurWrapper = {
+  kind: 'blur';
+  props: Omit<BlurViewProps, 'children'>;
+};
+type ViewWrapper = {
+  kind: 'view';
+  props: ViewProps;
+};
+
+type Wrapper = GradientWrapper | BlurWrapper | ViewWrapper;
 
 interface ButtonProps {
   label: string;
@@ -100,31 +117,25 @@ const Button: React.FC<ButtonProps> = ({
     return { loading, pressed, disabled, needsBlur, isAccent };
   }, [currentState, variant]);
 
-  const wrapper = useMemo(() => {
+  const wrapper = useMemo<Wrapper>(() => {
     if (flags.isAccent) {
-      return {
-        Component: LinearGradient as React.ComponentType<any>,
-        props: {
-          colors: getAccentGradientColors(currentState),
-          start: { x: 0, y: 0 },
-          end: { x: 1, y: 1 },
-          style: [buttonStyles.gradient, sizeStyle, variantStyle],
-        },
+      const props: Omit<LinearGradientProps, 'children'> = {
+        colors: getAccentGradientColors(currentState),
+        start: { x: 0, y: 0 },
+        end: { x: 1, y: 1 },
+        style: [buttonStyles.gradient, sizeStyle, variantStyle],
       };
+      return { kind: 'gradient', props };
     }
     if (flags.needsBlur) {
-      return {
-        Component: BlurView as React.ComponentType<any>,
-        props: {
-          intensity: 20,
-          style: [sizeStyle, buttonStyles.blurContainer],
-        },
+      const props: Omit<BlurViewProps, 'children'> = {
+        intensity: 20,
+        style: [sizeStyle, buttonStyles.blurContainer],
       };
+      return { kind: 'blur', props };
     }
-    return {
-      Component: View as React.ComponentType<any>,
-      props: { style: [buttonStyles.button, sizeStyle, variantStyle] },
-    };
+    const props: ViewProps = { style: [buttonStyles.button, sizeStyle, variantStyle] };
+    return { kind: 'view', props };
   }, [
     flags.isAccent,
     flags.needsBlur,
@@ -143,18 +154,46 @@ const Button: React.FC<ButtonProps> = ({
       onPressIn={() => setCurrentState('pressed')}
       onPressOut={() => setCurrentState('default')}
     >
-      <wrapper.Component {...wrapper.props}>
-        <ButtonContents
-          state={currentState}
-          icon={icon}
-          iconSize={iconSize}
-          textStyles={textStyles}
-          textColor={textColor}
-          label={label}
-          showLeftIcon={showLeftIcon}
-          showRightIcon={showRightIcon}
-        />
-      </wrapper.Component>
+      {wrapper.kind === 'gradient' ? (
+        <LinearGradient {...wrapper.props}>
+          <ButtonContents
+            state={currentState}
+            icon={icon}
+            iconSize={iconSize}
+            textStyles={textStyles}
+            textColor={textColor}
+            label={label}
+            showLeftIcon={showLeftIcon}
+            showRightIcon={showRightIcon}
+          />
+        </LinearGradient>
+      ) : wrapper.kind === 'blur' ? (
+        <BlurView {...wrapper.props}>
+          <ButtonContents
+            state={currentState}
+            icon={icon}
+            iconSize={iconSize}
+            textStyles={textStyles}
+            textColor={textColor}
+            label={label}
+            showLeftIcon={showLeftIcon}
+            showRightIcon={showRightIcon}
+          />
+        </BlurView>
+      ) : (
+        <View {...wrapper.props}>
+          <ButtonContents
+            state={currentState}
+            icon={icon}
+            iconSize={iconSize}
+            textStyles={textStyles}
+            textColor={textColor}
+            label={label}
+            showLeftIcon={showLeftIcon}
+            showRightIcon={showRightIcon}
+          />
+        </View>
+      )}
     </Pressable>
   );
 };

@@ -12,17 +12,24 @@ interface ActionButtonProps {
   icon?: Icon;
 }
 
+interface ActionButtonContentsProps {
+  label: string;
+  textColor: ColorValue;
+  icon?: Icon;
+}
+
 const ActionButton: React.FC<ActionButtonProps> = ({ label, state = 'default', onPress, icon }) => {
   const { theme } = useTheme();
   const styles = useActionButtonStyles();
   const [currentState, setCurrentState] = useState<ButtonState>(state);
 
-  const getTextColor = () => {
-    if (currentState === 'disabled') {
-      return theme.text.disabled;
-    }
-    return theme.text.primary;
-  };
+  const textColor = useMemo(() => {
+    return currentState === 'disabled' ? theme.text.disabled : theme.text.primary;
+  }, [currentState, theme]);
+
+  const isDisabled = useMemo(() => {
+    return currentState === 'disabled' || currentState === 'loading';
+  }, [currentState]);
 
   const getActionButtonContent = () => {
     // this is the best way to handle the blur effect
@@ -31,26 +38,22 @@ const ActionButton: React.FC<ActionButtonProps> = ({ label, state = 'default', o
     if (needsBlur) {
       return (
         <BlurView intensity={20} style={[styles.button, styles.blurContainer]}>
-          <ActionButtonContents label={label} textColor={getTextColor()} icon={icon} />
+          <ActionButtonContents label={label} textColor={textColor} icon={icon} />
         </BlurView>
       );
     }
     return (
       <View style={[styles.button]}>
-        <ActionButtonContents label={label} textColor={getTextColor()} icon={icon} />
+        <ActionButtonContents label={label} textColor={textColor} icon={icon} />
       </View>
     );
-  };
-
-  const getActionButtonStyle = () => {
-    return [styles.button, styles[currentState]];
   };
 
   return (
     <Pressable
       onPress={onPress}
-      disabled={currentState === 'disabled' || currentState === 'loading'}
-      style={getActionButtonStyle()}
+      disabled={isDisabled}
+      style={[styles.button, styles[currentState]]}
       onPressIn={() => setCurrentState('pressed')}
       onPressOut={() => setCurrentState('default')}
     >
@@ -58,12 +61,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({ label, state = 'default', o
     </Pressable>
   );
 };
-
-interface ActionButtonContentsProps {
-  label: string;
-  textColor: ColorValue;
-  icon?: Icon;
-}
 
 const ActionButtonContents: React.FC<ActionButtonContentsProps> = ({ label, textColor, icon }) => {
   const styles = useActionButtonStyles();

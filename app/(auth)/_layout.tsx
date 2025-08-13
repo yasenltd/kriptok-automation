@@ -21,7 +21,7 @@ const AuthLayout = () => {
     [user?.address, user?.btc, user?.solana, user?.sui],
   );
 
-  useBalancePollingAll(addresses);
+  //useBalancePollingAll(addresses);
 
   return (
     <AuthGuard>

@@ -114,6 +114,7 @@ const TransactionScreen = ({ onComplete }: Props) => {
         console.error(error);
       } finally {
         setShowPinModal(false);
+        setPin('');
       }
     },
     [parsedToken, user, values, onComplete],

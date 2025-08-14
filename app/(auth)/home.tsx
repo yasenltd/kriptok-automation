@@ -203,7 +203,7 @@ const Home = () => {
         <View style={{ gap: 5, marginTop: 5, alignItems: 'center' }}>
           <WalletQr address={evmWallet.address} />
           <Pressable onPress={() => onShare(evmWallet.address)} style={{ padding: 12 }}>
-            <Text>Share Address</Text>
+            <Text style={{ color: theme.text.primary }}>Share Address</Text>
           </Pressable>
         </View>
       )}
@@ -226,27 +226,27 @@ const Home = () => {
         disabled={true}
       />
 
-      <Button label="Default" state="default" style="accent" />
-      <Button label="Default" state="loading" style="accent" showLeftIcon={true} />
-      <Button label="Default" state="disabled" style="accent" />
+      <View style={{ alignItems: 'center', marginBottom: 10 }}>
+        <Button label="Default" state="default" style="accent" />
+        <Button label="Default" state="loading" style="accent" showLeftIcon={true} />
+        <Button label="Default" state="disabled" style="accent" />
 
-      <Button label="Secondary" state="default" style="secondary" />
-      <Button label="Secondary" state="loading" style="secondary" showLeftIcon={true} />
-      <Button label="Secondary" state="disabled" style="secondary" />
+        <Button label="Secondary" state="default" style="secondary" />
+        <Button label="Secondary" state="loading" style="secondary" showLeftIcon={true} />
+        <Button label="Secondary" state="disabled" style="secondary" />
 
-      <Button label="Tertiary" state="default" style="tertiary" />
-      <Button label="Tertiary" state="loading" style="tertiary" showLeftIcon={true} />
-      <Button label="Tertiary" state="disabled" style="tertiary" />
+        <Button label="Tertiary" state="default" style="tertiary" />
+        <Button label="Tertiary" state="loading" style="tertiary" showLeftIcon={true} />
+        <Button label="Tertiary" state="disabled" style="tertiary" />
 
-      <Button label="Outline" state="default" style="outline" />
-      <Button label="Outline" state="loading" style="outline" showLeftIcon={true} />
-      <Button label="Outline" state="disabled" style="outline" />
+        <Button label="Outline" state="default" style="outline" />
+        <Button label="Outline" state="loading" style="outline" showLeftIcon={true} />
+        <Button label="Outline" state="disabled" style="outline" />
 
-      <Button label="Ghost" state="default" style="ghost" />
-      <Button label="Ghost" state="loading" style="ghost" showLeftIcon={true} />
-      <Button label="Ghost" state="disabled" style="ghost" />
+        <Button label="Ghost" state="default" style="ghost" />
+        <Button label="Ghost" state="loading" style="ghost" showLeftIcon={true} />
+        <Button label="Ghost" state="disabled" style="ghost" />
 
-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around' }}>
         <View>
           <IconButton state="default" style="accent" icon={<PlusIcon />} />
           <IconButton state="loading" style="accent" icon={<PlusIcon />} />
@@ -277,11 +277,13 @@ const Home = () => {
           <IconButton state="disabled" style="ghost" icon={<PlusIcon />} />
         </View>
 
-        <View style={{ flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+        <View>
           <ActionButton label="Default" state="default" icon={<ArrowUpIcon />} />
           <ActionButton label="Loading" state="loading" icon={<ArrowUpIcon />} />
           <ActionButton label="Disabled" state="disabled" icon={<ArrowUpIcon />} />
+        </View>
 
+        <View>
           <Toggle
             options={[
               { label: 'Label', key: 'option1', icon: <PlusIcon /> },
@@ -289,7 +291,9 @@ const Home = () => {
               { label: 'Label', key: 'option3', icon: <PlusIcon /> },
             ]}
           ></Toggle>
+        </View>
 
+        <View>
           <Checkbox label="Label" description="Description" value={false} onChange={() => {}} />
           <Checkbox label="Label" description="Description" value={true} onChange={() => {}} />
           <Checkbox

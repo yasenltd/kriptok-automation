@@ -1,40 +1,82 @@
-import { Text, View, Pressable } from 'react-native';
+import { useTheme } from '@/context/ThemeContext';
+import { typography } from '@/theme/typography';
 import { MaterialIcons } from '@expo/vector-icons';
-import { colors } from '@/utils';
+import { useMemo } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 type CheckboxProps = {
   value: boolean;
   onChange: (checked: boolean) => void;
-  text?: string;
+  label: string;
+  description?: string;
   color?: string;
 };
-const AppCheckbox: React.FC<CheckboxProps> = ({ value, onChange, text, color }) => {
+const Checkbox: React.FC<CheckboxProps> = ({
+  value,
+  onChange,
+  label: text,
+  description,
+  color,
+}) => {
+  const styles = useCheckboxStyles();
+
   return (
     <Pressable style={{ maxWidth: '100%' }} onPress={() => onChange(!value)}>
-      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-        <MaterialIcons
-          name={value ? 'check-box' : 'check-box-outline-blank'}
-          size={20}
-          color={color ?? colors['secondary-black']}
-          style={{ marginBottom: 2 }}
-        />
-        {text && (
-          <Text
-            style={{
-              marginLeft: 8,
-              color: colors['text-black'],
-              fontFamily: 'montserrat-regular',
-              flexShrink: 1,
-              fontSize: 12,
-              lineHeight: 20,
-            }}
-          >
-            {text}
-          </Text>
+      <View style={styles.container}>
+        <View style={styles.labelContainer}>
+          <MaterialIcons
+            name={value ? 'check-box' : 'check-box-outline-blank'}
+            size={20}
+            color={(color ?? value) ? styles.checked.color : styles.unchecked.color}
+            style={{ marginBottom: 2 }}
+          />
+
+          {text && <Text style={styles.label}>{text}</Text>}
+        </View>
+        {description && (
+          <View style={styles.descriptionContainer}>
+            <Text style={styles.description}>{description}</Text>
+          </View>
         )}
       </View>
     </Pressable>
   );
 };
 
-export default AppCheckbox;
+const useCheckboxStyles = () => {
+  const { theme } = useTheme();
+  return useMemo(
+    () =>
+      StyleSheet.create({
+        container: {
+          flexDirection: 'column',
+          gap: 4,
+        },
+        labelContainer: {
+          flexDirection: 'row',
+          gap: 8,
+        },
+        descriptionContainer: {
+          flexDirection: 'row',
+          paddingLeft: 28, // indent description to align with checkbox
+        },
+        checked: {
+          color: theme.text.primary,
+        },
+        unchecked: {
+          color: theme.text.tertiary,
+        },
+        label: {
+          color: theme.text.primary,
+          ...typography.checkbox.label,
+        },
+        description: {
+          color: theme.text.tertiary,
+          ...typography.checkbox.description,
+        },
+      }),
+    [theme],
+  );
+};
+
+export default Checkbox;

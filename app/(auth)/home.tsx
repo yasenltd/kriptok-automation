@@ -1,24 +1,37 @@
-import { getLoginMessage, login, signSiweMessage } from '@/utils/auth';
-import { getToken, saveToken } from '@/utils/tokenStorage';
 import { useState } from 'react';
 import { Text, View, TouchableOpacity, Pressable, ScrollView } from 'react-native';
-import { AuthLogoutResponse, AuthRefreshResponse } from '@/types';
-import { refreshInstance, api } from '@/services/apiClient';
-import { loadWalletSecurely } from '@/utils/secureStore';
 import { useEffect } from 'react';
-import { deriveEVMWalletFromMnemonic, shareText } from '@/utils';
+import { shareText } from '@/utils';
 import { useSelector } from 'react-redux';
-import { RootState } from '@/stores/store';
+import Checkbox from '@/components/ui/AppCheckbox';
+import Button from '@/components/ui/Button';
+import IconButton from '@/components/ui/IconButton';
+import Switch from '@/components/ui/Switch';
+import { useTheme } from '@/context/ThemeContext';
 import { useToast } from '@/hooks/useToast';
+import { api, refreshInstance } from '@/services/apiClient';
+import { RootState } from '@/stores/store';
+import { AuthLogoutResponse, AuthRefreshResponse } from '@/types';
+import { deriveEVMWalletFromMnemonic } from '@/utils';
+import { getLoginMessage, login, signSiweMessage } from '@/utils/auth';
+import { loadWalletSecurely } from '@/utils/secureStore';
+import { getToken, saveToken } from '@/utils/tokenStorage';
 import { router } from 'expo-router';
 import WalletQr from '@components/WalletQr';
+import { ArrowUpIcon, PlusIcon } from 'react-native-heroicons/micro';
+import ActionButton from '../../components/ui/ActionButton';
+import Toggle from '../../components/ui/Toggle';
+
 // NOTE: Intended for initial testing and development purposes, to be removed later
 const Home = () => {
   /* Hooks */
   const user = useSelector((state: RootState) => state.user.data);
   const toast = useToast();
+  const { theme, colorScheme, toggleTheme } = useTheme();
 
   const [evmWallet, setEvmWallet] = useState<{ address: string; privateKey: string } | null>(null);
+  const [checkboxValue, setCheckboxValue] = useState(false);
+
   const handleLogin = async () => {
     if (!evmWallet) return;
     const { message } = await getLoginMessage(evmWallet.address);
@@ -184,16 +197,113 @@ const Home = () => {
       >
         <Text style={{ color: '#fff', fontWeight: '600', fontSize: 16 }}>Test access token</Text>
       </TouchableOpacity>
-      <Text>EVM Wallet: {evmWallet?.address}</Text>
+      <Text style={{ color: theme.text.primary }}>EVM Wallet: {evmWallet?.address}</Text>
 
       {evmWallet && evmWallet.address && (
         <View style={{ gap: 5, marginTop: 5, alignItems: 'center' }}>
           <WalletQr address={evmWallet.address} />
           <Pressable onPress={() => onShare(evmWallet.address)} style={{ padding: 12 }}>
-            <Text>Share Address</Text>
+            <Text style={{ color: theme.text.primary }}>Share Address</Text>
           </Pressable>
         </View>
       )}
+
+      <Text style={{ color: theme.text.primary }}>Theme: {colorScheme ?? 'undefined'}</Text>
+
+      <Switch
+        size="L"
+        value={colorScheme === 'dark'}
+        onValueChange={() => {
+          toggleTheme();
+        }}
+      />
+      <Switch
+        size="L"
+        value={colorScheme === 'dark'}
+        onValueChange={() => {
+          toggleTheme();
+        }}
+        disabled={true}
+      />
+
+      <View style={{ alignItems: 'center', marginBottom: 10 }}>
+        <Button label="Default" state="default" style="accent" />
+        <Button label="Default" state="loading" style="accent" showLeftIcon={true} />
+        <Button label="Default" state="disabled" style="accent" />
+
+        <Button label="Secondary" state="default" style="secondary" />
+        <Button label="Secondary" state="loading" style="secondary" showLeftIcon={true} />
+        <Button label="Secondary" state="disabled" style="secondary" />
+
+        <Button label="Tertiary" state="default" style="tertiary" />
+        <Button label="Tertiary" state="loading" style="tertiary" showLeftIcon={true} />
+        <Button label="Tertiary" state="disabled" style="tertiary" />
+
+        <Button label="Outline" state="default" style="outline" />
+        <Button label="Outline" state="loading" style="outline" showLeftIcon={true} />
+        <Button label="Outline" state="disabled" style="outline" />
+
+        <Button label="Ghost" state="default" style="ghost" />
+        <Button label="Ghost" state="loading" style="ghost" showLeftIcon={true} />
+        <Button label="Ghost" state="disabled" style="ghost" />
+
+        <View>
+          <IconButton state="default" style="accent" icon={<PlusIcon />} />
+          <IconButton state="loading" style="accent" icon={<PlusIcon />} />
+          <IconButton state="disabled" style="accent" icon={<PlusIcon />} />
+        </View>
+
+        <View>
+          <IconButton state="default" style="secondary" icon={<PlusIcon />} />
+          <IconButton state="loading" style="secondary" icon={<PlusIcon />} />
+          <IconButton state="disabled" style="secondary" icon={<PlusIcon />} />
+        </View>
+
+        <View>
+          <IconButton state="default" style="tertiary" icon={<PlusIcon />} />
+          <IconButton state="loading" style="tertiary" icon={<PlusIcon />} />
+          <IconButton state="disabled" style="tertiary" icon={<PlusIcon />} />
+        </View>
+
+        <View>
+          <IconButton state="default" style="outline" icon={<PlusIcon />} />
+          <IconButton state="loading" style="outline" icon={<PlusIcon />} />
+          <IconButton state="disabled" style="outline" icon={<PlusIcon />} />
+        </View>
+
+        <View>
+          <IconButton state="default" style="ghost" icon={<PlusIcon />} />
+          <IconButton state="loading" style="ghost" icon={<PlusIcon />} />
+          <IconButton state="disabled" style="ghost" icon={<PlusIcon />} />
+        </View>
+
+        <View>
+          <ActionButton label="Default" state="default" icon={<ArrowUpIcon />} />
+          <ActionButton label="Loading" state="loading" icon={<ArrowUpIcon />} />
+          <ActionButton label="Disabled" state="disabled" icon={<ArrowUpIcon />} />
+        </View>
+
+        <View>
+          <Toggle
+            options={[
+              { label: 'Label', key: 'option1', icon: <PlusIcon /> },
+              { label: 'Label', key: 'option2', icon: <PlusIcon /> },
+              { label: 'Label', key: 'option3', icon: <PlusIcon /> },
+            ]}
+          ></Toggle>
+        </View>
+
+        <View>
+          <Checkbox label="Label" description="Description" value={false} onChange={() => {}} />
+          <Checkbox label="Label" description="Description" value={true} onChange={() => {}} />
+          <Checkbox
+            label="Label"
+            description="Description"
+            value={checkboxValue}
+            onChange={newValue => setCheckboxValue(newValue)}
+          />
+        </View>
+      </View>
     </ScrollView>
   );
 };

@@ -4,10 +4,10 @@
     "slug": "kriptok-wallet",
     "scheme": "kriptok",
     "version": "1.0.0",
-    "plugins": ["expo-dev-client", "expo-secure-store", "@config-plugins/detox"],
+    "plugins": ["expo-dev-client", "expo-secure-store", "expo-font", "@config-plugins/detox"],
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash-icon.png",
@@ -16,7 +16,8 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.test.kriptok"
+      "bundleIdentifier": "com.test.kriptok",
+      "userInterfaceStyle": "automatic"
     },
     "android": {
       "adaptiveIcon": {
@@ -24,7 +25,8 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.test.kriptok"
+      "package": "com.test.kriptok",
+      "userInterfaceStyle": "automatic"
     },
     "web": {
       "favicon": "./assets/favicon.png"

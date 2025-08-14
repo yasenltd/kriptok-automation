@@ -11,6 +11,8 @@ const ECPair = ECPairFactory(ecc);
 
 const DUST_LIMIT = 546n;
 
+const BASE_MEMPOOL_URL = isDev ? 'https://mempool.space/testnet/api' : 'https://mempool.space/api';
+
 interface BitcoinUtxo {
   txid: string;
   vout: number;
@@ -20,8 +22,7 @@ interface BitcoinUtxo {
 }
 
 const fetchUtxos = async (address: string): Promise<BitcoinUtxo[]> => {
-  const baseUrl = isDev ? 'https://mempool.space/testnet/api' : 'https://mempool.space/api';
-  const res = await getPublicRaw(`${baseUrl}/address/${address}/utxo`);
+  const res = await getPublicRaw(`${BASE_MEMPOOL_URL}/address/${address}/utxo`);
   return res.data as BitcoinUtxo[];
 };
 
@@ -32,17 +33,16 @@ const toSigner = (keyPair: ECPairInterface): bitcoin.Signer => {
   };
 };
 
-export const getBitcoinBalance = async (address: string): Promise<bigint> => {
+export const getBitcoinBalance = async (address: string): Promise<number> => {
   const utxos = await fetchUtxos(address);
-  return utxos.reduce((sum, utxo) => sum + BigInt(utxo.value), 0n);
+  const totalStats = utxos.reduce((sum, utxo) => sum + BigInt(utxo.value), 0n);
+  return Number(totalStats) / 1e8;
 };
 
 const fetchScriptPubKey = async (txid: string, vout: number): Promise<string> => {
-  const baseUrl = isDev ? 'https://mempool.space/testnet/api' : 'https://mempool.space/api';
-
   const res = await getPublicRaw<{
     vout: { scriptpubkey: string }[];
-  }>(`${baseUrl}/tx/${txid}`);
+  }>(`${BASE_MEMPOOL_URL}/tx/${txid}`);
 
   return res.data.vout[vout].scriptpubkey;
 };

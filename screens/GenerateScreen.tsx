@@ -8,7 +8,7 @@ import {
 } from '../utils';
 import AppModal from '@components/ui/AppModal';
 import { useToast } from '@/hooks/useToast';
-import { setPin } from '@/utils/secureStore';
+import { setPin, storeAllPrivKeys } from '@/utils/secureStore';
 import { Wallets } from '@/types';
 import { getLoginMessage, getSignupMessage, login, signSiweMessage, signup } from '@/utils/auth';
 import { router } from 'expo-router';
@@ -51,13 +51,20 @@ export default function GenerateScreen() {
     setSuiWallet(prev => ({ ...prev, privateKey: '' }));
   }, []);
 
-  const handleGenerateMnemonic = useCallback(() => {
+  const handleGenerateMnemonic = useCallback(async () => {
     try {
       const newMnemonic = generateMnemonic();
       setMnemonic(newMnemonic);
 
       const wallets = deriveAllWalletsFromMnemonic(newMnemonic);
 
+      //store priv keys
+      await storeAllPrivKeys({
+        eth: wallets.evm.privateKey,
+        sol: wallets.solana.privateKey,
+        sui: wallets.sui.privateKey,
+        btc: wallets.bitcoin.privateKey,
+      });
       setWallets(wallets);
 
       setPinModalVisible(true);

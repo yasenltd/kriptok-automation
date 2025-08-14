@@ -7,7 +7,7 @@ import {
   deriveSolanaWallet,
   deriveAllWalletsFromMnemonic,
 } from './mnemonic';
-import { colors } from './constants';
+import { colors, textSize, inputSizeMapping } from './constants';
 import {
   storeWalletSecurely,
   loadWalletSecurelyWithBiometrics,
@@ -15,10 +15,14 @@ import {
   secureGet,
   secureRemove,
   secureSave,
+  loadPrivKeySecurely,
+  storePrivKeySecurely,
+  storeAllPrivKeys,
 } from './secureStore';
 
 import { getToken, saveToken, removeToken, isTokenExpired } from './tokenStorage';
 import { copyToClipboard } from './stringUtils';
+import { formatAddress, shareText } from './stringUtils';
 
 export {
   generateMnemonic,
@@ -40,4 +44,11 @@ export {
   removeToken,
   isTokenExpired,
   copyToClipboard,
+  textSize,
+  inputSizeMapping,
+  formatAddress,
+  loadPrivKeySecurely,
+  storePrivKeySecurely,
+  storeAllPrivKeys,
+  shareText,
 };

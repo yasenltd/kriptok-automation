@@ -1,3 +1,5 @@
+import { Feather } from '@expo/vector-icons';
+
 export type LanguageType = 'en' | 'tr';
 
 export type User = {
@@ -56,6 +58,19 @@ export type RegisterType = {
   message: string;
 };
 
+export type BalancesType = {
+  eth: number;
+  linea: number;
+  polygon: number;
+  base: number;
+  optimism: number;
+  arbitrum: number;
+  bnb: number;
+  btc: number;
+  sol: number;
+  sui: number;
+};
+
 export type IUser = {
   address: string; // Ethereum
   btc?: string;
@@ -64,6 +79,7 @@ export type IUser = {
   nonce?: string;
   userId?: string;
   hasBackedUp: boolean;
+  balances: BalancesType;
   createdAt?: string;
   updatedAt?: string;
   _id?: string;
@@ -74,3 +90,25 @@ export type StatusType = 'checking' | 'unlocking' | 'unlocked';
 export interface UpdateUserDto {
   hasBackedUp: boolean;
 }
+
+export type FeatherIconType = keyof typeof Feather.glyphMap;
+
+export const nativeCoins = ['eth', 'btc', 'sol', 'sui'];
+
+export type AssetMeta = {
+  key: string;
+  label: string;
+  ledgerId: 'ethereum' | 'bitcoin' | 'solana' | 'sui';
+  isNative: boolean;
+  tokenAddress?: string;
+  decimals: number;
+  balance: string;
+};
+
+export type txInfo = {
+  amount: string;
+  txHash: string;
+  to: string;
+  icon: string;
+  assetLabel: string;
+};

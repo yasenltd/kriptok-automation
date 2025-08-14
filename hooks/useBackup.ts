@@ -2,7 +2,7 @@ import { useToast } from '@/hooks/useToast';
 import { updateUser } from '@/stores/user/userSlice';
 import { loadWalletSecurelyWithBiometrics } from '@/utils';
 import { loadWalletFromPin } from '@/utils/secureStore';
-import { updateUserMe } from '@/utils/users';
+import { updateHasBackedUp } from '@/utils/users';
 import { router } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -66,7 +66,7 @@ export const useBackup = () => {
 
     if (isCorrect) {
       try {
-        const hasBackedUp = await updateUserMe({ hasBackedUp: true });
+        const hasBackedUp = await updateHasBackedUp();
         dispatch(updateUser({ hasBackedUp: hasBackedUp }));
       } catch (error) {
         console.error(error);

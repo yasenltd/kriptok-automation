@@ -1,11 +1,7 @@
 import { useToast } from '@/hooks/useToast';
 import { RootState } from '@/stores/store';
 import { AssetMeta, txInfo } from '@/types';
-import {
-  loadPrivkeyFromPin,
-  loadPrivKeySecurely,
-  loadPrivKeyWithBiometrics,
-} from '@/utils/secureStore';
+import { loadPrivkeyFromPin, loadPrivKeyWithBiometrics } from '@/utils/secureStore';
 import { BaseTxParams, sendTransaction } from '@/utils/transactions';
 import AppInput from '@components/ui/AppInput';
 import UnlockModal from '@components/UnlockModal';
@@ -13,6 +9,23 @@ import { useLocalSearchParams } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { useSelector } from 'react-redux';
+
+type Values = { to: string; amount: string; fee?: string };
+type Fail = { message: string };
+
+const validateTx = (values: Values, balanceStr?: string): Fail | null => {
+  const amountNum = Number(values.amount);
+  const balanceNum = Number(balanceStr ?? '0');
+
+  const rules: Array<[boolean, string]> = [
+    [!!values.amount && !isNaN(amountNum) && amountNum > 0, 'Enter a valid amount!'],
+    [amountNum <= balanceNum, 'Insufficient balance!'],
+    [!!values.to, 'Enter a valid address!'],
+  ];
+
+  const failed = rules.find(([ok]) => !ok);
+  return failed ? { message: failed[1] } : null;
+};
 
 const LEDGER_TO_KEYTYPE = {
   bitcoin: 'btc',
@@ -60,6 +73,12 @@ const TransactionScreen = ({ onComplete }: Props) => {
     [user],
   );
 
+  const failAndClose = useCallback((msg: string) => {
+    toast.showError(msg);
+    setShowPinModal(false);
+    setPin('');
+  }, []);
+
   const buildTxParams = useCallback(
     (to: string, amount: string, fee?: string): BaseTxParams => {
       const baseParams: BaseTxParams = {
@@ -84,21 +103,8 @@ const TransactionScreen = ({ onComplete }: Props) => {
 
   const handleTransaction = useCallback(
     async (privKey: string) => {
-      const amountNum = parseFloat(values.amount);
-      const balanceNum = parseFloat(parsedToken.balance ?? '0');
-
-      if (!values.amount || isNaN(amountNum) || amountNum <= 0) {
-        toast.showError('Enter a valid amount!');
-        return;
-      }
-      if (amountNum > balanceNum) {
-        toast.showError('Insufficient balance!');
-        return;
-      }
-      if (!values.to) {
-        toast.showError('Enter a valid address!');
-        return;
-      }
+      const fail = validateTx(values, parsedToken.balance);
+      if (fail) return failAndClose(fail.message);
       try {
         if (!privKey) {
           toast.showError('Private key not found for this chain.');
@@ -118,6 +124,7 @@ const TransactionScreen = ({ onComplete }: Props) => {
         console.error(error);
       } finally {
         setShowPinModal(false);
+        setPin('');
       }
     },
     [parsedToken, user, values, onComplete],

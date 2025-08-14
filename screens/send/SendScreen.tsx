@@ -1,4 +1,5 @@
-import { BalancesType, useAllBalances } from '@/hooks/useGetBalances';
+import { BalancesType } from '@/types';
+import { useAllBalances } from '@/hooks/useGetBalances';
 import { RootState } from '@/stores/store';
 import AppLoader from '@components/ui/AppLoader';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';

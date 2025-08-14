@@ -1,15 +1,9 @@
+import { BalancesType } from '@/types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getEthBalance } from '@/utils/transactions/evm';
 import { getSuiBalance } from '@/utils/transactions/sui';
 import { getSolanaBalance } from '@/utils/transactions/solana';
 import { getBitcoinBalance } from '@/utils/transactions/bitcoin';
-
-export type BalancesType = {
-  eth: number;
-  btc: number;
-  sol: number;
-  sui: number;
-};
 
 type Addresses = {
   eth?: string;
@@ -32,13 +26,32 @@ export const useAllBalances = (addresses: Addresses) => {
     if (!allReady) return;
     try {
       setBalancesLoading(true);
-      const [eth, btc, sol, sui] = await Promise.all([
-        getEthBalance(addresses.eth!),
-        getBitcoinBalance(addresses.btc!),
-        getSolanaBalance(addresses.sol!),
-        getSuiBalance(addresses.sui!),
-      ]);
-      setBalances({ eth: Number(eth), btc, sol, sui });
+      const [eth, linea, polygon, base, optimism, arbitrum, bnb, btc, sol, sui] = await Promise.all(
+        [
+          getEthBalance(addresses.eth!, 'ethereum'),
+          getEthBalance(addresses.eth!, 'linea'),
+          getEthBalance(addresses.eth!, 'polygon'),
+          getEthBalance(addresses.eth!, 'base'),
+          getEthBalance(addresses.eth!, 'optimism'),
+          getEthBalance(addresses.eth!, 'arbitrum'),
+          getEthBalance(addresses.eth!, 'bnb'),
+          getBitcoinBalance(addresses.btc!),
+          getSolanaBalance(addresses.sol!),
+          getSuiBalance(addresses.sui!),
+        ],
+      );
+      setBalances({
+        eth: Number(eth),
+        linea: Number(linea),
+        polygon: Number(polygon),
+        base: Number(base),
+        optimism: Number(optimism),
+        arbitrum: Number(arbitrum),
+        bnb: Number(bnb),
+        btc,
+        sol,
+        sui,
+      });
     } catch (err) {
       console.error(err);
     } finally {

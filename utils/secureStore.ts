@@ -22,7 +22,6 @@ export type StoredWalletData = {
 
 export const getOrCreateAesKey = async (): Promise<string> => {
   const storedKey = await SecureStore.getItemAsync(WALLET_ENCRYPTION_KEY);
-
   if (storedKey) return storedKey;
 
   const keyBuffer = Crypto.getRandomBytes(32);
@@ -47,17 +46,20 @@ const deriveKey = async (salt: string): Promise<string> => {
   return await Aes.pbkdf2(pass, salt, iterations, keyLength, algorithm);
 };
 
-const encryptData = async (
-  mnemonic: string,
-  key: string,
-): Promise<{ cipher: string; iv: string }> => {
+const encryptData = async (data: string, key: string): Promise<{ cipher: string; iv: string }> => {
   const iv = await Aes.randomKey(16);
-  const cipher = await Aes.encrypt(mnemonic, key, iv, 'aes-256-cbc');
+  const cipher = await Aes.encrypt(data, key, iv, 'aes-256-cbc');
   return { cipher, iv };
 };
 
 const decryptData = async (cipher: string, key: string, iv: string): Promise<string> => {
-  return await Aes.decrypt(cipher, key, iv, 'aes-256-cbc');
+  try {
+    const decrypted = await Aes.decrypt(cipher, key, iv, 'aes-256-cbc');
+    return decrypted;
+  } catch (error) {
+    console.error(error);
+    throw new Error('Decrypt failed');
+  }
 };
 
 async function hashPin(pin: string): Promise<string> {
@@ -136,9 +138,12 @@ export const loadWalletFromPin = async (pin: string) => {
 };
 
 export const clearWalletSecurely = async () => {
-  await SecureStore.deleteItemAsync(WALLET_KEYCHAIN_SERVICE);
-  await SecureStore.deleteItemAsync(PIN_HASH_KEY);
-  await SecureStore.deleteItemAsync(WALLET_ENCRYPTION_KEY);
+  await Promise.all([
+    SecureStore.deleteItemAsync(WALLET_KEYCHAIN_SERVICE),
+    SecureStore.deleteItemAsync(PIN_HASH_KEY),
+    ...Object.values(PRIV_KEY_SERVICE).map(k => SecureStore.deleteItemAsync(k)),
+    SecureStore.deleteItemAsync(WALLET_ENCRYPTION_KEY),
+  ]);
 };
 
 export const secureSave = async (key: string, data: unknown) => {
@@ -190,20 +195,22 @@ export const storePrivKeySecurely = async (privKey: string, keyType: KeyType) =>
 export const loadPrivKeySecurely = async (keyType: KeyType): Promise<string | null> => {
   const stored = await SecureStore.getItemAsync(PRIV_KEY_SERVICE[keyType]);
   if (!stored) return null;
-
   try {
     const { cipher, salt, iv } = JSON.parse(stored);
     const key = await deriveKey(salt);
     return await decryptData(cipher, key, iv);
-  } catch {
+  } catch (e) {
+    console.error('Decryption failed:', e);
     return null;
   }
 };
 
 export const storeAllPrivKeys = async (keys: Record<KeyType, string>) => {
-  await Promise.all(
-    (Object.keys(PRIV_KEY_SERVICE) as KeyType[]).map(k => storePrivKeySecurely(keys[k], k)),
-  );
+  await getOrCreateAesKey();
+
+  for (const k of Object.keys(PRIV_KEY_SERVICE) as KeyType[]) {
+    await storePrivKeySecurely(keys[k], k);
+  }
 };
 
 export const loadPrivKeyWithBiometrics = async (keyType: KeyType) => {

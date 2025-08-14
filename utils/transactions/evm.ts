@@ -8,6 +8,8 @@ import {
 } from '../constants';
 import { BaseTxParams } from '.';
 
+type ChainKey = keyof typeof MAIN_ETH_RPC_PROVIDER;
+
 const providerCache: Record<string, JsonRpcProvider> = {};
 
 export const getWalletProvider = (chain: 'ethereum', privateKey: string) => {
@@ -33,8 +35,8 @@ const getFallbackFee = (tokenAddress: string | null): { feeInWei: bigint; feeInE
   };
 };
 
-export const getEthBalance = async (address: string) => {
-  const rpc = isDev ? TEST_ETH_RPC_PROVIDER['ethereum'] : MAIN_ETH_RPC_PROVIDER['ethereum'];
+export const getEthBalance = async (address: string, chain: ChainKey = 'ethereum') => {
+  const rpc = isDev ? TEST_ETH_RPC_PROVIDER[chain] : MAIN_ETH_RPC_PROVIDER[chain];
   if (!providerCache[rpc]) {
     providerCache[rpc] = new JsonRpcProvider(rpc);
   }

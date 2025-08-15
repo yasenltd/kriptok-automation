@@ -8,7 +8,8 @@ export type ButtonSize =
   | 'M'
   | 'L'
   | 'XL'
-  | { width: number; height: number; fontSize?: number; iconSize?: number };
+  | { width: number; height: number; fontSize?: number; iconSize?: number }
+  | 'screen';
 export type IconButtonSize = 'XS' | 'S' | 'M' | 'L';
 export type Icon = React.JSX.Element | IconProps;
 

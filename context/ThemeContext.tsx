@@ -9,7 +9,6 @@ import React, {
   useMemo,
   useState,
 } from 'react';
-import { useColorScheme } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type Scheme = 'light' | 'dark';
@@ -26,8 +25,7 @@ const THEME_KEY = 'app.theme.scheme';
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const systemColorScheme = useColorScheme();
-  const [scheme, setScheme] = useState<Scheme>((systemColorScheme ?? 'light') as Scheme);
+  const [scheme, setScheme] = useState<Scheme>('dark');
   const [hydrated, setHydrated] = useState(false);
 
   const getTheme = useCallback(async () => {

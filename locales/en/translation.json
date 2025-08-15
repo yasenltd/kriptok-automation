@@ -1,6 +1,8 @@
 {
-  "kriptokWallet": "Kriptok Wallet",
+  "kriptokWallet": "Welcome to KriptoK",
   "welcome": "Welcome! What would you like to do?",
+  "getStarted": "To get started, create a new wallet",
+  "orImport": "or import an existing one",
   "create": "Create New Wallet",
   "import": "Import Existing Wallet",
   "selectLanguage": "Select Language"

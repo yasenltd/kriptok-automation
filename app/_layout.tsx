@@ -12,13 +12,11 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { ThemeProvider } from '../context/ThemeContext';
 import ThemedStack from '@components/ThemedStack';
 
-const Layout = () => {
-  SplashScreen.preventAutoHideAsync();
+SplashScreen.preventAutoHideAsync();
 
+const Layout = () => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [fontsLoaded, fontError] = useFonts({
-    // add other font configurations here
-    // should the font weights change
     'Satoshi-Regular': require('@/assets/fonts/Satoshi-Regular.otf'),
     'Satoshi-Bold': require('@/assets/fonts/Satoshi-Bold.otf'),
   });
@@ -28,16 +26,12 @@ const Layout = () => {
     setIsLoaded(true);
   }, []);
 
-  useEffect(() => {
-    if (fontsLoaded || fontError) {
-      SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded, fontError]);
-
   const onLayoutRootView = useCallback(async () => {
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    await SplashScreen.hideAsync();
-  }, []);
+    const ready = (fontsLoaded || !!fontError) && isLoaded;
+    if (ready) {
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded, fontError, isLoaded]);
 
   useEffect(() => {
     checkForData();

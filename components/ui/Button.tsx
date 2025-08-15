@@ -44,6 +44,7 @@ const PRESET_SIZES = {
   M: { width: 140, height: 40, paddingHorizontal: 8, paddingVertical: 4 },
   L: { width: 160, height: 44, paddingHorizontal: 8, paddingVertical: 8 },
   XL: { width: 184, height: 52, paddingHorizontal: 8, paddingVertical: 12 },
+  screen: { width: '100%', height: 40, paddingHorizontal: 8, paddingVertical: 4 },
 } as const;
 
 type PresetKey = keyof typeof PRESET_SIZES;
@@ -53,6 +54,7 @@ const TEXT_STYLES: Record<PresetKey, TextStyle> = {
   M: typography.button.xsToL,
   L: typography.button.xsToL,
   XL: typography.button.xl,
+  screen: typography.button.xsToL,
 };
 
 const Button: React.FC<ButtonProps> = ({
@@ -68,7 +70,7 @@ const Button: React.FC<ButtonProps> = ({
   const { buttonStyles, getAccentGradientColors, getButtonTextColor, getStyles } =
     useButtonStyles();
 
-  const [currentState, setCurrentState] = useState<ButtonState>(state as ButtonState);
+  const [isPressed, setIsPressed] = useState(false);
 
   const { sizeStyle, textStyles, iconSize } = useMemo(() => {
     if (isCustomSize(size)) {
@@ -95,32 +97,39 @@ const Button: React.FC<ButtonProps> = ({
 
   const variant = style;
 
+  const isDisabled = state === 'disabled' || state === 'loading';
+  const effectiveState: ButtonState = isDisabled
+    ? (state as ButtonState)
+    : isPressed
+      ? 'pressed'
+      : 'default';
+
   const variantStyle = useMemo(
-    () => getStyles(currentState, variant),
-    [currentState, variant, getStyles],
+    () => getStyles(effectiveState, variant),
+    [effectiveState, variant, getStyles],
   );
 
   const textColor = useMemo<ColorValue>(
-    () => getButtonTextColor(currentState, variant),
-    [currentState, variant, getButtonTextColor],
+    () => getButtonTextColor(effectiveState, variant),
+    [effectiveState, variant, getButtonTextColor],
   );
 
   const flags = useMemo(() => {
-    const loading = currentState === 'loading';
-    const pressed = currentState === 'pressed';
-    const disabled = currentState === 'disabled';
-    const isDefault = currentState === 'default';
+    const loading = effectiveState === 'loading';
+    const pressed = effectiveState === 'pressed';
+    const disabled = effectiveState === 'disabled';
+    const isDefault = effectiveState === 'default';
     const needsBlur =
       ((variant === 'outline' || variant === 'ghost') && (loading || pressed)) ||
       (variant === 'tertiary' && isDefault);
     const isAccent = variant === 'accent';
     return { loading, pressed, disabled, needsBlur, isAccent };
-  }, [currentState, variant]);
+  }, [effectiveState, variant]);
 
   const wrapper = useMemo<Wrapper>(() => {
     if (flags.isAccent) {
       const props: Omit<LinearGradientProps, 'children'> = {
-        colors: getAccentGradientColors(currentState),
+        colors: getAccentGradientColors(effectiveState),
         start: { x: 0, y: 0 },
         end: { x: 1, y: 1 },
         style: [buttonStyles.gradient, sizeStyle, variantStyle],
@@ -139,7 +148,7 @@ const Button: React.FC<ButtonProps> = ({
   }, [
     flags.isAccent,
     flags.needsBlur,
-    currentState,
+    effectiveState,
     getAccentGradientColors,
     buttonStyles,
     sizeStyle,
@@ -151,13 +160,15 @@ const Button: React.FC<ButtonProps> = ({
       onPress={onPress}
       disabled={flags.disabled || flags.loading}
       style={[buttonStyles.button, sizeStyle]}
-      onPressIn={() => setCurrentState('pressed')}
-      onPressOut={() => setCurrentState('default')}
+      onPressIn={() => {
+        if (!isDisabled) setIsPressed(true);
+      }}
+      onPressOut={() => setIsPressed(false)}
     >
       {wrapper.kind === 'gradient' ? (
         <LinearGradient {...wrapper.props}>
           <ButtonContents
-            state={currentState}
+            state={effectiveState}
             icon={icon}
             iconSize={iconSize}
             textStyles={textStyles}
@@ -170,7 +181,7 @@ const Button: React.FC<ButtonProps> = ({
       ) : wrapper.kind === 'blur' ? (
         <BlurView {...wrapper.props}>
           <ButtonContents
-            state={currentState}
+            state={effectiveState}
             icon={icon}
             iconSize={iconSize}
             textStyles={textStyles}
@@ -183,7 +194,7 @@ const Button: React.FC<ButtonProps> = ({
       ) : (
         <View {...wrapper.props}>
           <ButtonContents
-            state={currentState}
+            state={effectiveState}
             icon={icon}
             iconSize={iconSize}
             textStyles={textStyles}

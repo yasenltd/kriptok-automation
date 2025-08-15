@@ -1,22 +1,32 @@
 import { useTheme } from '@/context/ThemeContext';
+import { colors } from '@/theme/colors';
 import { typography } from '@/theme/typography';
 import PinInput from '@components/ui/AppPinInput';
 import Button from '@components/ui/Button';
-import { KeyboardAvoidingView, Platform, StyleSheet, Text, View } from 'react-native';
 import { useMemo } from 'react';
+import { KeyboardAvoidingView, Platform, StyleSheet, Text, View } from 'react-native';
 
 type Props = {
-  onNext: () => void;
   pin: string;
-  setPin: (value: string) => void;
+  onNext: () => void;
+  confirmPin: string;
+  setConfirmPin: (value: string) => void;
 };
 
-const EnterPin = ({ onNext, pin, setPin }: Props) => {
+const VerifyPin = ({ pin, confirmPin, setConfirmPin, onNext }: Props) => {
   const { theme } = useTheme();
 
+  const isWrong = useMemo(() => {
+    if (confirmPin.length === 6 && confirmPin !== pin) {
+      return true;
+    }
+    return false;
+  }, [pin, confirmPin]);
+
   const isButtonDisabled = useMemo(() => {
-    return !pin || pin.length < 6;
-  }, [pin, setPin]);
+    return !confirmPin || confirmPin.length < 6 || isWrong;
+  }, [confirmPin, setConfirmPin, isWrong]);
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -31,16 +41,25 @@ const EnterPin = ({ onNext, pin, setPin }: Props) => {
               { color: theme.text.primary, marginBottom: 50 },
             ]}
           >
-            Enter PIN
+            Re-enter PIN
           </Text>
-          <PinInput length={6} value={pin} onChange={setPin} autoFocus cellSize={42} />
+          <PinInput
+            length={6}
+            value={confirmPin}
+            onChange={setConfirmPin}
+            autoFocus
+            cellSize={42}
+            isWrong={isWrong}
+          />
 
-          <Text style={[styles.text, styles.title, { color: theme.text.tertiary, marginTop: 5 }]}>
-            This is used to secure your wallet on this device.
-          </Text>
+          {isWrong && (
+            <Text style={[styles.text, styles.title, { color: colors.error[40], marginTop: 10 }]}>
+              This pin doesn't match the already entered one.
+            </Text>
+          )}
 
-          <Text style={[styles.text, styles.title, { color: theme.text.tertiary }]}>
-            Please remember it, as it cannot be recovered.
+          <Text style={[styles.text, styles.title, { color: theme.text.tertiary, marginTop: 10 }]}>
+            Be sure you enter the same PIN.
           </Text>
         </View>
 
@@ -56,7 +75,7 @@ const EnterPin = ({ onNext, pin, setPin }: Props) => {
   );
 };
 
-export default EnterPin;
+export default VerifyPin;
 
 const styles = StyleSheet.create({
   text: {

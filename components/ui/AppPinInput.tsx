@@ -1,4 +1,5 @@
 import { useTheme } from '@/context/ThemeContext';
+import { colors } from '@/theme/colors';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { TextInput, View, StyleSheet, TextInput as RNTextInput, Platform } from 'react-native';
 
@@ -9,6 +10,7 @@ type PinInputProps = {
   onComplete?: (val: string) => void;
   autoFocus?: boolean;
   cellSize?: number;
+  isWrong?: boolean;
 };
 
 const PinInput: React.FC<PinInputProps> = ({
@@ -18,6 +20,7 @@ const PinInput: React.FC<PinInputProps> = ({
   onComplete,
   autoFocus = true,
   cellSize = 42,
+  isWrong,
 }) => {
   const { theme } = useTheme();
 
@@ -77,7 +80,13 @@ const PinInput: React.FC<PinInputProps> = ({
   }, [autoFocus]);
 
   return (
-    <View style={[styles.row, { gap: 0 }]}>
+    <View
+      style={[
+        styles.row,
+        isWrong && styles.wrong,
+        { borderColor: isWrong ? colors.error[40] : undefined },
+      ]}
+    >
       {digits.map((digit, i) => (
         <TextInput
           key={i}
@@ -136,6 +145,11 @@ const styles = StyleSheet.create({
   },
   cellFilled: {
     borderColor: '#9CA3AF',
+  },
+  wrong: {
+    borderWidth: 2,
+    padding: 2,
+    borderRadius: 6,
   },
 });
 

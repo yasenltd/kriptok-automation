@@ -27,17 +27,19 @@ const ThemedStack = () => {
             <Header
               {...props}
               title={props.options.title as string}
-              headerTitleAlign="left"
+              headerTitleAlign="center"
               headerBackButtonDisplayMode="minimal"
               headerTransparent={true}
               headerTitleStyle={{ color: theme.text.primary }}
               headerStyle={{ borderBottomWidth: 0, shadowOpacity: 0, elevation: 0 }}
               headerLeft={headerProps =>
-                props.back && pathname !== '/home' ? (
+                typeof props.options.headerLeft === 'function' ? (
+                  props.options.headerLeft(headerProps)
+                ) : props.back && pathname !== '/home' ? (
                   <HeaderBackButton
                     {...headerProps}
                     onPress={props.navigation.goBack}
-                    label={''}
+                    label=""
                     tintColor={theme.text.primary}
                   />
                 ) : null
@@ -47,7 +49,7 @@ const ThemedStack = () => {
         }}
       >
         <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="generate" options={{ headerShown: true }} />
+        <Stack.Screen name="generate" options={{ headerShown: true, title: 'Create New Wallet' }} />
         <Stack.Screen name="import" options={{ headerShown: true }} />
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
       </Stack>

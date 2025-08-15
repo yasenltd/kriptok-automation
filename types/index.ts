@@ -78,6 +78,7 @@ export type IUser = {
   solana?: string;
   nonce?: string;
   userId?: string;
+  biometricsEnabled?: boolean;
   hasBackedUp: boolean;
   balances: BalancesType;
   createdAt?: string;

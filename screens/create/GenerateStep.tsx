@@ -16,6 +16,7 @@ import { clearWalletSecurely, setPin } from '@/utils/secureStore';
 import { getUser } from '@/utils/users';
 import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { BackHandler, Platform, StyleSheet, Text, View } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 import { useDispatch } from 'react-redux';
@@ -30,6 +31,7 @@ const GenerateStep = ({ pin, biometricsEnabled }: Props) => {
   const { setIsAuthenticated } = useAuth();
   const dispatch = useDispatch();
   const { theme } = useTheme();
+  const { t } = useTranslation();
 
   const handleGenerateMnemonic = useCallback(async () => {
     try {
@@ -123,7 +125,7 @@ const GenerateStep = ({ pin, biometricsEnabled }: Props) => {
     <View style={styles.root}>
       <View>
         <Text style={[typography['heading5'], styles.title, { color: theme.text.primary }]}>
-          Creating a wallet
+          {t('creating')}
         </Text>
 
         <Text
@@ -133,7 +135,7 @@ const GenerateStep = ({ pin, biometricsEnabled }: Props) => {
             { color: theme.text.tertiary, marginTop: 10, alignSelf: 'stretch' },
           ]}
         >
-          This might take a few seconds...
+          {t('mightTake')}
         </Text>
 
         <View style={{ alignItems: 'center', marginTop: 30 }}>

@@ -4,6 +4,7 @@ import { typography } from '@/theme/typography';
 import PinInput from '@components/ui/AppPinInput';
 import Button from '@components/ui/Button';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { KeyboardAvoidingView, Platform, StyleSheet, Text, View } from 'react-native';
 
 type Props = {
@@ -15,6 +16,7 @@ type Props = {
 
 const VerifyPin = ({ pin, confirmPin, setConfirmPin, onNext }: Props) => {
   const { theme } = useTheme();
+  const { t } = useTranslation();
 
   const isWrong = useMemo(() => {
     if (confirmPin.length === 6 && confirmPin !== pin) {
@@ -41,7 +43,7 @@ const VerifyPin = ({ pin, confirmPin, setConfirmPin, onNext }: Props) => {
               { color: theme.text.primary, marginBottom: 50 },
             ]}
           >
-            Re-enter PIN
+            {t('reEnter')}
           </Text>
           <PinInput
             length={6}
@@ -54,17 +56,17 @@ const VerifyPin = ({ pin, confirmPin, setConfirmPin, onNext }: Props) => {
 
           {isWrong && (
             <Text style={[styles.text, styles.title, { color: colors.error[40], marginTop: 10 }]}>
-              This pin doesn't match the already entered one.
+              {t('matchPin')}
             </Text>
           )}
 
           <Text style={[styles.text, styles.title, { color: theme.text.tertiary, marginTop: 10 }]}>
-            Be sure you enter the same PIN.
+            {t('beSure')}
           </Text>
         </View>
 
         <Button
-          label="Continue"
+          label={t('continue')}
           style="secondary"
           size={'screen'}
           onPress={onNext}

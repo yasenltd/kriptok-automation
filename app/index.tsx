@@ -138,7 +138,9 @@ const WelcomeScreen = () => {
             ]}
           >
             <View>
-              <Text style={[typography['heading3'], { color: theme.text.primary }]}>
+              <Text
+                style={[typography['heading3'], { color: theme.text.primary, textAlign: 'center' }]}
+              >
                 {t('kriptokWallet')}
               </Text>
               <View>
@@ -153,14 +155,14 @@ const WelcomeScreen = () => {
 
             <View style={{ gap: 12, width: '100%' }}>
               <Button
-                label="Create new wallet"
+                label={t('create')}
                 onPress={() => router.push('/generate')}
                 state="default"
                 style="accent"
                 size="screen"
               />
               <Button
-                label="Import an existing wallet"
+                label={t('import')}
                 state="default"
                 style="outline"
                 size="screen"
@@ -170,22 +172,29 @@ const WelcomeScreen = () => {
 
             <View style={{ gap: 2 }}>
               <Text style={[styles.subtitle, styles.text, { color: theme.text.primary }]}>
-                By continuing forward you agree with our
+                {t('byContinuing')}
               </Text>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: 4,
+                  justifyContent: 'center',
+                }}
+              >
                 <Pressable onPress={() => router.push('/terms')}>
                   <Text style={[styles.subtitle, styles.text, { color: colors.blue[40] }]}>
-                    Terms and Conditions
+                    {t('terms')}
                   </Text>
                 </Pressable>
 
                 <Text style={[styles.subtitle, styles.text, { color: theme.text.primary }]}>
-                  and
+                  {t('and')}
                 </Text>
 
                 <Pressable onPress={() => router.push('/privacy')}>
                   <Text style={[styles.subtitle, styles.text, { color: colors.blue[40] }]}>
-                    Privacy Policy
+                    {t('privacy')}
                   </Text>
                 </Pressable>
               </View>

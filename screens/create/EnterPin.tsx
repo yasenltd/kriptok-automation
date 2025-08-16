@@ -4,6 +4,7 @@ import PinInput from '@components/ui/AppPinInput';
 import Button from '@components/ui/Button';
 import { KeyboardAvoidingView, Platform, StyleSheet, Text, View } from 'react-native';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   onNext: () => void;
@@ -13,6 +14,7 @@ type Props = {
 
 const EnterPin = ({ onNext, pin, setPin }: Props) => {
   const { theme } = useTheme();
+  const { t } = useTranslation();
 
   const isButtonDisabled = useMemo(() => {
     return !pin || pin.length < 6;
@@ -31,21 +33,21 @@ const EnterPin = ({ onNext, pin, setPin }: Props) => {
               { color: theme.text.primary, marginBottom: 50 },
             ]}
           >
-            Enter PIN
+            {t('enterPin')}
           </Text>
           <PinInput length={6} value={pin} onChange={setPin} autoFocus cellSize={42} />
 
           <Text style={[styles.text, styles.title, { color: theme.text.tertiary, marginTop: 5 }]}>
-            This is used to secure your wallet on this device.
+            {t('secureYourWallet')}
           </Text>
 
           <Text style={[styles.text, styles.title, { color: theme.text.tertiary }]}>
-            Please remember it, as it cannot be recovered.
+            {t('pleaseRemember')}
           </Text>
         </View>
 
         <Button
-          label="Continue"
+          label={t('continue')}
           style="secondary"
           size={'screen'}
           onPress={onNext}

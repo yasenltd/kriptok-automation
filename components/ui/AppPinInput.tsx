@@ -125,7 +125,6 @@ const PinInput: React.FC<PinInputProps> = ({
           autoCorrect={false}
           autoCapitalize="none"
           selection={{ start: 1, end: 1 }}
-          caretHidden
         />
       ))}
     </View>

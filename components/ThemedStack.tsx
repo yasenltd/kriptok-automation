@@ -4,10 +4,12 @@ import { Stack, usePathname } from 'expo-router';
 import { useMemo } from 'react';
 import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
 import { View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 const ThemedStack = () => {
   const { theme, colorScheme } = useTheme();
   const pathname = usePathname();
+  const { t } = useTranslation();
 
   const showHeader = useMemo(() => {
     const headerRoutes = ['/', '/generate', '/import'];
@@ -49,7 +51,7 @@ const ThemedStack = () => {
         }}
       >
         <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="generate" options={{ headerShown: true, title: 'Create New Wallet' }} />
+        <Stack.Screen name="generate" options={{ headerShown: true, title: t('createTitle') }} />
         <Stack.Screen name="import" options={{ headerShown: true }} />
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
       </Stack>

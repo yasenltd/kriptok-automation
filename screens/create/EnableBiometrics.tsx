@@ -7,6 +7,7 @@ import Button from '@components/ui/Button';
 import * as LocalAuthentication from 'expo-local-authentication';
 import { useCallback } from 'react';
 import { useToast } from '@/hooks/useToast';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   onNext: () => void;
@@ -16,6 +17,7 @@ type Props = {
 const EnableBiometrics = ({ onNext, setBiometrics }: Props) => {
   const { theme } = useTheme();
   const toast = useToast();
+  const { t } = useTranslation();
 
   const handleEnable = useCallback(async () => {
     try {
@@ -61,7 +63,7 @@ const EnableBiometrics = ({ onNext, setBiometrics }: Props) => {
     <View style={styles.root}>
       <View>
         <Text style={[typography['heading5'], styles.title, { color: theme.text.primary }]}>
-          Log in with {Platform.OS === 'ios' ? 'Face ID' : 'Touch ID'}
+          {t('loginWith')} {Platform.OS === 'ios' ? 'Face ID' : 'Touch ID'}
         </Text>
 
         <Text
@@ -71,7 +73,7 @@ const EnableBiometrics = ({ onNext, setBiometrics }: Props) => {
             { color: theme.text.tertiary, marginTop: 10, alignSelf: 'stretch' },
           ]}
         >
-          Make logging in to your account more secure and faster.
+          {t('makeLogging')}
         </Text>
 
         <View style={{ alignItems: 'center', marginTop: 30 }}>
@@ -84,9 +86,9 @@ const EnableBiometrics = ({ onNext, setBiometrics }: Props) => {
       </View>
 
       <View style={styles.rowButtons}>
-        <Button label="Skip" style="tertiary" size={'L'} onPress={onNext} />
+        <Button label={t('skip')} style="tertiary" size={'L'} onPress={onNext} />
 
-        <Button label="Enable" style="secondary" size={'L'} onPress={handleEnable} />
+        <Button label={t('enable')} style="secondary" size={'L'} onPress={handleEnable} />
       </View>
     </View>
   );

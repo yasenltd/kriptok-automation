@@ -11,6 +11,7 @@ type PinInputProps = {
   autoFocus?: boolean;
   cellSize?: number;
   isWrong?: boolean;
+  revertedTheme?: boolean;
 };
 
 const PinInput: React.FC<PinInputProps> = ({
@@ -21,6 +22,7 @@ const PinInput: React.FC<PinInputProps> = ({
   autoFocus = true,
   cellSize = 42,
   isWrong,
+  revertedTheme,
 }) => {
   const { theme } = useTheme();
 
@@ -98,8 +100,8 @@ const PinInput: React.FC<PinInputProps> = ({
               width: cellSize,
               height: cellSize,
               borderRadius: 2,
-              borderColor: theme.text.primary,
-              color: theme.text.primary,
+              borderColor: revertedTheme ? theme.text.secondary : theme.text.primary,
+              color: revertedTheme ? theme.text.secondary : theme.text.primary,
             },
             digit ? styles.cellFilled : null,
           ]}

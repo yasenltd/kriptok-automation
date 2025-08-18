@@ -33,6 +33,7 @@ interface ButtonProps {
   icon?: Icon;
   showLeftIcon?: boolean;
   showRightIcon?: boolean;
+  isReverted?: boolean;
 }
 
 type CustomSize = { width: number; height: number; fontSize?: number; iconSize?: number };
@@ -66,6 +67,7 @@ const Button: React.FC<ButtonProps> = ({
   icon,
   showLeftIcon,
   showRightIcon,
+  isReverted,
 }) => {
   const { buttonStyles, getAccentGradientColors, getButtonTextColor, getStyles } =
     useButtonStyles();

@@ -72,7 +72,7 @@ const Button: React.FC<ButtonProps> = ({
   invertedTheme = false,
 }) => {
   const { buttonStyles, getAccentGradientColors, getButtonTextColor, getStyles } =
-    useButtonStyles(invertedTheme);
+    useButtonStyles();
 
   const [pressed, setPressed] = useState<boolean>(false);
 

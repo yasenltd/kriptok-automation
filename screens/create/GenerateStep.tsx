@@ -42,7 +42,8 @@ const GenerateStep = ({ pin, biometricsEnabled }: Props) => {
   const { theme } = useTheme();
   const { t } = useTranslation();
   const [showErrorModal, setShowErrorModal] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isRetryLoading, setIsRetryLoading] = useState(false);
+  const [isBackLoading, setIsBackLoading] = useState(false);
   const [pinInput, setPinInput] = useState('');
   const [publicAddresses, setPublicAddresses] = useState({ eth: '', sol: '', sui: '', btc: '' });
 
@@ -132,7 +133,7 @@ const GenerateStep = ({ pin, biometricsEnabled }: Props) => {
         toast.showError('Wrong pin. Try again.');
         return;
       }
-      setIsLoading(true);
+      setIsRetryLoading(true);
       try {
         const { message: signupMessage } = await getSignupMessage(publicAddresses.eth);
         const signupSignature = await signSiweMessage(signupMessage, privKey);
@@ -172,7 +173,7 @@ const GenerateStep = ({ pin, biometricsEnabled }: Props) => {
       } catch (error) {
         console.error(error);
       } finally {
-        setIsLoading(false);
+        setIsRetryLoading(false);
         setPinInput('');
       }
     },
@@ -187,13 +188,13 @@ const GenerateStep = ({ pin, biometricsEnabled }: Props) => {
 
   const handleGoBack = useCallback(async () => {
     try {
-      setIsLoading(true);
+      setIsBackLoading(true);
       await clearWalletSecurely();
       router.replace('/');
     } catch (e) {
       console.error('Go back error:', e);
     } finally {
-      setIsLoading(false);
+      setIsBackLoading(false);
       setPinInput('');
     }
   }, []);
@@ -242,15 +243,16 @@ const GenerateStep = ({ pin, biometricsEnabled }: Props) => {
               label="Go Back"
               size={'M'}
               onPress={handleGoBack}
-              disabled={isLoading}
-              variant="secondary"
+              disabled={isRetryLoading}
+              loading={isBackLoading}
+              variant="accent"
             />
             <Button
               label="Retry"
               size={'M'}
               onPress={() => retryFlowWithPin(pinInput)}
-              loading={isLoading}
-              variant="accent"
+              loading={isRetryLoading}
+              variant="secondary"
             />
           </View>
         </AppModal>

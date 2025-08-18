@@ -1,13 +1,13 @@
 import { useTheme } from '@/context/ThemeContext';
+import { useToast } from '@/hooks/useToast';
 import { typography } from '@/theme/typography';
-import { Linking, Platform, StyleSheet, Text, View } from 'react-native';
 import Finger from '@assets/images/finger-icon.svg';
 import Smile from '@assets/images/smile-icon.svg';
 import Button from '@components/ui/Button';
 import * as LocalAuthentication from 'expo-local-authentication';
 import { useCallback } from 'react';
-import { useToast } from '@/hooks/useToast';
 import { useTranslation } from 'react-i18next';
+import { Linking, Platform, StyleSheet, Text, View } from 'react-native';
 
 type Props = {
   onNext: () => void;
@@ -86,9 +86,9 @@ const EnableBiometrics = ({ onNext, setBiometrics }: Props) => {
       </View>
 
       <View style={styles.rowButtons}>
-        <Button label={t('skip')} style="tertiary" size={'L'} onPress={onNext} />
+        <Button label={t('skip')} variant="tertiary" size={'L'} onPress={onNext} />
 
-        <Button label={t('enable')} style="secondary" size={'L'} onPress={handleEnable} />
+        <Button label={t('enable')} variant="secondary" size={'L'} onPress={handleEnable} />
       </View>
     </View>
   );

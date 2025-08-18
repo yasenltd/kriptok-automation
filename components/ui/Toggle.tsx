@@ -28,7 +28,7 @@ const Toggle: React.FC<ToggleProps> = ({ layout = 'horizontal', options, style }
           key={option.key}
           label={option.label}
           onPress={() => setSelectedKey(option.key)}
-          style={selectedKey === option.key ? 'secondary' : 'ghost'}
+          variant={selectedKey === option.key ? 'secondary' : 'ghost'}
           size={{ width: 71, height: 28, fontSize: 14, iconSize: 16 }}
           icon={option.icon}
           showLeftIcon={!!option.icon}

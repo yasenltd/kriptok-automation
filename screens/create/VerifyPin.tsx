@@ -67,10 +67,10 @@ const VerifyPin = ({ pin, confirmPin, setConfirmPin, onNext }: Props) => {
 
         <Button
           label={t('continue')}
-          style="secondary"
+          variant="secondary"
           size={'screen'}
           onPress={onNext}
-          state={isButtonDisabled ? 'disabled' : 'default'}
+          disabled={isButtonDisabled}
         />
       </View>
     </KeyboardAvoidingView>

@@ -2,9 +2,9 @@ import { useTheme } from '@/context/ThemeContext';
 import { typography } from '@/theme/typography';
 import PinInput from '@components/ui/AppPinInput';
 import Button from '@components/ui/Button';
-import { KeyboardAvoidingView, Platform, StyleSheet, Text, View } from 'react-native';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { KeyboardAvoidingView, Platform, StyleSheet, Text, View } from 'react-native';
 
 type Props = {
   onNext: () => void;
@@ -48,10 +48,10 @@ const EnterPin = ({ onNext, pin, setPin }: Props) => {
 
         <Button
           label={t('continue')}
-          style="secondary"
+          variant="secondary"
           size={'screen'}
           onPress={onNext}
-          state={isButtonDisabled ? 'disabled' : 'default'}
+          disabled={isButtonDisabled}
         />
       </View>
     </KeyboardAvoidingView>

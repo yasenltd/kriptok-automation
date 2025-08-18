@@ -242,15 +242,15 @@ const GenerateStep = ({ pin, biometricsEnabled }: Props) => {
               label="Go Back"
               size={'M'}
               onPress={handleGoBack}
-              state={isLoading ? 'disabled' : 'default'}
-              style="secondary"
+              disabled={isLoading}
+              variant="secondary"
             />
             <Button
               label="Retry"
               size={'M'}
               onPress={() => retryFlowWithPin(pinInput)}
-              state={isLoading ? 'loading' : 'default'}
-              style="accent"
+              loading={isLoading}
+              variant="accent"
             />
           </View>
         </AppModal>

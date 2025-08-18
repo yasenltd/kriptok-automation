@@ -1,13 +1,13 @@
 import { useButtonStyles } from '@/hooks/useButtonStyles';
 import { typography } from '@/theme/typography';
-import { ButtonSize, ButtonState, ButtonStyle, Icon, SelectableButtonState } from '@/utils/types';
+import { ButtonSize, ButtonStyle as ButtonVariant, Icon } from '@/utils/types';
+import type { BlurViewProps } from 'expo-blur';
 import { BlurView } from 'expo-blur';
+import type { LinearGradientProps } from 'expo-linear-gradient';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useMemo, useState } from 'react';
 import { ColorValue, Pressable, Text, TextStyle, View, type ViewProps } from 'react-native';
 import LoaderIcon from '../icons/LoaderIcon';
-import type { BlurViewProps } from 'expo-blur';
-import type { LinearGradientProps } from 'expo-linear-gradient';
 
 type GradientWrapper = {
   kind: 'gradient';
@@ -26,14 +26,14 @@ type Wrapper = GradientWrapper | BlurWrapper | ViewWrapper;
 
 interface ButtonProps {
   label: string;
-  state?: SelectableButtonState;
-  style?: ButtonStyle;
+  variant?: ButtonVariant;
   size?: ButtonSize | { width: number; height: number; fontSize?: number; iconSize?: number };
   onPress?: () => void;
   icon?: Icon;
   showLeftIcon?: boolean;
   showRightIcon?: boolean;
-  isReverted?: boolean;
+  loading?: boolean;
+  disabled?: boolean;
 }
 
 type CustomSize = { width: number; height: number; fontSize?: number; iconSize?: number };
@@ -60,19 +60,26 @@ const TEXT_STYLES: Record<PresetKey, TextStyle> = {
 
 const Button: React.FC<ButtonProps> = ({
   label = '',
-  state = 'default',
-  style = 'accent',
+  variant = 'accent',
   size = 'M',
   onPress,
   icon,
   showLeftIcon,
   showRightIcon,
-  isReverted,
+  loading = false,
+  disabled = false,
 }) => {
   const { buttonStyles, getAccentGradientColors, getButtonTextColor, getStyles } =
     useButtonStyles();
 
-  const [isPressed, setIsPressed] = useState(false);
+  const [pressed, setPressed] = useState<boolean>(false);
+
+  const currentState = useMemo(() => {
+    if (disabled) return 'disabled';
+    if (loading) return 'loading';
+    if (pressed) return 'pressed';
+    return 'default';
+  }, [disabled, loading, pressed]);
 
   const { sizeStyle, textStyles, iconSize } = useMemo(() => {
     if (isCustomSize(size)) {
@@ -97,41 +104,28 @@ const Button: React.FC<ButtonProps> = ({
     return { sizeKey: key, sizeStyle: PRESET_SIZES[key], textStyles: text, iconSize: icon };
   }, [size]);
 
-  const variant = style;
-
-  const isDisabled = state === 'disabled' || state === 'loading';
-  const effectiveState: ButtonState = isDisabled
-    ? (state as ButtonState)
-    : isPressed
-      ? 'pressed'
-      : 'default';
-
   const variantStyle = useMemo(
-    () => getStyles(effectiveState, variant),
-    [effectiveState, variant, getStyles],
+    () => getStyles(currentState, variant),
+    [variant, currentState, getStyles],
   );
 
   const textColor = useMemo<ColorValue>(
-    () => getButtonTextColor(effectiveState, variant),
-    [effectiveState, variant, getButtonTextColor],
+    () => getButtonTextColor(currentState, variant),
+    [variant, currentState, getButtonTextColor],
   );
 
   const flags = useMemo(() => {
-    const loading = effectiveState === 'loading';
-    const pressed = effectiveState === 'pressed';
-    const disabled = effectiveState === 'disabled';
-    const isDefault = effectiveState === 'default';
     const needsBlur =
       ((variant === 'outline' || variant === 'ghost') && (loading || pressed)) ||
-      (variant === 'tertiary' && isDefault);
+      (variant === 'tertiary' && !loading && !pressed && !disabled);
     const isAccent = variant === 'accent';
-    return { loading, pressed, disabled, needsBlur, isAccent };
-  }, [effectiveState, variant]);
+    return { needsBlur, isAccent };
+  }, [variant, loading, disabled, pressed]);
 
   const wrapper = useMemo<Wrapper>(() => {
     if (flags.isAccent) {
       const props: Omit<LinearGradientProps, 'children'> = {
-        colors: getAccentGradientColors(effectiveState),
+        colors: getAccentGradientColors(currentState),
         start: { x: 0, y: 0 },
         end: { x: 1, y: 1 },
         style: [buttonStyles.gradient, sizeStyle, variantStyle],
@@ -141,7 +135,7 @@ const Button: React.FC<ButtonProps> = ({
     if (flags.needsBlur) {
       const props: Omit<BlurViewProps, 'children'> = {
         intensity: 20,
-        style: [sizeStyle, buttonStyles.blurContainer],
+        style: [sizeStyle, buttonStyles.blurContainer, buttonStyles.button, variantStyle],
       };
       return { kind: 'blur', props };
     }
@@ -150,7 +144,6 @@ const Button: React.FC<ButtonProps> = ({
   }, [
     flags.isAccent,
     flags.needsBlur,
-    effectiveState,
     getAccentGradientColors,
     buttonStyles,
     sizeStyle,
@@ -160,17 +153,15 @@ const Button: React.FC<ButtonProps> = ({
   return (
     <Pressable
       onPress={onPress}
-      disabled={flags.disabled || flags.loading}
+      disabled={disabled || loading}
       style={[buttonStyles.button, sizeStyle]}
-      onPressIn={() => {
-        if (!isDisabled) setIsPressed(true);
-      }}
-      onPressOut={() => setIsPressed(false)}
+      onPressIn={() => setPressed(true)}
+      onPressOut={() => setPressed(false)}
     >
       {wrapper.kind === 'gradient' ? (
         <LinearGradient {...wrapper.props}>
           <ButtonContents
-            state={effectiveState}
+            loading={loading}
             icon={icon}
             iconSize={iconSize}
             textStyles={textStyles}
@@ -183,7 +174,7 @@ const Button: React.FC<ButtonProps> = ({
       ) : wrapper.kind === 'blur' ? (
         <BlurView {...wrapper.props}>
           <ButtonContents
-            state={effectiveState}
+            loading={loading}
             icon={icon}
             iconSize={iconSize}
             textStyles={textStyles}
@@ -196,7 +187,7 @@ const Button: React.FC<ButtonProps> = ({
       ) : (
         <View {...wrapper.props}>
           <ButtonContents
-            state={effectiveState}
+            loading={loading}
             icon={icon}
             iconSize={iconSize}
             textStyles={textStyles}
@@ -212,7 +203,7 @@ const Button: React.FC<ButtonProps> = ({
 };
 
 interface ButtonContentsProps {
-  state: ButtonState;
+  loading: boolean;
   icon?: Icon;
   iconSize: number;
   textStyles: TextStyle;
@@ -223,7 +214,7 @@ interface ButtonContentsProps {
 }
 
 const ButtonContents: React.FC<ButtonContentsProps> = ({
-  state,
+  loading,
   icon,
   iconSize,
   textStyles,
@@ -233,7 +224,6 @@ const ButtonContents: React.FC<ButtonContentsProps> = ({
   showRightIcon,
 }) => {
   const { buttonStyles } = useButtonStyles();
-  const loading = state === 'loading';
 
   const renderIcon = (visible?: boolean) => {
     if (!visible) return null;

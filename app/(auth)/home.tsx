@@ -1,8 +1,3 @@
-import { useState } from 'react';
-import { Text, View, TouchableOpacity, Pressable, ScrollView } from 'react-native';
-import { useEffect } from 'react';
-import { shareText } from '@/utils';
-import { useSelector } from 'react-redux';
 import Checkbox from '@/components/ui/AppCheckbox';
 import Button from '@/components/ui/Button';
 import IconButton from '@/components/ui/IconButton';
@@ -12,13 +7,16 @@ import { useToast } from '@/hooks/useToast';
 import { api, refreshInstance } from '@/services/apiClient';
 import { RootState } from '@/stores/store';
 import { AuthLogoutResponse, AuthRefreshResponse } from '@/types';
-import { deriveEVMWalletFromMnemonic } from '@/utils';
+import { deriveEVMWalletFromMnemonic, shareText } from '@/utils';
 import { getLoginMessage, login, signSiweMessage } from '@/utils/auth';
 import { loadWalletSecurely } from '@/utils/secureStore';
 import { getToken, saveToken } from '@/utils/tokenStorage';
-import { router } from 'expo-router';
 import WalletQr from '@components/WalletQr';
+import { router } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { Pressable, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { ArrowUpIcon, PlusIcon } from 'react-native-heroicons/micro';
+import { useSelector } from 'react-redux';
 import ActionButton from '../../components/ui/ActionButton';
 import Toggle from '../../components/ui/Toggle';
 
@@ -227,25 +225,25 @@ const Home = () => {
       />
 
       <View style={{ alignItems: 'center', marginBottom: 10 }}>
-        <Button label="Default" state="default" style="accent" />
-        <Button label="Default" state="loading" style="accent" showLeftIcon={true} />
-        <Button label="Default" state="disabled" style="accent" />
+        <Button label="Default" variant="accent" />
+        <Button label="Default" loading variant="accent" showLeftIcon={true} />
+        <Button label="Default" disabled variant="accent" />
 
-        <Button label="Secondary" state="default" style="secondary" />
-        <Button label="Secondary" state="loading" style="secondary" showLeftIcon={true} />
-        <Button label="Secondary" state="disabled" style="secondary" />
+        <Button label="Secondary" variant="secondary" />
+        <Button label="Secondary" loading variant="secondary" showLeftIcon={true} />
+        <Button label="Secondary" disabled variant="secondary" />
 
-        <Button label="Tertiary" state="default" style="tertiary" />
-        <Button label="Tertiary" state="loading" style="tertiary" showLeftIcon={true} />
-        <Button label="Tertiary" state="disabled" style="tertiary" />
+        <Button label="Tertiary" variant="tertiary" />
+        <Button label="Tertiary" loading variant="tertiary" showLeftIcon={true} />
+        <Button label="Tertiary" disabled variant="tertiary" />
 
-        <Button label="Outline" state="default" style="outline" />
-        <Button label="Outline" state="loading" style="outline" showLeftIcon={true} />
-        <Button label="Outline" state="disabled" style="outline" />
+        <Button label="Outline" variant="outline" />
+        <Button label="Outline" loading variant="outline" showLeftIcon={true} />
+        <Button label="Outline" disabled variant="outline" />
 
-        <Button label="Ghost" state="default" style="ghost" />
-        <Button label="Ghost" state="loading" style="ghost" showLeftIcon={true} />
-        <Button label="Ghost" state="disabled" style="ghost" />
+        <Button label="Ghost" variant="ghost" />
+        <Button label="Ghost" loading variant="ghost" showLeftIcon={true} />
+        <Button label="Ghost" disabled variant="ghost" />
 
         <View>
           <IconButton state="default" style="accent" icon={<PlusIcon />} />

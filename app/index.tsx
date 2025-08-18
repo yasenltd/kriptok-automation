@@ -1,16 +1,16 @@
-import { router } from 'expo-router';
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useTranslation } from 'react-i18next';
-import { LinearGradient } from 'expo-linear-gradient';
-import AuthGuard from '@/screens/AuthGuard';
 import Safe from '@/assets/images/safe.svg';
 import { useTheme } from '@/context/ThemeContext';
+import AuthGuard from '@/screens/AuthGuard';
+import { colors } from '@/theme/colors';
 import { typography } from '@/theme/typography';
 import ConcentricCircles from '@components/ConcentricCircles';
-import MaskedView from '@react-native-masked-view/masked-view';
 import Button from '@components/ui/Button';
-import { colors } from '@/theme/colors';
+import MaskedView from '@react-native-masked-view/masked-view';
+import { LinearGradient } from 'expo-linear-gradient';
+import { router } from 'expo-router';
+import { useTranslation } from 'react-i18next';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const SIZE = 400;
 const FADE = 0.6;
@@ -157,14 +157,12 @@ const WelcomeScreen = () => {
               <Button
                 label={t('create')}
                 onPress={() => router.push('/generate')}
-                state="default"
-                style="accent"
+                variant="accent"
                 size="screen"
               />
               <Button
                 label={t('import')}
-                state="default"
-                style="outline"
+                variant="outline"
                 size="screen"
                 onPress={() => router.push('/import')}
               />

@@ -33,15 +33,54 @@ export const useButtonStyles = () => {
   const accentStyles = StyleSheet.create({
     default: {
       elevation: 2,
-      boxShadow: '0px 0px 10px 0px #FFFFFF80 inset, 0px 0px 5px 0px #FFFFFF inset',
     },
     pressed: {
       boxShadow: '0px 0px 5px 0px #A3BDED80, 0px 4px 10px 0px #A3BDED3D',
       elevation: 5,
     },
     loading: {
-      boxShadow:
-        '0px 0px 10px 0px #FFFFFF80 inset, 0px 0px 10px 0px #FFFFFF80 inset, 0px 0px 5px 0px #FFFFFF inset, 0px 0px 15px 0px #FFFFFF inset, 0px 0px 5px 0px #A3BDED80, 0px 4px 10px 0px #A3BDED3D',
+      boxShadow: [
+        {
+          offsetX: 0,
+          offsetY: 0,
+          blurRadius: 10,
+          spreadDistance: 0,
+          color: colors.white.opacity[50],
+          inset: true,
+        },
+        {
+          offsetX: 0,
+          offsetY: 0,
+          blurRadius: 5,
+          spreadDistance: 0,
+          color: colors.white[100],
+          inset: true,
+        },
+        {
+          offsetX: 0,
+          offsetY: 0,
+          blurRadius: 15,
+          spreadDistance: 0,
+          color: colors.white[100],
+          inset: true,
+        },
+        {
+          offsetX: 0,
+          offsetY: 0,
+          blurRadius: 5,
+          spreadDistance: 0,
+          color: '#A3BDED80',
+          inset: true,
+        },
+        {
+          offsetX: 0,
+          offsetY: 4,
+          blurRadius: 10,
+          spreadDistance: 0,
+          color: '#A3BDED80',
+          inset: true,
+        },
+      ],
       elevation: 3,
     },
     disabled: {
@@ -50,10 +89,10 @@ export const useButtonStyles = () => {
   });
 
   const accentGradients = {
-    default: [colors.blue[30], colors.blue[60]],
+    default: [theme.button.primary.default, theme.button.primary.default],
     disabled: [theme.button.secondary.disabled, theme.button.secondary.disabled],
-    loading: [colors.blue[10], colors.blue[40]],
-    pressed: [colors.blue[10], colors.blue[10]],
+    loading: [colors.blue[10], colors.blue[20]],
+    pressed: [theme.button.primary.pressed, theme.button.primary.pressed],
   };
 
   const secondaryStyles = StyleSheet.create({

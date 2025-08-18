@@ -36,8 +36,8 @@ export const useAllBalances = (addresses: Addresses) => {
           getEthBalance(addresses.eth!, 'arbitrum'),
           getEthBalance(addresses.eth!, 'bnb'),
           getBitcoinBalance(addresses.btc!),
-          getSolanaBalance(addresses.sol!),
-          getSuiBalance(addresses.sui!),
+          getSolanaBalance(addresses.sol!, []),
+          getSuiBalance(addresses.sui!, []),
         ],
       );
       setBalances({
@@ -49,8 +49,8 @@ export const useAllBalances = (addresses: Addresses) => {
         arbitrum: Number(arbitrum),
         bnb: Number(bnb),
         btc,
-        sol,
-        sui,
+        sol: sol.sol,
+        sui: sui.sui,
       });
     } catch (err) {
       console.error(err);

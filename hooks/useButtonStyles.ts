@@ -3,8 +3,9 @@ import { colors } from '@/theme/colors';
 import { ButtonState, ButtonStyle } from '@/utils/types';
 import { ColorValue, StyleSheet, ViewStyle } from 'react-native';
 
-export const useButtonStyles = () => {
-  const { theme } = useTheme();
+export const useButtonStyles = (useInvertedTheme = false) => {
+  const { theme: currentTheme, invertedTheme } = useTheme();
+  const theme = useInvertedTheme ? invertedTheme : currentTheme;
 
   const buttonStyles = StyleSheet.create({
     button: {

@@ -1,5 +1,6 @@
 import { DarkTheme } from '@/theme/DarkTheme';
 import { LightTheme } from '@/theme/LightTheme';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, {
   createContext,
   ReactNode,
@@ -9,12 +10,12 @@ import React, {
   useMemo,
   useState,
 } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type Scheme = 'light' | 'dark';
 
 type ThemeContextType = {
   theme: typeof DarkTheme | typeof LightTheme;
+  invertedTheme: typeof DarkTheme | typeof LightTheme;
   colorScheme: Scheme;
   toggleTheme: () => void;
   setTheme: (scheme: Scheme) => void;
@@ -72,6 +73,7 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const value = useMemo<ThemeContextType>(
     () => ({
       theme: scheme === 'light' ? LightTheme : DarkTheme,
+      invertedTheme: scheme === 'light' ? DarkTheme : LightTheme,
       colorScheme: scheme,
       toggleTheme,
       setTheme,

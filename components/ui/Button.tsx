@@ -34,6 +34,7 @@ interface ButtonProps {
   showRightIcon?: boolean;
   loading?: boolean;
   disabled?: boolean;
+  invertedTheme?: boolean;
 }
 
 type CustomSize = { width: number; height: number; fontSize?: number; iconSize?: number };
@@ -68,9 +69,10 @@ const Button: React.FC<ButtonProps> = ({
   showRightIcon,
   loading = false,
   disabled = false,
+  invertedTheme = false,
 }) => {
   const { buttonStyles, getAccentGradientColors, getButtonTextColor, getStyles } =
-    useButtonStyles();
+    useButtonStyles(invertedTheme);
 
   const [pressed, setPressed] = useState<boolean>(false);
 

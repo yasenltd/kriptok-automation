@@ -1,7 +1,7 @@
 import { useTheme } from '@/context/ThemeContext';
 import { colors } from '@/theme/colors';
+import Button from '@components/ui/Button';
 import Input from '@components/ui/Input';
-import { LinearGradient } from 'expo-linear-gradient';
 import {
   Image,
   KeyboardAvoidingView,
@@ -15,9 +15,18 @@ import {
 type Props = {
   seedPhrase: string;
   setSeedPhrase: (value: string) => void;
+  walletName: string;
+  setWalletName: (value: string) => void;
+  onNext: () => void;
 };
 
-const ImportSeedPhrase = ({ seedPhrase, setSeedPhrase }: Props) => {
+const ImportSeedPhrase = ({
+  seedPhrase,
+  setSeedPhrase,
+  walletName,
+  setWalletName,
+  onNext,
+}: Props) => {
   const { theme } = useTheme();
 
   return (
@@ -26,7 +35,7 @@ const ImportSeedPhrase = ({ seedPhrase, setSeedPhrase }: Props) => {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <ScrollView
-        contentContainerStyle={{ flexGrow: 1, width: '100%' }}
+        contentContainerStyle={{ flexGrow: 1, width: '100%', gap: 30 }}
         keyboardShouldPersistTaps="handled"
       >
         <View
@@ -39,14 +48,7 @@ const ImportSeedPhrase = ({ seedPhrase, setSeedPhrase }: Props) => {
             },
           ]}
         >
-          <View
-            style={{
-              flexDirection: 'row',
-              flex: 1,
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}
-          >
+          <View style={styles.warningRow}>
             <Image
               source={require('@assets/images/warning-icon.png')}
               style={{
@@ -64,14 +66,46 @@ const ImportSeedPhrase = ({ seedPhrase, setSeedPhrase }: Props) => {
           </View>
         </View>
 
-        <View style={{ marginTop: 20 }}>
-          <Input
-            value={seedPhrase}
-            onChange={setSeedPhrase}
-            size="normal"
-            width="screen"
-            label="Wallet Name"
-            placeholder="Enter Wallet Name"
+        <View>
+          <View>
+            <Input
+              value={walletName}
+              onChange={setWalletName}
+              size="normal"
+              width="screen"
+              label="Wallet Name"
+              placeholder="Enter wallet name"
+            />
+          </View>
+
+          <View style={{ marginTop: 20 }}>
+            <Input
+              value={seedPhrase}
+              onChange={setSeedPhrase}
+              size="normal"
+              width="screen"
+              label="Import Seed Phrase"
+              placeholder="Enter seed phrase"
+            />
+
+            <Text
+              style={[
+                styles.text,
+                { color: theme.text.tertiary, flexShrink: 1, flexWrap: 'wrap', marginTop: 10 },
+              ]}
+            >
+              Typically 12 (sometimes 18,24) words separated by single spaces
+            </Text>
+          </View>
+        </View>
+
+        <View>
+          <Button
+            label="Continue"
+            size="screen"
+            variant="secondary"
+            disabled={!seedPhrase || !walletName}
+            onPress={onNext}
           />
         </View>
       </ScrollView>
@@ -95,9 +129,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   text: {
-    textAlign: 'center',
     fontFamily: 'Satoshi-Regular',
-    fontSize: 12,
+    fontSize: 14,
   },
   warning: {
     width: '100%',
@@ -111,6 +144,13 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 0,
     right: 0,
+  },
+  warningRow: {
+    flexDirection: 'row',
+    flex: 1,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: 8,
   },
 });
 

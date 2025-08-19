@@ -2,6 +2,7 @@ import EnableBiometrics from '@/screens/components/EnableBiometrics';
 import EnterPin from '@/screens/components/EnterPin';
 import VerifyPin from '@/screens/components/VerifyPin';
 import ImportSeedPhrase from '@/screens/import/ImportSeedPhrase';
+import ImportWallet from '@/screens/import/ImportWallet';
 import { useNavigation } from 'expo-router';
 import { useLayoutEffect, useState } from 'react';
 import { SafeAreaView, StyleSheet } from 'react-native';
@@ -23,9 +24,6 @@ const Import = () => {
     });
   }, [navigation, step]);
 
-  if (true) {
-    return <ImportSeedPhrase seedPhrase={seedPhrase} setSeedPhrase={setSeedPhrase} />;
-  }
   return (
     <SafeAreaView style={styles.root}>
       {step === 0 && <EnterPin onNext={() => setStep(1)} pin={pin} setPin={setPin} />}
@@ -47,16 +45,28 @@ const Import = () => {
       )}
 
       {step === 3 && (
-        <Animated.View
-          style={{ flex: 1 }}
-          entering={FadeInRight}
-          exiting={FadeOutLeft}
-        ></Animated.View>
+        <Animated.View style={{ flex: 1 }} entering={FadeInRight} exiting={FadeOutLeft}>
+          <ImportSeedPhrase
+            seedPhrase={seedPhrase}
+            setSeedPhrase={setSeedPhrase}
+            walletName={walletName}
+            setWalletName={setWalletName}
+            onNext={() => setStep(4)}
+          />
+        </Animated.View>
       )}
 
       {step === 4 && (
         <Animated.View style={{ flex: 1 }} entering={FadeInRight} exiting={FadeOutLeft}>
-          {/* <GenerateStep pin={pin} biometricsEnabled={biometricsEnabled} /> */}
+          <ImportWallet
+            seedPhrase={seedPhrase}
+            setSeedPhrase={setSeedPhrase}
+            walletName={walletName}
+            setWalletName={setWalletName}
+            pin={pin}
+            setPinInput={setPin}
+            biometricsEnabled={biometricsEnabled}
+          />
         </Animated.View>
       )}
     </SafeAreaView>

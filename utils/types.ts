@@ -19,3 +19,7 @@ export interface IconProps {
   iconStyle?: 'micro' | 'mini' | 'outline' | 'solid';
   style?: any;
 }
+
+export type InputStyle = 'fill' | 'stroke';
+export type InputSize = 'normal' | 'big';
+export type InputWidth = 'small' | 'medium' | 'large' | 'screen' | { width: number };

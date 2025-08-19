@@ -1,5 +1,5 @@
 import { typography } from '@/theme/typography';
-import { Icon, LinkSize, LinkVariant } from '@/utils/types';
+import { Icon, LinkSize, LinkState, LinkVariant } from '@/utils/types';
 import React, { useCallback, useMemo, useState } from 'react';
 import { ColorValue, Pressable, StyleSheet, Text, TextStyle } from 'react-native';
 import { useTheme } from '../../context/ThemeContext';

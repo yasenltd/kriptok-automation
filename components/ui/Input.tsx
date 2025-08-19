@@ -166,7 +166,7 @@ const Input = forwardRef<TextInput, InputProps>(function Input(
             autoCorrect={false}
             textContentType="none"
           />
-          <View style={textAreaStyles.rightSection} pointerEvents="none">
+          <View style={textAreaStyles.rightSection}>
             {derivedState === 'error' &&
               renderIcon(<ExclamationCircleIcon />, 20, (wrapperStyle as any).borderColor)}
             {actionButton}

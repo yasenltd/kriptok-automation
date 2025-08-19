@@ -31,73 +31,60 @@ export const ThemeProvider: React.FC<{ inverted?: boolean; children: ReactNode }
   children,
 }) => {
   const parentContext = useContext(ThemeContext);
-  const isNestedProvider = !!parentContext;
 
+  // if nested, just derive everything from parent, no local state
+  if (parentContext) {
+    const value = useMemo<ThemeContextType>(() => {
+      return {
+        ...parentContext,
+        theme: inverted ? parentContext.invertedTheme : parentContext.theme,
+        invertedTheme: inverted ? parentContext.theme : parentContext.invertedTheme,
+      };
+    }, [parentContext, inverted]);
+
+    return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
+  }
+
+  // if root provider, this executes
   const systemColorScheme = useColorScheme();
   const [scheme, setScheme] = useState<Scheme>((systemColorScheme ?? 'light') as Scheme);
   const [hydrated, setHydrated] = useState(false);
 
-  const getTheme = useCallback(async () => {
-    // only load from storage if this is the root provider
-    if (!isNestedProvider) {
+  useEffect(() => {
+    (async () => {
       try {
         const saved = await AsyncStorage.getItem(THEME_KEY);
         if (saved === 'light' || saved === 'dark') setScheme(saved);
       } catch (err) {
         console.error(err);
+      } finally {
+        setHydrated(true);
       }
-    }
-    setHydrated(true);
-  }, [isNestedProvider]);
+    })();
+  }, []);
 
-  useEffect(() => {
-    // if nested, use parent's scheme
-    if (isNestedProvider) {
-      setScheme(parentContext.colorScheme);
-      setHydrated(parentContext.hydrated);
-    } else {
-      getTheme();
+  const persist = useCallback(async (s: Scheme) => {
+    try {
+      await AsyncStorage.setItem(THEME_KEY, s);
+    } catch (err) {
+      console.error(err);
     }
-  }, [isNestedProvider, parentContext?.colorScheme, parentContext?.hydrated, getTheme]);
-
-  const persist = useCallback(
-    async (s: Scheme) => {
-      // Only persist if this is the root provider
-      if (!isNestedProvider) {
-        try {
-          await AsyncStorage.setItem(THEME_KEY, s);
-        } catch (err) {
-          console.error(err);
-        }
-      }
-    },
-    [isNestedProvider],
-  );
+  }, []);
 
   const toggleTheme = useCallback(() => {
-    // If nested, delegate to parent
-    if (isNestedProvider) {
-      parentContext.toggleTheme();
-    } else {
-      setScheme(prev => {
-        const next: Scheme = prev === 'light' ? 'dark' : 'light';
-        persist(next);
-        return next;
-      });
-    }
-  }, [persist, isNestedProvider, parentContext]);
+    setScheme(prev => {
+      const next: Scheme = prev === 'light' ? 'dark' : 'light';
+      persist(next);
+      return next;
+    });
+  }, [persist]);
 
   const setTheme = useCallback(
     (s: Scheme) => {
-      // if nested, delegate to parent
-      if (isNestedProvider) {
-        parentContext.setTheme(s);
-      } else {
-        setScheme(s);
-        persist(s);
-      }
+      setScheme(s);
+      persist(s);
     },
-    [persist, isNestedProvider, parentContext],
+    [persist],
   );
 
   const value = useMemo<ThemeContextType>(() => {

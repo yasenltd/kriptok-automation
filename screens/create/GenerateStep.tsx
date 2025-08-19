@@ -35,7 +35,7 @@ const GenerateStep = ({ pin, biometricsEnabled }: Props) => {
   const dispatch = useDispatch();
   const { theme } = useTheme();
   const { t } = useTranslation();
-  const [showErrorModal, setShowErrorModal] = useState(true);
+  const [showErrorModal, setShowErrorModal] = useState(false);
   const [isRetryLoading, setIsRetryLoading] = useState(false);
   const [isBackLoading, setIsBackLoading] = useState(false);
   const [pinInput, setPinInput] = useState('');
@@ -76,7 +76,6 @@ const GenerateStep = ({ pin, biometricsEnabled }: Props) => {
   }, [pin]);
 
   const handleSecureSave = useCallback(async () => {
-    /*
     try {
       const { wallets } = await handleGenerateMnemonic();
 
@@ -117,8 +116,8 @@ const GenerateStep = ({ pin, biometricsEnabled }: Props) => {
       toast.showSuccess('Success! Your wallet and PIN are secured.');
     } catch (err) {
       console.error('Secure store error:', err);
-      setShowErrorModal(true); 
-    } */
+      setShowErrorModal(true);
+    }
   }, [pin, biometricsEnabled]);
 
   const retryFlowWithPin = useCallback(

@@ -23,3 +23,4 @@ export interface IconProps {
 export type InputStyle = 'fill' | 'stroke';
 export type InputSize = 'normal' | 'big';
 export type InputWidth = 'small' | 'medium' | 'large' | 'screen' | { width: number };
+export type InputState = 'default' | 'focused' | 'disabled' | 'error';

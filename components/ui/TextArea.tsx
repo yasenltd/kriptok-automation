@@ -3,8 +3,9 @@ import { typography } from '@/theme/typography';
 import { inputSizeMapping } from '@/utils';
 import { Icon, InputState, InputStyle, InputWidth } from '@/utils/types';
 import React, {
+  Dispatch,
   forwardRef,
-  ReactElement,
+  SetStateAction,
   useCallback,
   useImperativeHandle,
   useMemo,
@@ -12,38 +13,36 @@ import React, {
 } from 'react';
 import { ColorValue, StyleSheet, Text, TextInput, TextStyle, View, ViewStyle } from 'react-native';
 import { ExclamationCircleIcon } from 'react-native-heroicons/outline';
+import { getFromClipboard } from '../../utils/stringUtils';
 import { commonStyles } from '../styles/inputStyles';
+import Link from './Link';
 
 interface InputProps {
   value: string;
+  setValue: Dispatch<SetStateAction<string>>;
   onChange: (text: string) => void;
   placeholder?: string;
   width?: InputWidth;
   variant?: InputStyle;
   label?: string;
   disabled?: boolean;
-  leftIcon?: Icon;
-  actionButton?: React.ReactNode;
-  firstRightButton?: ReactElement;
-  secondRightButton?: ReactElement;
   hint?: string;
   error?: string;
   style?: ViewStyle;
 }
 
-const Input = forwardRef<TextInput, InputProps>(function Input(
+type IconElement = React.ReactElement<{ size?: number; color?: ColorValue }>;
+
+const TextArea = forwardRef<TextInput, InputProps>(function Input(
   {
     value,
+    setValue,
     onChange,
     width = 'screen',
     variant = 'stroke',
     label,
     disabled = false,
     placeholder = '',
-    leftIcon,
-    actionButton,
-    firstRightButton,
-    secondRightButton,
     error,
     hint,
     style,
@@ -67,7 +66,7 @@ const Input = forwardRef<TextInput, InputProps>(function Input(
   const handleBlur = useCallback(() => setIsFocused(false), []);
   useImperativeHandle(inputRef, () => innerRef.current as TextInput);
 
-  const { textAreaStyles } = useInputStyles();
+  const { textAreaStyles } = useTextAreaStyles();
 
   const widthStyle = useMemo(() => {
     if (typeof width === 'string') return { width: inputSizeMapping[width] };
@@ -137,7 +136,7 @@ const Input = forwardRef<TextInput, InputProps>(function Input(
 
   const renderIcon = useCallback((icon: Icon, iconSize: number, iconColor: ColorValue) => {
     if (React.isValidElement(icon)) {
-      return React.cloneElement(icon as ReactElement<Icon>, { size: iconSize, color: iconColor });
+      return React.cloneElement(icon as IconElement, { size: iconSize, color: iconColor });
     }
     return null;
   }, []);
@@ -148,10 +147,12 @@ const Input = forwardRef<TextInput, InputProps>(function Input(
 
       <View style={widthStyle}>
         <View style={[wrapperStyle, textAreaStyles.inputWrapper]}>
-          <View pointerEvents="none">
+          {/* <View pointerEvents="none">
             {leftIcon && renderIcon(leftIcon, 20, textAreaStyles.textInput.color)}
-          </View>
+          </View> */}
+
           <TextInput
+            multiline
             ref={innerRef}
             style={[textAreaStyles.textInput, { flex: 1 }]}
             value={value}
@@ -166,12 +167,34 @@ const Input = forwardRef<TextInput, InputProps>(function Input(
             autoCorrect={false}
             textContentType="none"
           />
-          <View style={textAreaStyles.rightSection} pointerEvents="none">
+          {!value && (
+            <View
+              pointerEvents="box-none"
+              style={{
+                justifyContent: 'center',
+                alignItems: 'center',
+                position: 'absolute',
+                left: 7,
+                top: 8,
+                width: '100%',
+                height: '100%',
+                // borderWidth: 1,
+                // borderColor: 'yellow',
+              }}
+            >
+              <Link
+                variant="accent"
+                label="Paste"
+                onPress={async () => {
+                  const clipboard = await getFromClipboard();
+                  setValue(prev => prev + (clipboard ?? ''));
+                }}
+              />
+            </View>
+          )}
+          <View style={textAreaStyles.rightSection}>
             {derivedState === 'error' &&
               renderIcon(<ExclamationCircleIcon />, 20, (wrapperStyle as any).borderColor)}
-            {actionButton}
-            {firstRightButton}
-            {secondRightButton}
           </View>
         </View>
       </View>
@@ -185,9 +208,9 @@ const Input = forwardRef<TextInput, InputProps>(function Input(
   );
 });
 
-export default Input;
+export default TextArea;
 
-const useInputStyles = () => {
+const useTextAreaStyles = () => {
   const { theme } = useTheme();
   const textAreaStyles = useMemo(
     () =>
@@ -198,26 +221,30 @@ const useInputStyles = () => {
         disabledHint: { ...commonStyles.disabledHint, color: theme.text.disabled },
         error: { ...commonStyles.error, color: theme.text.error },
         rightSection: {
-          flexDirection: 'row',
-          alignContent: 'center',
-          alignItems: 'center',
+          position: 'absolute',
+          top: 8,
+          right: 10,
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          alignItems: 'flex-end',
+          height: '100%', // match inputWrapper height
           gap: 8,
         },
         textInput: {
           ...commonStyles.textInput,
           color: theme.text.primary,
-          textAlignVertical: 'center',
+          paddingRight: 26,
         },
         inputWrapper: {
           ...commonStyles.inputWrapper,
           flexDirection: 'row',
-          alignItems: 'center',
-          alignContent: 'center',
-          height: 40,
-          paddingHorizontal: 10,
+          alignItems: 'stretch',
+          alignContent: 'stretch',
+          height: 120,
+          paddingLeft: 10,
+          paddingRight: 4,
           paddingVertical: 8,
-          borderRadius: 9999,
-          gap: 8,
+          borderRadius: 8,
         },
       }),
     [theme],

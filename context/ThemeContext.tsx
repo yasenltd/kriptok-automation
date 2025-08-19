@@ -1,5 +1,6 @@
 import { DarkTheme } from '@/theme/DarkTheme';
 import { LightTheme } from '@/theme/LightTheme';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, {
   createContext,
   ReactNode,
@@ -10,12 +11,12 @@ import React, {
   useState,
 } from 'react';
 import { useColorScheme } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type Scheme = 'light' | 'dark';
 
 type ThemeContextType = {
   theme: typeof DarkTheme | typeof LightTheme;
+  invertedTheme: typeof DarkTheme | typeof LightTheme;
   colorScheme: Scheme;
   toggleTheme: () => void;
   setTheme: (scheme: Scheme) => void;
@@ -25,24 +26,41 @@ type ThemeContextType = {
 const THEME_KEY = 'app.theme.scheme';
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const ThemeProvider: React.FC<{ inverted?: boolean; children: ReactNode }> = ({
+  inverted = false,
+  children,
+}) => {
+  const parentContext = useContext(ThemeContext);
+
+  // if nested, just derive everything from parent, no local state
+  if (parentContext) {
+    const value = useMemo<ThemeContextType>(() => {
+      return {
+        ...parentContext,
+        theme: inverted ? parentContext.invertedTheme : parentContext.theme,
+        invertedTheme: inverted ? parentContext.theme : parentContext.invertedTheme,
+      };
+    }, [parentContext, inverted]);
+
+    return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
+  }
+
+  // if root provider, this executes
   const systemColorScheme = useColorScheme();
   const [scheme, setScheme] = useState<Scheme>((systemColorScheme ?? 'light') as Scheme);
   const [hydrated, setHydrated] = useState(false);
 
-  const getTheme = useCallback(async () => {
-    try {
-      const saved = await AsyncStorage.getItem(THEME_KEY);
-      if (saved === 'light' || saved === 'dark') setScheme(saved);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setHydrated(true);
-    }
-  }, []);
-
   useEffect(() => {
-    getTheme();
+    (async () => {
+      try {
+        const saved = await AsyncStorage.getItem(THEME_KEY);
+        if (saved === 'light' || saved === 'dark') setScheme(saved);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setHydrated(true);
+      }
+    })();
   }, []);
 
   const persist = useCallback(async (s: Scheme) => {
@@ -53,15 +71,13 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     }
   }, []);
 
-  const toggleTheme = useCallback(
-    () =>
-      setScheme(prev => {
-        const next: Scheme = prev === 'light' ? 'dark' : 'light';
-        persist(next);
-        return next;
-      }),
-    [persist],
-  );
+  const toggleTheme = useCallback(() => {
+    setScheme(prev => {
+      const next: Scheme = prev === 'light' ? 'dark' : 'light';
+      persist(next);
+      return next;
+    });
+  }, [persist]);
 
   const setTheme = useCallback(
     (s: Scheme) => {
@@ -71,16 +87,20 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     [persist],
   );
 
-  const value = useMemo<ThemeContextType>(
-    () => ({
-      theme: scheme === 'light' ? LightTheme : DarkTheme,
+  const value = useMemo<ThemeContextType>(() => {
+    const isLight = scheme === 'light';
+    const normalTheme = isLight ? LightTheme : DarkTheme;
+    const invertedTheme = isLight ? DarkTheme : LightTheme;
+
+    return {
+      theme: inverted ? invertedTheme : normalTheme,
+      invertedTheme: inverted ? normalTheme : invertedTheme,
       colorScheme: scheme,
       toggleTheme,
       setTheme,
       hydrated,
-    }),
-    [scheme, toggleTheme, setTheme, hydrated],
-  );
+    };
+  }, [scheme, toggleTheme, setTheme, hydrated, inverted]);
 
   if (!hydrated) return null;
 

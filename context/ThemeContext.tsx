@@ -32,7 +32,6 @@ export const ThemeProvider: React.FC<{ inverted?: boolean; children: ReactNode }
 }) => {
   const parentContext = useContext(ThemeContext);
 
-  // if nested, just derive everything from parent, no local state
   if (parentContext) {
     const value = useMemo<ThemeContextType>(() => {
       return {
@@ -45,9 +44,7 @@ export const ThemeProvider: React.FC<{ inverted?: boolean; children: ReactNode }
     return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
   }
 
-  // if root provider, this executes
-  const systemColorScheme = useColorScheme();
-  const [scheme, setScheme] = useState<Scheme>((systemColorScheme ?? 'light') as Scheme);
+  const [scheme, setScheme] = useState<Scheme>('light' as Scheme);
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {

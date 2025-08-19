@@ -76,7 +76,7 @@ export type RegisterType = {
 export type BalancesType = {
   eth: number;
   polygon: number;
-  bsc: number;
+  bnb: number;
   btc: number;
   sol: number;
   sui: number;
@@ -110,7 +110,7 @@ export const nativeCoins = ['eth', 'btc', 'sol', 'sui'];
 export type AssetMeta = {
   key: string;
   label: string;
-  ledgerId: 'ethereum' | 'bitcoin' | 'solana' | 'sui';
+  ledgerId: 'ethereum' | 'bitcoin' | 'solana' | 'sui' | 'bnb';
   isNative: boolean;
   tokenAddress?: string;
   decimals: number;

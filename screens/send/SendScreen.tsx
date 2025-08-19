@@ -30,15 +30,7 @@ const SendScreen = () => {
     { key: 'btc', label: 'BTC', ledgerId: 'bitcoin', isNative: true, decimals: 8, balance: '' },
     { key: 'sol', label: 'SOL', ledgerId: 'solana', isNative: true, decimals: 9, balance: '' },
     { key: 'sui', label: 'SUI', ledgerId: 'sui', isNative: true, decimals: 9, balance: '' },
-    {
-      key: 'usdt-eth',
-      label: 'USDT',
-      ledgerId: 'ethereum',
-      isNative: false,
-      tokenAddress: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
-      decimals: 6,
-      balance: '',
-    },
+    { key: 'bnb', label: 'BNB', ledgerId: 'bnb', isNative: true, decimals: 18, balance: '' },
   ]);
 
   const filteredAssets = useMemo(

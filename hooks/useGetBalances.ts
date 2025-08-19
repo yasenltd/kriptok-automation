@@ -40,7 +40,7 @@ export const useAllBalances = (addresses: Addresses) => {
       const [eth, polygonBalances, bscBalances, btc, sol, sui] = await Promise.all([
         getEthBalance(addresses.eth!, isDev ? sepolia : mainnet, []),
         getEthBalance(addresses.eth!, isDev ? polygonAmoy : polygon, []),
-        getEthBalance(addresses.eth!, isDev ? bsc : bsc, []),
+        getEthBalance(addresses.eth!, isDev ? bscTestnet : bsc, []),
         getBitcoinBalance(addresses.btc!),
         getSolanaBalance(addresses.sol!, []),
         getSuiBalance(addresses.sui!, []),
@@ -49,7 +49,7 @@ export const useAllBalances = (addresses: Addresses) => {
       setBalances({
         eth: Number(eth.eth),
         polygon: Number(polygonBalances.eth),
-        bsc: Number(bscBalances.eth),
+        bnb: Number(bscBalances.eth),
         btc: Number(btc),
         sol: sol.sol,
         sui: sui.sui,

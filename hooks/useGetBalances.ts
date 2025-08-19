@@ -4,6 +4,16 @@ import { getEthBalance } from '@/utils/transactions/evm';
 import { getSuiBalance } from '@/utils/transactions/sui';
 import { getSolanaBalance } from '@/utils/transactions/solana';
 import { getBitcoinBalance } from '@/utils/transactions/bitcoin';
+import { isDev } from '@/utils/constants';
+import {
+  mainnet,
+  sepolia,
+  polygon,
+  polygonMumbai,
+  bscTestnet,
+  bsc,
+  polygonAmoy,
+} from 'viem/chains';
 
 type Addresses = {
   eth?: string;
@@ -26,29 +36,21 @@ export const useAllBalances = (addresses: Addresses) => {
     if (!allReady) return;
     try {
       setBalancesLoading(true);
-      const [eth, linea, polygon, base, optimism, arbitrum, bnb, btc, sol, sui] = await Promise.all(
-        [
-          getEthBalance(addresses.eth!, 'ethereum'),
-          getEthBalance(addresses.eth!, 'linea'),
-          getEthBalance(addresses.eth!, 'polygon'),
-          getEthBalance(addresses.eth!, 'base'),
-          getEthBalance(addresses.eth!, 'optimism'),
-          getEthBalance(addresses.eth!, 'arbitrum'),
-          getEthBalance(addresses.eth!, 'bnb'),
-          getBitcoinBalance(addresses.btc!),
-          getSolanaBalance(addresses.sol!, []),
-          getSuiBalance(addresses.sui!, []),
-        ],
-      );
+
+      const [eth, polygonBalances, bscBalances, btc, sol, sui] = await Promise.all([
+        getEthBalance(addresses.eth!, isDev ? sepolia : mainnet, []),
+        getEthBalance(addresses.eth!, isDev ? polygonAmoy : polygon, []),
+        getEthBalance(addresses.eth!, isDev ? bsc : bsc, []),
+        getBitcoinBalance(addresses.btc!),
+        getSolanaBalance(addresses.sol!, []),
+        getSuiBalance(addresses.sui!, []),
+      ]);
+
       setBalances({
-        eth: Number(eth),
-        linea: Number(linea),
-        polygon: Number(polygon),
-        base: Number(base),
-        optimism: Number(optimism),
-        arbitrum: Number(arbitrum),
-        bnb: Number(bnb),
-        btc,
+        eth: Number(eth.eth),
+        polygon: Number(polygonBalances.eth),
+        bsc: Number(bscBalances.eth),
+        btc: Number(btc),
         sol: sol.sol,
         sui: sui.sui,
       });

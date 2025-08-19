@@ -7,8 +7,8 @@ import {
   TEST_ETH_RPC_PROVIDER,
 } from '../constants';
 import { BaseTxParams } from '.';
-
-type ChainKey = keyof typeof MAIN_ETH_RPC_PROVIDER;
+import { Chain } from 'viem/chains';
+import { createPublicClient, http } from 'viem';
 
 const providerCache: Record<string, JsonRpcProvider> = {};
 
@@ -35,15 +35,65 @@ const getFallbackFee = (tokenAddress: string | null): { feeInWei: bigint; feeInE
   };
 };
 
-export const getEthBalance = async (address: string, chain: ChainKey = 'ethereum') => {
-  const rpc = isDev ? TEST_ETH_RPC_PROVIDER[chain] : MAIN_ETH_RPC_PROVIDER[chain];
-  if (!providerCache[rpc]) {
-    providerCache[rpc] = new JsonRpcProvider(rpc);
-  }
+export const getEthBalance = async (address: string, chain: Chain, tokens: string[]) => {
+  const ethClient = createPublicClient({
+    chain: chain,
+    transport: http(),
+  });
 
-  const provider = providerCache[rpc];
-  const balanceWei = await provider.getBalance(address);
-  return ethers.formatEther(balanceWei);
+  const tokenCalls = tokens.flatMap(token => [
+    {
+      address: token as `0x${string}`,
+      abi: [
+        {
+          inputs: [{ name: 'owner', type: 'address' }],
+          name: 'balanceOf',
+          outputs: [{ name: '', type: 'uint256' }],
+          stateMutability: 'view',
+          type: 'function' as const,
+        },
+      ] as const,
+      functionName: 'balanceOf',
+      args: [address as `0x${string}`],
+    },
+    {
+      address: token as `0x${string}`,
+      abi: [
+        {
+          inputs: [],
+          name: 'decimals',
+          outputs: [{ name: '', type: 'uint8' }],
+          stateMutability: 'view',
+          type: 'function' as const,
+        },
+      ] as const,
+      functionName: 'decimals',
+      args: [],
+    },
+  ]);
+
+  const results = await ethClient.multicall({
+    contracts: tokenCalls,
+  });
+
+  const tokenData = tokens.map((token, index) => {
+    const balanceResult = results[index * 2];
+    const decimalsResult = results[index * 2 + 1];
+    const balance = balanceResult.result as bigint;
+    const decimals = decimalsResult.result as number;
+    const formattedBalance = ethers.formatUnits(balance, decimals);
+
+    return {
+      token,
+      balance: formattedBalance,
+    };
+  });
+
+  const balanceWei = await ethClient.getBalance({ address: address as `0x${string}` });
+  return {
+    eth: ethers.formatEther(balanceWei),
+    tokens: tokenData,
+  };
 };
 
 export const estimateGasFee = async (

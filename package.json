@@ -70,6 +70,7 @@
     "redux-persist": "^6.0.0",
     "solana-batch-requests": "^1.0.2",
     "tweetnacl": "^1.0.3",
+    "viem": "^2.34.0",
     "wif": "^5.0.0"
   },
   "devDependencies": {

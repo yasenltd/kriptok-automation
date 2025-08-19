@@ -60,12 +60,8 @@ export type RegisterType = {
 
 export type BalancesType = {
   eth: number;
-  linea: number;
   polygon: number;
-  base: number;
-  optimism: number;
-  arbitrum: number;
-  bnb: number;
+  bsc: number;
   btc: number;
   sol: number;
   sui: number;

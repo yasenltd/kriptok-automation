@@ -31,6 +31,21 @@ export type Wallets = {
   };
 };
 
+export type WalletAddresses = {
+  evm: {
+    address: string;
+  };
+  bitcoin: {
+    address: string;
+  };
+  solana: {
+    address: string;
+  };
+  sui: {
+    address: string;
+  };
+};
+
 export interface AuthRefreshResponse {
   access_token: string;
   expires_in: number;
@@ -74,6 +89,7 @@ export type IUser = {
   solana?: string;
   nonce?: string;
   userId?: string;
+  biometricsEnabled?: boolean;
   hasBackedUp: boolean;
   balances: BalancesType;
   createdAt?: string;

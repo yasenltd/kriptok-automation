@@ -4,10 +4,12 @@ import { Stack, usePathname } from 'expo-router';
 import { useMemo } from 'react';
 import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
 import { View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 const ThemedStack = () => {
   const { theme, colorScheme } = useTheme();
   const pathname = usePathname();
+  const { t } = useTranslation();
 
   const showHeader = useMemo(() => {
     const headerRoutes = ['/', '/generate', '/import'];
@@ -27,17 +29,19 @@ const ThemedStack = () => {
             <Header
               {...props}
               title={props.options.title as string}
-              headerTitleAlign="left"
+              headerTitleAlign="center"
               headerBackButtonDisplayMode="minimal"
               headerTransparent={true}
               headerTitleStyle={{ color: theme.text.primary }}
               headerStyle={{ borderBottomWidth: 0, shadowOpacity: 0, elevation: 0 }}
               headerLeft={headerProps =>
-                props.back && pathname !== '/home' ? (
+                typeof props.options.headerLeft === 'function' ? (
+                  props.options.headerLeft(headerProps)
+                ) : props.back && pathname !== '/home' ? (
                   <HeaderBackButton
                     {...headerProps}
                     onPress={props.navigation.goBack}
-                    label={''}
+                    label=""
                     tintColor={theme.text.primary}
                   />
                 ) : null
@@ -47,7 +51,7 @@ const ThemedStack = () => {
         }}
       >
         <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="generate" options={{ headerShown: true }} />
+        <Stack.Screen name="generate" options={{ headerShown: true, title: t('createTitle') }} />
         <Stack.Screen name="import" options={{ headerShown: true }} />
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
       </Stack>

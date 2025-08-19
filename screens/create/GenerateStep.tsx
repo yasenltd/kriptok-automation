@@ -3,7 +3,7 @@ import { useTheme } from '@/context/ThemeContext';
 import { useToast } from '@/hooks/useToast';
 import { setUser } from '@/stores/user/userSlice';
 import { typography } from '@/theme/typography';
-import { IUser } from '@/types';
+import { IUser, Wallets } from '@/types';
 import {
   deriveAllWalletsFromMnemonic,
   generateMnemonic,
@@ -28,12 +28,6 @@ type Props = {
   pin: string;
   biometricsEnabled: boolean;
 };
-type DerivedWallets = {
-  evm: { address: string; privateKey: string };
-  bitcoin: { address: string; privateKey: string };
-  solana: { address: string; privateKey: string };
-  sui: { address: string; privateKey: string };
-};
 
 const GenerateStep = ({ pin, biometricsEnabled }: Props) => {
   const toast = useToast();
@@ -57,10 +51,10 @@ const GenerateStep = ({ pin, biometricsEnabled }: Props) => {
       await storeWalletSecurely(newMnemonic);
 
       setPublicAddresses({
-        eth: wallets.evm.privateKey,
-        sol: wallets.solana.privateKey,
-        sui: wallets.sui.privateKey,
-        btc: wallets.bitcoin.privateKey,
+        eth: wallets.evm.address,
+        sol: wallets.solana.address,
+        sui: wallets.sui.address,
+        btc: wallets.bitcoin.address,
       });
 
       //store priv keys
@@ -77,7 +71,7 @@ const GenerateStep = ({ pin, biometricsEnabled }: Props) => {
       router.replace('/');
       console.error('Something went wrong:', err);
       toast.showError('Failed to save your wallet.');
-      return { wallets: {} as DerivedWallets };
+      return { wallets: {} as Wallets };
     }
   }, [pin]);
 

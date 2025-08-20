@@ -1,8 +1,5 @@
-import { useBalancePollingAll } from '@/hooks/useBalancePolling';
-import { RootState } from '@/stores/store';
 import { StatusType } from '@/types';
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
-import { useSelector } from 'react-redux';
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -22,14 +19,6 @@ export const setExternalForceAuth = (fn: () => void) => {
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [status, setStatus] = useState<StatusType>('checking');
-  const user = useSelector((state: RootState) => state.user.data);
-
-  useBalancePollingAll({
-    eth: user?.address,
-    btc: user?.btc,
-    sol: user?.solana,
-    sui: user?.sui,
-  });
 
   const forceAuth = () => {
     setIsAuthenticated(false);

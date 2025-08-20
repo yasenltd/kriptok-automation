@@ -44,7 +44,7 @@ export const ThemeProvider: React.FC<{ inverted?: boolean; children: ReactNode }
     return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
   }
 
-  const [scheme, setScheme] = useState<Scheme>('dark' as Scheme);
+  const [scheme, setScheme] = useState<Scheme>('light' as Scheme);
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {

@@ -20,6 +20,8 @@ const Home = () => {
   const toast = useToast();
   const { theme } = useTheme();
 
+  const [text, setText] = useState('');
+
   const [evmWallet, setEvmWallet] = useState<{ address: string; privateKey: string } | null>(null);
   const handleLogin = async () => {
     if (!evmWallet) return;

@@ -5,7 +5,7 @@ import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSelector } from 'react-redux';
 import { useHeaderHeight } from '@react-navigation/elements';
 import AppInput from '@components/ui/AppInput';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import CryptoIcon from '@ledgerhq/crypto-icons/native';
 import { router } from 'expo-router';
 import { AssetMeta } from '@/types';
@@ -23,7 +23,6 @@ const SendScreen = () => {
     { key: 'btc', label: 'BTC', ledgerId: 'bitcoin', isNative: true, decimals: 8, balance: '' },
     { key: 'sol', label: 'SOL', ledgerId: 'solana', isNative: true, decimals: 9, balance: '' },
     { key: 'sui', label: 'SUI', ledgerId: 'sui', isNative: true, decimals: 9, balance: '' },
-    { key: 'bnb', label: 'BNB', ledgerId: 'bnb', isNative: true, decimals: 18, balance: '' },
   ]);
 
   const filteredAssets = useMemo(

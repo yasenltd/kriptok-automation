@@ -2,6 +2,9 @@ import { useTheme } from '@/context/ThemeContext';
 import { colors } from '@/theme/colors';
 import Button from '@components/ui/Button';
 import Input from '@components/ui/Input';
+import TextArea from '@components/ui/TextArea';
+import { Dispatch, SetStateAction } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Image,
   KeyboardAvoidingView,
@@ -14,7 +17,7 @@ import {
 
 type Props = {
   seedPhrase: string;
-  setSeedPhrase: (value: string) => void;
+  setSeedPhrase: Dispatch<SetStateAction<string>>;
   walletName: string;
   setWalletName: (value: string) => void;
   onNext: () => void;
@@ -28,7 +31,7 @@ const ImportSeedPhrase = ({
   onNext,
 }: Props) => {
   const { theme } = useTheme();
-
+  const { t } = useTranslation();
   return (
     <KeyboardAvoidingView
       style={styles.root}
@@ -60,8 +63,7 @@ const ImportSeedPhrase = ({
             <Text
               style={[styles.text, { color: theme.text.primary, flexShrink: 1, flexWrap: 'wrap' }]}
             >
-              Never share your seed phrase with anyone. Anyone who has it can access and steal your
-              funds immediately.
+              {t('neverShare')}
             </Text>
           </View>
         </View>
@@ -71,21 +73,18 @@ const ImportSeedPhrase = ({
             <Input
               value={walletName}
               onChange={setWalletName}
-              size="normal"
               width="screen"
-              label="Wallet Name"
-              placeholder="Enter wallet name"
+              label={t('walletName')}
+              placeholder={t('enterWallet')}
             />
           </View>
 
           <View style={{ marginTop: 20 }}>
-            <Input
+            <TextArea
               value={seedPhrase}
-              onChange={setSeedPhrase}
-              size="normal"
-              width="screen"
-              label="Import Seed Phrase"
-              placeholder="Enter seed phrase"
+              setValue={setSeedPhrase}
+              placeholder={t('enterSeed')}
+              label={t('importSeed')}
             />
 
             <Text
@@ -94,14 +93,14 @@ const ImportSeedPhrase = ({
                 { color: theme.text.tertiary, flexShrink: 1, flexWrap: 'wrap', marginTop: 10 },
               ]}
             >
-              Typically 12 (sometimes 18,24) words separated by single spaces
+              {t('seedWords')}
             </Text>
           </View>
         </View>
 
         <View>
           <Button
-            label="Continue"
+            label={t('continue')}
             size="screen"
             variant="secondary"
             disabled={!seedPhrase || !walletName}

@@ -1,5 +1,5 @@
 import { typography } from '@/theme/typography';
-import { Icon, LinkSize, LinkState, LinkVariant } from '@/utils/types';
+import { Icon, LinkSize, LinkVariant } from '@/utils/types';
 import React, { useCallback, useMemo, useState } from 'react';
 import { ColorValue, Pressable, StyleSheet, Text, TextStyle } from 'react-native';
 import { useTheme } from '../../context/ThemeContext';
@@ -137,7 +137,10 @@ export const useLinkStyles = () => {
     },
   });
 
-  const getLinkTextColor: (state: LinkState, style: LinkVariant) => ColorValue = (state, style) => {
+  const getLinkTextColor: (
+    state: 'default' | 'pressed' | 'disabled',
+    style: LinkVariant,
+  ) => ColorValue = (state, style) => {
     return textColorStyles[style][state].color;
   };
 

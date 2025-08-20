@@ -5,7 +5,9 @@ import { ColorValue, ViewProps } from 'react-native';
 
 export type ButtonVariant = 'accent' | 'secondary' | 'tertiary' | 'outline' | 'ghost';
 export type CustomSize = { width: number; height: number; fontSize?: number; iconSize?: number };
-export type ButtonSize = 'XS' | 'M' | 'L' | 'XL' | CustomSize;
+export type ButtonSize = 'XS' | 'M' | 'L' | 'XL' | CustomSize | 'screen';
+export type ButtonStyle = 'accent' | 'secondary' | 'tertiary' | 'outline' | 'ghost';
+export type ButtonState = 'default' | 'pressed' | 'disabled' | 'loading';
 export type IconButtonSize = 'XS' | 'S' | 'M' | 'L';
 
 type GradientWrapper = {

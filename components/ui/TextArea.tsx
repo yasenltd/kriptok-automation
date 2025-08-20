@@ -20,7 +20,6 @@ import Link from './Link';
 interface InputProps {
   value: string;
   setValue: Dispatch<SetStateAction<string>>;
-  onChange: (text: string) => void;
   placeholder?: string;
   width?: InputWidth;
   variant?: InputStyle;
@@ -37,7 +36,6 @@ const TextArea = forwardRef<TextInput, InputProps>(function Input(
   {
     value,
     setValue,
-    onChange,
     width = 'screen',
     variant = 'stroke',
     label,
@@ -61,7 +59,6 @@ const TextArea = forwardRef<TextInput, InputProps>(function Input(
         ? 'focused'
         : 'default';
 
-  const handleChange = useCallback((text: string) => onChange(text), [onChange]);
   const handleFocus = useCallback(() => !disabled && setIsFocused(true), [disabled]);
   const handleBlur = useCallback(() => setIsFocused(false), []);
   useImperativeHandle(inputRef, () => innerRef.current as TextInput);
@@ -147,16 +144,12 @@ const TextArea = forwardRef<TextInput, InputProps>(function Input(
 
       <View style={widthStyle}>
         <View style={[wrapperStyle, textAreaStyles.inputWrapper]}>
-          {/* <View pointerEvents="none">
-            {leftIcon && renderIcon(leftIcon, 20, textAreaStyles.textInput.color)}
-          </View> */}
-
           <TextInput
             multiline
             ref={innerRef}
             style={[textAreaStyles.textInput, { flex: 1 }]}
             value={value}
-            onChangeText={handleChange}
+            onChangeText={text => setValue(text)}
             placeholder={placeholder ?? ''}
             placeholderTextColor={placeholderStyle.color}
             autoCapitalize="none"
@@ -178,8 +171,6 @@ const TextArea = forwardRef<TextInput, InputProps>(function Input(
                 top: 8,
                 width: '100%',
                 height: '100%',
-                // borderWidth: 1,
-                // borderColor: 'yellow',
               }}
             >
               <Link
@@ -227,7 +218,7 @@ const useTextAreaStyles = () => {
           flexDirection: 'column',
           justifyContent: 'space-between',
           alignItems: 'flex-end',
-          height: '100%', // match inputWrapper height
+          height: '100%',
           gap: 8,
         },
         textInput: {

@@ -1,8 +1,4 @@
-import Checkbox from '@/components/ui/AppCheckbox';
-import Button from '@/components/ui/Button';
-import IconButton from '@/components/ui/IconButton';
-import Switch from '@/components/ui/Switch';
-import { ThemeProvider, useTheme } from '@/context/ThemeContext';
+import { useTheme } from '@/context/ThemeContext';
 import { useToast } from '@/hooks/useToast';
 import { api, refreshInstance } from '@/services/apiClient';
 import { RootState } from '@/stores/store';
@@ -15,50 +11,15 @@ import WalletQr from '@components/WalletQr';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Pressable, ScrollView, Text, TouchableOpacity, View } from 'react-native';
-import { ArrowUpIcon, PlusIcon } from 'react-native-heroicons/micro';
 import { useSelector } from 'react-redux';
-import ActionButton from '../../components/ui/ActionButton';
-import Toggle from '../../components/ui/Toggle';
-
-// NOTE: Intended for initial testing and development purposes, to be removed later
-
-const InvertedButtons = () => {
-  // This useTheme() call will get the inverted theme from the inner ThemeProvider
-  const { theme } = useTheme();
-
-  return (
-    <View style={{ backgroundColor: theme.surface.primary, padding: 8 }}>
-      <Button label="Default" variant="accent" />
-      <Button label="Default" loading variant="accent" showLeftIcon={true} />
-      <Button label="Default" disabled variant="accent" />
-
-      <Button label="Secondary" variant="secondary" />
-      <Button label="Secondary" loading variant="secondary" showLeftIcon={true} />
-      <Button label="Secondary" disabled variant="secondary" />
-
-      <Button label="Tertiary" variant="tertiary" />
-      <Button label="Tertiary" loading variant="tertiary" showLeftIcon={true} />
-      <Button label="Tertiary" disabled variant="tertiary" />
-
-      <Button label="Outline" variant="outline" />
-      <Button label="Outline" loading variant="outline" showLeftIcon={true} />
-      <Button label="Outline" disabled variant="outline" />
-
-      <Button label="Ghost" variant="ghost" />
-      <Button label="Ghost" loading variant="ghost" showLeftIcon={true} />
-      <Button label="Ghost" disabled variant="ghost" />
-    </View>
-  );
-};
 
 const Home = () => {
   /* Hooks */
   const user = useSelector((state: RootState) => state.user.data);
   const toast = useToast();
-  const { theme, colorScheme, toggleTheme } = useTheme();
+  const { theme } = useTheme();
 
   const [evmWallet, setEvmWallet] = useState<{ address: string; privateKey: string } | null>(null);
-  const [checkboxValue, setCheckboxValue] = useState(false);
 
   const handleLogin = async () => {
     if (!evmWallet) return;
@@ -235,86 +196,6 @@ const Home = () => {
           </Pressable>
         </View>
       )}
-
-      <Text style={{ color: theme.text.primary }}>Theme: {colorScheme ?? 'undefined'}</Text>
-
-      <Switch
-        size="L"
-        value={colorScheme === 'dark'}
-        onValueChange={() => {
-          toggleTheme();
-        }}
-      />
-      <Switch
-        size="L"
-        value={colorScheme === 'dark'}
-        onValueChange={() => {
-          toggleTheme();
-        }}
-        disabled={true}
-      />
-
-      <View style={{ alignItems: 'center', marginBottom: 10 }}>
-        <ThemeProvider inverted>
-          <InvertedButtons />
-        </ThemeProvider>
-        <View>
-          <IconButton state="default" style="accent" icon={<PlusIcon />} />
-          <IconButton state="loading" style="accent" icon={<PlusIcon />} />
-          <IconButton state="disabled" style="accent" icon={<PlusIcon />} />
-        </View>
-
-        <View>
-          <IconButton state="default" style="secondary" icon={<PlusIcon />} />
-          <IconButton state="loading" style="secondary" icon={<PlusIcon />} />
-          <IconButton state="disabled" style="secondary" icon={<PlusIcon />} />
-        </View>
-
-        <View>
-          <IconButton state="default" style="tertiary" icon={<PlusIcon />} />
-          <IconButton state="loading" style="tertiary" icon={<PlusIcon />} />
-          <IconButton state="disabled" style="tertiary" icon={<PlusIcon />} />
-        </View>
-
-        <View>
-          <IconButton state="default" style="outline" icon={<PlusIcon />} />
-          <IconButton state="loading" style="outline" icon={<PlusIcon />} />
-          <IconButton state="disabled" style="outline" icon={<PlusIcon />} />
-        </View>
-
-        <View>
-          <IconButton state="default" style="ghost" icon={<PlusIcon />} />
-          <IconButton state="loading" style="ghost" icon={<PlusIcon />} />
-          <IconButton state="disabled" style="ghost" icon={<PlusIcon />} />
-        </View>
-
-        <View>
-          <ActionButton label="Default" state="default" icon={<ArrowUpIcon />} />
-          <ActionButton label="Loading" state="loading" icon={<ArrowUpIcon />} />
-          <ActionButton label="Disabled" state="disabled" icon={<ArrowUpIcon />} />
-        </View>
-
-        <View>
-          <Toggle
-            options={[
-              { label: 'Label', key: 'option1', icon: <PlusIcon /> },
-              { label: 'Label', key: 'option2', icon: <PlusIcon /> },
-              { label: 'Label', key: 'option3', icon: <PlusIcon /> },
-            ]}
-          ></Toggle>
-        </View>
-
-        <View>
-          <Checkbox label="Label" description="Description" value={false} onChange={() => {}} />
-          <Checkbox label="Label" description="Description" value={true} onChange={() => {}} />
-          <Checkbox
-            label="Label"
-            description="Description"
-            value={checkboxValue}
-            onChange={newValue => setCheckboxValue(newValue)}
-          />
-        </View>
-      </View>
     </ScrollView>
   );
 };

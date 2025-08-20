@@ -52,7 +52,7 @@ const ThemedStack = () => {
       >
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="generate" options={{ headerShown: true, title: t('createTitle') }} />
-        <Stack.Screen name="import" options={{ headerShown: true }} />
+        <Stack.Screen name="import" options={{ headerShown: true, title: 'Import Wallet' }} />
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
       </Stack>
     </View>

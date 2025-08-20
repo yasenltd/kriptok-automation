@@ -3,15 +3,22 @@ import { useTheme } from '@/context/ThemeContext';
 import { useToast } from '@/hooks/useToast';
 import { setUser } from '@/stores/user/userSlice';
 import { typography } from '@/theme/typography';
-import { IUser, Wallets } from '@/types';
+import { WalletAddresses } from '@/types';
 import {
   deriveAllWalletsFromMnemonic,
-  generateMnemonic,
   saveToken,
   storeAllPrivKeys,
   storeWalletSecurely,
+  validateMnemonic,
 } from '@/utils';
-import { getLoginMessage, getSignupMessage, login, signSiweMessage, signup } from '@/utils/auth';
+import {
+  getLoginMessage,
+  getSignupMessage,
+  isRegistered,
+  login,
+  signSiweMessage,
+  signup,
+} from '@/utils/auth';
 import { clearWalletSecurely, loadPrivkeyFromPin, setPin } from '@/utils/secureStore';
 import { getUser } from '@/utils/users';
 import AppModal from '@components/ui/AppModal';
@@ -25,159 +32,142 @@ import { ActivityIndicator } from 'react-native-paper';
 import { useDispatch } from 'react-redux';
 
 type Props = {
+  seedPhrase: string;
+  setSeedPhrase: (value: string) => void;
+  walletName: string;
+  setWalletName: (value: string) => void;
   pin: string;
+  setPinInput: (value: string) => void;
   biometricsEnabled: boolean;
 };
 
-const GenerateStep = ({ pin, biometricsEnabled }: Props) => {
+const ImportWallet = ({
+  seedPhrase,
+  setSeedPhrase,
+  walletName,
+  setWalletName,
+  pin,
+  setPinInput,
+  biometricsEnabled,
+}: Props) => {
+  /* Hooks */
+  const { theme } = useTheme();
+  const { t } = useTranslation();
+
   const toast = useToast();
   const { setIsAuthenticated } = useAuth();
   const dispatch = useDispatch();
-  const { theme } = useTheme();
-  const { t } = useTranslation();
+
+  /* State */
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [isRetryLoading, setIsRetryLoading] = useState(false);
   const [isBackLoading, setIsBackLoading] = useState(false);
-  const [pinInput, setPinInput] = useState('');
-  const [publicAddresses, setPublicAddresses] = useState({ eth: '', sol: '', sui: '', btc: '' });
+  const [retryPin, setRetryPin] = useState('');
+  const [retryAddresses, setRetryAddresses] = useState<WalletAddresses>({} as WalletAddresses);
 
-  const handleGenerateMnemonic = useCallback(async () => {
-    try {
-      const newMnemonic = generateMnemonic();
+  /* Handlers */
+  const handleImport = useCallback(async () => {
+    const mnemonic = seedPhrase.trim();
+    const isValid = validateMnemonic(mnemonic);
+    if (isValid) {
+      try {
+        await storeWalletSecurely(mnemonic);
+        const wallets = deriveAllWalletsFromMnemonic(mnemonic);
+        const derivedWallets = {
+          evm: { address: wallets.evm.address },
+          bitcoin: { address: wallets.bitcoin.address },
+          solana: { address: wallets.solana.address },
+          sui: { address: wallets.sui.address },
+        };
+        setRetryAddresses(derivedWallets);
 
-      const wallets = deriveAllWalletsFromMnemonic(newMnemonic);
+        //store priv keys
+        await storeAllPrivKeys({
+          eth: wallets.evm.privateKey,
+          sol: wallets.solana.privateKey,
+          sui: wallets.sui.privateKey,
+          btc: wallets.bitcoin.privateKey,
+        });
 
-      await setPin(pin);
-      await storeWalletSecurely(newMnemonic);
+        await setPin(pin);
 
-      setPublicAddresses({
-        eth: wallets.evm.address,
-        sol: wallets.solana.address,
-        sui: wallets.sui.address,
-        btc: wallets.bitcoin.address,
-      });
+        await handleSecureSave(derivedWallets);
+      } catch (error) {
+        toast.showError('Error while importing wallet. Try again.');
+        console.error(error);
 
-      //store priv keys
-      await storeAllPrivKeys({
-        eth: wallets.evm.privateKey,
-        sol: wallets.solana.privateKey,
-        sui: wallets.sui.privateKey,
-        btc: wallets.bitcoin.privateKey,
-      });
-
-      return { wallets: wallets };
-    } catch (err) {
+        await clearWalletSecurely();
+        router.replace('/');
+      }
+    } else {
+      toast.showError('Invalid mnemonic.');
       await clearWalletSecurely();
       router.replace('/');
-      console.error('Something went wrong:', err);
-      toast.showError('Failed to save your wallet.');
-      return { wallets: {} as Wallets };
     }
-  }, [pin]);
+  }, [seedPhrase, pin, biometricsEnabled, walletName]);
 
-  const handleSecureSave = useCallback(async () => {
-    try {
-      const { wallets } = await handleGenerateMnemonic();
-
-      const { message: signupMessage } = await getSignupMessage(wallets.evm.address);
-      const signupSignature = await signSiweMessage(signupMessage, wallets.evm.privateKey);
-      // signup user
-      await signup({
-        eth: wallets.evm.address,
-        btc: wallets.bitcoin.address,
-        sui: wallets.sui.address,
-        solana: wallets.solana.address,
-        signature: signupSignature,
-        message: signupMessage,
-      });
-      //generate message
-      const { message } = await getLoginMessage(wallets.evm.address);
-      // sign message
-      const signature = await signSiweMessage(message, wallets.evm.privateKey);
-
-      //obtain tokens
-      const { access_token, expires_in, refresh_token, refresh_expires_in } = await login(
-        message,
-        signature,
-      );
-
-      await saveToken({
-        access_token,
-        refresh_token,
-        expires_in: expires_in.toString(),
-        refresh_expires_in: refresh_expires_in.toString(),
-      });
-
-      const user = await getUser();
-      const extended = { ...user, biometricsEnabled: biometricsEnabled } as IUser;
-      dispatch(setUser(extended));
-      setIsAuthenticated(true);
-      router.replace('/home');
-      toast.showSuccess('Success! Your wallet and PIN are secured.');
-    } catch (err) {
-      console.error('Secure store error:', err);
-      setShowErrorModal(true);
-    }
-  }, [pin, biometricsEnabled]);
-
-  const retryFlowWithPin = useCallback(
-    async (input: string) => {
-      const privKey = await loadPrivkeyFromPin(input, 'eth');
-      if (!privKey) {
-        toast.showError('Wrong pin. Try again.');
-        return;
-      }
-      setIsRetryLoading(true);
+  const handleSecureSave = useCallback(
+    async (wallets: WalletAddresses, retry?: boolean) => {
       try {
-        const { message: signupMessage } = await getSignupMessage(publicAddresses.eth);
-        const signupSignature = await signSiweMessage(signupMessage, privKey);
-        // signup user
-        await signup({
-          eth: publicAddresses.eth,
-          btc: publicAddresses.btc,
-          sui: publicAddresses.sui,
-          solana: publicAddresses.sol,
-          signature: signupSignature,
-          message: signupMessage,
-        });
-        //generate message
-        const { message } = await getLoginMessage(publicAddresses.eth);
-        // sign message
-        const signature = await signSiweMessage(message, privKey);
+        if (retry) setIsRetryLoading(true);
 
+        const privateKey = (await loadPrivkeyFromPin(retry ? retryPin : pin, 'eth')) || '';
+        if (!privateKey) {
+          toast.showError('Wrong pin. Try again.');
+          return;
+        }
+        const existingUser = await isRegistered(wallets.evm.address);
+
+        if (!existingUser) {
+          const { message: signupMessage } = await getSignupMessage(wallets.evm.address);
+          const signupSignature = await signSiweMessage(signupMessage, privateKey);
+          // signup user
+          await signup({
+            eth: wallets.evm.address,
+            btc: wallets.bitcoin.address,
+            sui: wallets.sui.address,
+            solana: wallets.solana.address,
+            signature: signupSignature,
+            message: signupMessage,
+          });
+        }
+
+        //generate message
+        const { message } = await getLoginMessage(wallets.evm.address);
+        // sign message
+        const signature = await signSiweMessage(message, privateKey);
         //obtain tokens
         const { access_token, expires_in, refresh_token, refresh_expires_in } = await login(
           message,
           signature,
         );
-
         await saveToken({
           access_token,
           refresh_token,
           expires_in: expires_in.toString(),
           refresh_expires_in: refresh_expires_in.toString(),
         });
-
         const user = await getUser();
-        const extended = { ...user, biometricsEnabled: biometricsEnabled } as IUser;
-        dispatch(setUser(extended));
+        const extendedUser = {
+          ...user,
+          biometricsEnabled,
+          wallet: { evmAddress: wallets.evm.address, walletName: walletName },
+        };
+        dispatch(setUser(extendedUser));
         setIsAuthenticated(true);
+        setSeedPhrase('');
+        setWalletName('');
         router.replace('/home');
         toast.showSuccess('Success! Your wallet and PIN are secured.');
-      } catch (error) {
-        console.error(error);
+      } catch (err) {
+        console.error('Error:', err);
+        toast.showError('Could not import your wallet. Try again.');
+        setShowErrorModal(true);
       } finally {
-        setIsRetryLoading(false);
-        setPinInput('');
+        if (retry) setIsRetryLoading(false);
       }
     },
-    [
-      biometricsEnabled,
-      publicAddresses.eth,
-      publicAddresses.btc,
-      publicAddresses.sol,
-      publicAddresses.sui,
-    ],
+    [pin, biometricsEnabled, walletName, retryAddresses, retryPin],
   );
 
   const handleGoBack = useCallback(async () => {
@@ -194,7 +184,7 @@ const GenerateStep = ({ pin, biometricsEnabled }: Props) => {
   }, []);
 
   useEffect(() => {
-    handleSecureSave();
+    handleImport();
   }, []);
 
   useFocusEffect(
@@ -224,8 +214,8 @@ const GenerateStep = ({ pin, biometricsEnabled }: Props) => {
           <PinInput
             revertedTheme={true}
             length={6}
-            value={pinInput}
-            onChange={setPinInput}
+            value={retryPin}
+            onChange={setRetryPin}
             autoFocus
             cellSize={42}
           />
@@ -242,8 +232,9 @@ const GenerateStep = ({ pin, biometricsEnabled }: Props) => {
             <Button
               label={t('retry')}
               size={'M'}
-              onPress={() => retryFlowWithPin(pinInput)}
+              onPress={() => handleSecureSave(retryAddresses, true)}
               loading={isRetryLoading}
+              disabled={isRetryLoading}
               variant="secondary"
             />
           </View>
@@ -251,7 +242,7 @@ const GenerateStep = ({ pin, biometricsEnabled }: Props) => {
       )}
       <View>
         <Text style={[typography['heading5'], styles.title, { color: theme.text.primary }]}>
-          {t('creating')}
+          {t('importing')}
         </Text>
 
         <Text
@@ -273,8 +264,6 @@ const GenerateStep = ({ pin, biometricsEnabled }: Props) => {
     </View>
   );
 };
-
-export default GenerateStep;
 
 const styles = StyleSheet.create({
   root: {
@@ -303,3 +292,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
+export default ImportWallet;

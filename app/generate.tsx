@@ -1,7 +1,7 @@
-import EnableBiometrics from '@/screens/create/EnableBiometrics';
-import EnterPin from '@/screens/create/EnterPin';
+import EnableBiometrics from '@/screens/components/EnableBiometrics';
+import EnterPin from '@/screens/components/EnterPin';
+import VerifyPin from '@/screens/components/VerifyPin';
 import GenerateStep from '@/screens/create/GenerateStep';
-import VerifyPin from '@/screens/create/VerifyPin';
 import { useNavigation } from 'expo-router';
 import { useLayoutEffect, useState } from 'react';
 import { SafeAreaView, StyleSheet } from 'react-native';

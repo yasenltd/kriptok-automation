@@ -99,7 +99,7 @@ export const sendSolanaTx = async (params: SolanaTxParams, privateKey: string) =
     const fee = await connection.getFeeForMessage(message);
     const estimatedFee = fee.value ?? 0;
     const balances = await getSolanaBalance(params.fromAddress, [], connection);
-    const solBalance = balances.sol;
+    const solBalance = Number(balances.native);
     const balanceLamports = Math.floor(solBalance * LAMPORTS_PER_SOL);
 
     if (balanceLamports < lamports + estimatedFee) {

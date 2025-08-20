@@ -144,10 +144,6 @@ const TextArea = forwardRef<TextInput, InputProps>(function Input(
 
       <View style={widthStyle}>
         <View style={[wrapperStyle, textAreaStyles.inputWrapper]}>
-          {/* <View pointerEvents="none">
-            {leftIcon && renderIcon(leftIcon, 20, textAreaStyles.textInput.color)}
-          </View> */}
-
           <TextInput
             multiline
             ref={innerRef}
@@ -175,8 +171,6 @@ const TextArea = forwardRef<TextInput, InputProps>(function Input(
                 top: 8,
                 width: '100%',
                 height: '100%',
-                // borderWidth: 1,
-                // borderColor: 'yellow',
               }}
             >
               <Link

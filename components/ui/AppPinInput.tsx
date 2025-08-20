@@ -14,6 +14,14 @@ type PinInputProps = {
   revertedTheme?: boolean;
 };
 
+const toFixedArray = (s: string, length: number) =>
+  (s + ' '.repeat(length)).slice(0, length).split('');
+const isDigit = (c: string) => /\d/.test(c);
+const findNextEmpty = (arr: string[], startIdx: number) => {
+  for (let i = startIdx + 1; i < arr.length; i++) if (!isDigit(arr[i])) return i;
+  return -1;
+};
+
 const PinInput: React.FC<PinInputProps> = ({
   length = 6,
   value,
@@ -28,7 +36,10 @@ const PinInput: React.FC<PinInputProps> = ({
 
   const refs = useRef<Array<RNTextInput | null>>([]);
 
-  const digits = useMemo(() => Array.from({ length }, (_, i) => value[i] ?? ''), [value, length]);
+  const digits = useMemo(() => {
+    const arr = toFixedArray(value, length);
+    return arr.map(c => (isDigit(c) ? c : ''));
+  }, [value, length]);
 
   const setRef =
     (index: number): React.RefCallback<RNTextInput> =>
@@ -48,31 +59,48 @@ const PinInput: React.FC<PinInputProps> = ({
     const incoming = (sourceText ?? char).replace(/\D/g, '');
     if (!incoming) return;
 
-    let newVal = value.split('');
+    const arr = toFixedArray(value, length);
+
+    if (incoming.length === 1) {
+      arr[index] = incoming;
+      onChange(arr.join(''));
+
+      const nextEmpty = findNextEmpty(arr, index);
+      if (nextEmpty !== -1) {
+        focusIndex(nextEmpty);
+      } else {
+        refs.current[length - 1]?.blur();
+        const compact = arr.join('').replace(/ /g, '');
+        if (onComplete && compact.length === length) onComplete(compact);
+      }
+      return;
+    }
+
     let i = index;
     for (const c of incoming) {
       if (i >= length) break;
-      newVal[i] = c;
+      arr[i] = c;
       i++;
     }
-    const joined = newVal.join('').slice(0, length);
-    onChange(joined);
+    onChange(arr.join(''));
 
-    if (i <= length - 1) {
-      focusIndex(i);
+    const nextEmpty = findNextEmpty(arr, index - 1 + incoming.length);
+    if (nextEmpty !== -1) {
+      focusIndex(nextEmpty);
     } else {
       refs.current[length - 1]?.blur();
-      if (onComplete && joined.length === length) onComplete(joined);
+      const compact = arr.join('').replace(/ /g, '');
+      if (onComplete && compact.length === length) onComplete(compact);
     }
   };
 
   const clearAt = useCallback(
     (index: number) => {
-      const arr = value.split('');
-      arr[index] = '';
+      const arr = toFixedArray(value, length);
+      arr[index] = ' ';
       onChange(arr.join(''));
     },
-    [value],
+    [value, length, onChange],
   );
 
   useEffect(() => {

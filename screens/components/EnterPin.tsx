@@ -17,7 +17,7 @@ const EnterPin = ({ onNext, pin, setPin }: Props) => {
   const { t } = useTranslation();
 
   const isButtonDisabled = useMemo(() => {
-    return !pin || pin.length < 6;
+    return !pin || pin.trim().length < 6;
   }, [pin, setPin]);
   return (
     <KeyboardAvoidingView

@@ -19,7 +19,7 @@ const VerifyPin = ({ pin, confirmPin, setConfirmPin, onNext }: Props) => {
   const { t } = useTranslation();
 
   const isWrong = useMemo(() => {
-    if (confirmPin.length === 6 && confirmPin !== pin) {
+    if (confirmPin.trim().length === 6 && confirmPin !== pin) {
       return true;
     }
     return false;

@@ -42,7 +42,8 @@ export const getSuiBalance = async (address: string, tokens: string[]): Promise<
 };
 
 export const sendSuiTx = async (params: SuiTxParams, privateKey: string): Promise<string> => {
-  const { sui: balance } = await getSuiBalance(params.fromAddress, []);
+  const { native: balanceStr } = await getSuiBalance(params.fromAddress, []);
+  const balance = Number(balanceStr);
   const amountSui = parseFloat(params.amount as string);
   if (isNaN(amountSui) || amountSui <= 0) {
     throw new Error('Invalid amount');

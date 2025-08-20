@@ -97,7 +97,13 @@ export const getEthBalance = async (
   const balanceWei = await ethClient.getBalance({ address: address as `0x${string}` });
   return {
     native: ethers.formatEther(balanceWei),
-    tokens: tokenData,
+    tokens: tokenData.reduce(
+      (acc, token) => {
+        acc[token.token] = token.balance;
+        return acc;
+      },
+      {} as Record<string, string>,
+    ),
   };
 };
 

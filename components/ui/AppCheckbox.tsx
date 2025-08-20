@@ -10,6 +10,7 @@ type CheckboxProps = {
   label: string;
   description?: string;
   color?: string;
+  testID?: string;
 };
 const Checkbox: React.FC<CheckboxProps> = ({
   value,
@@ -17,11 +18,12 @@ const Checkbox: React.FC<CheckboxProps> = ({
   label: text,
   description,
   color,
+  testID
 }) => {
   const styles = useCheckboxStyles();
 
   return (
-    <Pressable style={{ maxWidth: '100%' }} onPress={() => onChange(!value)}>
+    <Pressable style={{ maxWidth: '100%' }} onPress={() => onChange(!value)} testID={testID}>
       <View style={styles.container}>
         <View style={styles.labelContainer}>
           <MaterialIcons

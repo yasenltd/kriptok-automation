@@ -29,6 +29,7 @@ interface InputProps {
   hint?: string;
   error?: string;
   style?: ViewStyle;
+  testID?: string;
 }
 
 const Input = forwardRef<TextInput, InputProps>(function Input(
@@ -47,6 +48,7 @@ const Input = forwardRef<TextInput, InputProps>(function Input(
     error,
     hint,
     style,
+    testID,
   },
   inputRef,
 ) {
@@ -165,6 +167,7 @@ const Input = forwardRef<TextInput, InputProps>(function Input(
             spellCheck={false}
             autoCorrect={false}
             textContentType="none"
+            testID={testID}
           />
           <View style={textAreaStyles.rightSection}>
             {derivedState === 'error' &&

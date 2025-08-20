@@ -77,6 +77,7 @@ const ImportSeedPhrase = ({
               width="screen"
               label={t('walletName')}
               placeholder={t('enterWallet')}
+              testID='enter-wallet-name-input'
             />
           </View>
 
@@ -86,6 +87,7 @@ const ImportSeedPhrase = ({
               setValue={setSeedPhrase}
               placeholder={t('enterSeed')}
               label={t('importSeed')}
+              testID='import-seed-input'
             />
 
             <Text

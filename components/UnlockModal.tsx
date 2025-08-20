@@ -30,6 +30,7 @@ const UnlockModal: React.FC<UnlockModalProps> = ({
     >
       <Text style={{ marginBottom: 10 }}>{text ?? 'Enter your PIN to unlock your wallet.'}</Text>
       <TextInput
+        testID="enter-pin-unlock"
         style={styles.input}
         keyboardType="number-pad"
         maxLength={6}
@@ -39,7 +40,7 @@ const UnlockModal: React.FC<UnlockModalProps> = ({
         placeholder="Enter PIN"
       />
       <Pressable style={styles.button} onPress={handleUnlock}>
-        <Text style={styles.buttonText}>{buttonText ?? 'Unlock app'}</Text>
+        <Text testID="unlock-app" style={styles.buttonText}>{buttonText ?? 'Unlock app'}</Text>
       </Pressable>
     </AppModal>
   );

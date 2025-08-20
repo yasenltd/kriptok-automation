@@ -119,7 +119,7 @@ const Home = () => {
         }}
         onPress={() => router.push('/backup')}
       >
-        <Text style={{ color: '#fff', fontWeight: '600', fontSize: 16 }}>Backup</Text>
+        <Text testID="backup" style={{ color: '#fff', fontWeight: '600', fontSize: 16 }}>Backup</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -132,7 +132,7 @@ const Home = () => {
         }}
         onPress={() => router.push('/send')}
       >
-        <Text style={{ color: '#fff', fontWeight: '600', fontSize: 16 }}>Send</Text>
+        <Text testID="send" style={{ color: '#fff', fontWeight: '600', fontSize: 16 }}>Send</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -145,7 +145,7 @@ const Home = () => {
         }}
         onPress={handleLogin}
       >
-        <Text style={{ color: '#fff', fontWeight: '600', fontSize: 16 }}>Login</Text>
+        <Text testID="login" style={{ color: '#fff', fontWeight: '600', fontSize: 16 }}>Login</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -158,7 +158,7 @@ const Home = () => {
         }}
         onPress={handleRefresh}
       >
-        <Text style={{ color: '#fff', fontWeight: '600', fontSize: 16 }}>Refresh</Text>
+        <Text testID="refresh" style={{ color: '#fff', fontWeight: '600', fontSize: 16 }}>Refresh</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -171,7 +171,7 @@ const Home = () => {
         }}
         onPress={handleLogout}
       >
-        <Text style={{ color: '#fff', fontWeight: '600', fontSize: 16 }}>Logout</Text>
+        <Text testID="logout" style={{ color: '#fff', fontWeight: '600', fontSize: 16 }}>Logout</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -184,7 +184,7 @@ const Home = () => {
         }}
         onPress={handleTestAccessToken}
       >
-        <Text style={{ color: '#fff', fontWeight: '600', fontSize: 16 }}>Test access token</Text>
+        <Text testID="test-token" style={{ color: '#fff', fontWeight: '600', fontSize: 16 }}>Test access token</Text>
       </TouchableOpacity>
       <Text style={{ color: theme.text.primary }}>EVM Wallet: {evmWallet?.address}</Text>
 

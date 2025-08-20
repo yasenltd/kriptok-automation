@@ -16,7 +16,7 @@ const BackupStepIntro = ({ setStep }: { setStep: (n: number) => void }) => {
         </Text>
       </View>
 
-      <Button onPress={() => setStep(1)}>
+      <Button testID="understand-risks" onPress={() => setStep(1)}>
         <Text>I understand the risks</Text>
       </Button>
     </View>

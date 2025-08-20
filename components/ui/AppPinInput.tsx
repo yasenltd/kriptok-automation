@@ -12,6 +12,8 @@ type PinInputProps = {
   cellSize?: number;
   isWrong?: boolean;
   revertedTheme?: boolean;
+  testID?: string;
+  cellTestIDPrefix?: string;
 };
 
 const toFixedArray = (s: string, length: number) =>
@@ -31,9 +33,10 @@ const PinInput: React.FC<PinInputProps> = ({
   cellSize = 42,
   isWrong,
   revertedTheme,
+  testID,
+  cellTestIDPrefix,
 }) => {
   const { theme } = useTheme();
-
   const refs = useRef<Array<RNTextInput | null>>([]);
 
   const digits = useMemo(() => {
@@ -43,17 +46,14 @@ const PinInput: React.FC<PinInputProps> = ({
 
   const setRef =
     (index: number): React.RefCallback<RNTextInput> =>
-    r => {
-      refs.current[index] = r;
-    };
+      (r) => {
+        refs.current[index] = r;
+      };
 
-  const focusIndex = useCallback(
-    (i: number) => {
-      const ref = refs.current[i];
-      if (ref) ref.focus();
-    },
-    [refs.current],
-  );
+  const focusIndex = useCallback((i: number) => {
+    const ref = refs.current[i];
+    if (ref) ref.focus();
+  }, []);
 
   const setCharAt = (index: number, char: string, sourceText?: string) => {
     const incoming = (sourceText ?? char).replace(/\D/g, '');
@@ -76,12 +76,17 @@ const PinInput: React.FC<PinInputProps> = ({
       return;
     }
 
+    const buf = value.split('');
     let i = index;
     for (const c of incoming) {
       if (i >= length) break;
+      buf[i] = c;
       arr[i] = c;
       i++;
     }
+
+    const joined = buf.join('').slice(0, length);
+    onChange(joined);
     onChange(arr.join(''));
 
     const nextEmpty = findNextEmpty(arr, index - 1 + incoming.length);
@@ -117,47 +122,54 @@ const PinInput: React.FC<PinInputProps> = ({
         { borderColor: isWrong ? colors.error[40] : undefined },
       ]}
     >
-      {digits.map((digit, i) => (
-        <TextInput
-          key={i}
-          ref={setRef(i)}
-          testID={`pin-cell-${i}`}
-          style={[
-            styles.cell,
-            {
-              width: cellSize,
-              height: cellSize,
-              borderRadius: 2,
-              borderColor: revertedTheme ? theme.text.secondary : theme.text.primary,
-              color: revertedTheme ? theme.text.secondary : theme.text.primary,
-            },
-            digit ? styles.cellFilled : null,
-          ]}
-          value={digit ? '*' : ''}
-          onChangeText={txt => setCharAt(i, txt.slice(-1), txt)}
-          onKeyPress={({ nativeEvent }) => {
-            if (nativeEvent.key === 'Backspace') {
-              if (digits[i]) {
-                clearAt(i);
-              } else if (i > 0) {
-                const prev = i - 1;
-                focusIndex(prev);
-                const arr = value.split('');
-                arr[prev] = '';
-                onChange(arr.join(''));
+      {digits.map((digit, i) => {
+        const baseId = cellTestIDPrefix ? `${cellTestIDPrefix}-${i}` : `pin-cell-${i}`;
+        const idForThisCell = i === 0 && testID ? baseId : baseId;
+
+        return (
+          <TextInput
+            key={i}
+            ref={setRef(i)}
+            testID={idForThisCell}
+            style={[
+              styles.cell,
+              {
+                width: cellSize,
+                height: cellSize,
+                borderRadius: 2,
+                borderColor: revertedTheme ? theme.text.secondary : theme.text.primary,
+                color: revertedTheme ? theme.text.secondary : theme.text.primary,
+              },
+              digit ? styles.cellFilled : null,
+            ]}
+            value={digit ? '*' : ''}
+            onChangeText={(txt) => setCharAt(i, txt.slice(-1), txt)}
+            onKeyPress={({ nativeEvent }) => {
+              if (nativeEvent.key === 'Backspace') {
+                if (digits[i]) {
+                  clearAt(i);
+                } else if (i > 0) {
+                  const prev = i - 1;
+                  focusIndex(prev);
+                  const arr = value.split('');
+                  arr[prev] = '';
+                  onChange(arr.join(''));
+                }
               }
-            }
-          }}
-          keyboardType={Platform.OS === 'ios' ? 'number-pad' : 'numeric'}
-          textContentType="oneTimeCode"
-          secureTextEntry={true}
-          maxLength={1}
-          autoCorrect={false}
-          autoCapitalize="none"
-          selection={{ start: 1, end: 1 }}
-          selectionColor={revertedTheme ? theme.text.secondary : theme.text.primary}
-        />
-      ))}
+            }}
+            keyboardType={Platform.OS === 'ios' ? 'number-pad' : 'numeric'}
+            textContentType="oneTimeCode"
+            secureTextEntry
+            maxLength={1}
+            autoCorrect={false}
+            autoCapitalize="none"
+            selectionColor={revertedTheme ? theme.text.secondary : theme.text.primary}
+            importantForAutofill="no"
+            accessible
+            accessibilityLabel={`PIN digit ${i + 1}`}
+          />
+        );
+      })}
     </View>
   );
 };
@@ -166,6 +178,7 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignSelf: 'center',
+    gap: 8,
   },
   cell: {
     borderWidth: 1,

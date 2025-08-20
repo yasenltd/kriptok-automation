@@ -35,7 +35,7 @@ const EnterPin = ({ onNext, pin, setPin }: Props) => {
           >
             {t('enterPin')}
           </Text>
-          <PinInput length={6} value={pin} onChange={setPin} autoFocus cellSize={42} />
+          <PinInput length={6} value={pin} onChange={setPin} autoFocus cellSize={42} cellTestIDPrefix='enter-pin-cell' />
 
           <Text style={[styles.text, styles.title, { color: theme.text.tertiary, marginTop: 5 }]}>
             {t('secureYourWallet')}

@@ -219,9 +219,7 @@ const GenerateStep = ({ pin, biometricsEnabled }: Props) => {
           canClose={false}
           width="screen"
         >
-          <Text style={[styles.text, { marginBottom: 20 }]}>
-            Something went wrong while saving your wallet. Please, try again.
-          </Text>
+          <Text style={[styles.text, { marginBottom: 20 }]}>{t('wentWrong')}</Text>
 
           <PinInput
             revertedTheme={true}
@@ -234,7 +232,7 @@ const GenerateStep = ({ pin, biometricsEnabled }: Props) => {
 
           <View style={[styles.buttonContainer, { marginTop: 20 }]}>
             <Button
-              label="Go Back"
+              label={t('goBack')}
               size={'M'}
               onPress={handleGoBack}
               disabled={isRetryLoading}
@@ -242,7 +240,7 @@ const GenerateStep = ({ pin, biometricsEnabled }: Props) => {
               variant="accent"
             />
             <Button
-              label="Retry"
+              label={t('retry')}
               size={'M'}
               onPress={() => retryFlowWithPin(pinInput)}
               loading={isRetryLoading}

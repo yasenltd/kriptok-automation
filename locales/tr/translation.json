@@ -28,5 +28,9 @@
   "enterWallet": "Cüzdan adını girin",
   "enterSeed": "Seed cümlesini girin",
   "importSeed": "Seed Cümlesini İçe Aktar",
-  "seedWords": "Genellikle 12 (bazen 18,24) kelime, tek boşluklarla ayrılmış"
+  "seedWords": "Genellikle 12 (bazen 18,24) kelime, tek boşluklarla ayrılmış",
+  "goBack": "Geri Dön",
+  "retry": "Tekrar Dene",
+  "wentWrong": "Cüzdanınızı kaydederken bir şeyler ters gitti. Lütfen tekrar deneyin.",
+  "importing": "Cüzdan İçe Aktarılıyor"
 }

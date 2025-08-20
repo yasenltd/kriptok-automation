@@ -4,32 +4,28 @@ import { ReactElement } from 'react';
 import { ColorValue, ViewProps } from 'react-native';
 
 export type ButtonVariant = 'accent' | 'secondary' | 'tertiary' | 'outline' | 'ghost';
+export type ButtonState = 'default' | 'pressed' | 'loading' | 'disabled';
 export type CustomSize = { width: number; height: number; fontSize?: number; iconSize?: number };
-export type ButtonSize = 'XS' | 'M' | 'L' | 'XL' | CustomSize | 'screen';
-export type ButtonStyle = 'accent' | 'secondary' | 'tertiary' | 'outline' | 'ghost';
-export type ButtonState = 'default' | 'pressed' | 'disabled' | 'loading';
+export type ButtonSize = 'XS' | 'M' | 'L' | 'XL' | 'screen' | CustomSize;
 export type IconButtonSize = 'XS' | 'S' | 'M' | 'L';
 
-type GradientWrapper = {
+export type GradientWrapper = {
   kind: 'gradient';
   props: Omit<LinearGradientProps, 'children'>;
-  component: React.ComponentType<LinearGradientProps>;
 };
-type BlurWrapper = {
+export type BlurWrapper = {
   kind: 'blur';
   props: Omit<BlurViewProps, 'children'>;
-  component: React.ComponentType<BlurViewProps>;
 };
-type ViewWrapper = {
+export type ViewWrapper = {
   kind: 'view';
   props: ViewProps;
-  component: React.ComponentType<ViewProps>;
 };
+
 export type Wrapper = GradientWrapper | BlurWrapper | ViewWrapper;
 
 export type LinkVariant = 'accent' | 'secondary' | 'destruct' | 'create';
 export type LinkSize = 'S' | 'L';
-export type LinkState = 'default' | 'pressed' | 'disabled';
 
 export type Icon = React.JSX.Element | IconProps;
 export interface IconProps {
@@ -46,5 +42,5 @@ export type InputState = 'default' | 'focused' | 'disabled' | 'error';
 export interface TokenItem {
   label: string;
   value: string;
-  icon: () => ReactElement;
+  icon: () => ReactElement<IconProps>;
 }

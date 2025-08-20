@@ -23,5 +23,10 @@
   "skip": "Atla",
   "enable": "Etkinleştir",
   "creating": "Cüzdan oluşturuluyor",
-  "mightTake": "Bu birkaç saniye sürebilir..."
+  "neverShare": "Seed cümlenizi asla kimseyle paylaşmayın. Ona sahip olan herkes fonlarınıza erişebilir ve onları anında çalabilir.",
+  "walletName": "Cüzdan Adı",
+  "enterWallet": "Cüzdan adını girin",
+  "enterSeed": "Seed cümlesini girin",
+  "importSeed": "Seed Cümlesini İçe Aktar",
+  "seedWords": "Genellikle 12 (bazen 18,24) kelime, tek boşluklarla ayrılmış"
 }

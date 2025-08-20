@@ -96,6 +96,7 @@ export type IUser = {
   biometricsEnabled?: boolean;
   hasBackedUp: boolean;
   balances: BalancesType;
+  wallet?: { evmAddress: string; walletName: string };
   createdAt?: string;
   updatedAt?: string;
   _id?: string;

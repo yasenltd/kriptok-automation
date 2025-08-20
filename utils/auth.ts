@@ -8,6 +8,8 @@ export const getSignupMessage = (address: string) =>
 export const getLoginMessage = (address: string) =>
   get<{ message: string }>(`/auth/message/${address}`);
 
+export const isRegistered = (address: string) => get<boolean>(`/auth/find/${address}`);
+
 export const login = (message: string, signature: string) =>
   post<{
     access_token: string;

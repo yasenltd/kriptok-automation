@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/stores/store';
 import { updateUser } from '@/stores/user/userSlice';
 import { Addresses, getAllBalances } from '@/services/balances';
+import Constants from 'expo-constants';
 
 export function useBalancePollingAll(addresses: Addresses) {
   const dispatch = useDispatch();
@@ -17,21 +18,11 @@ export function useBalancePollingAll(addresses: Addresses) {
     [addresses.eth, addresses.btc, addresses.sol, addresses.sui],
   );
 
-  const lastBtcFetch = useRef<number>(Date.now() - 5 * 60 * 1000);
-  const BTC_FETCH_INTERVAL_MS = 5 * 60 * 1000; // 5 min
-  const POLL_INTERVAL_MS = 20 * 1000; // 20 sec
+  const POLL_INTERVAL_MS = Number(Constants.expoConfig?.extra?.EXPO_PUBLIC_BALANCES_FETCH_INTERVAL);
 
   const poll = useCallback(async () => {
     try {
-      const now = Date.now();
-
-      const includeBTC = now - lastBtcFetch.current >= BTC_FETCH_INTERVAL_MS;
-      if (includeBTC) {
-        lastBtcFetch.current = now;
-      }
-
-      const prev = balancesRef.current;
-      const balances = await getAllBalances(addresses, prev, { includeBTC });
+      const balances = await getAllBalances(addresses);
       dispatch(updateUser({ balances }));
     } catch (e) {
       console.warn('Balance polling failed:', e);

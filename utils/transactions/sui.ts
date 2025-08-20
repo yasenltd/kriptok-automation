@@ -3,21 +3,13 @@ import { Ed25519Keypair } from '@mysten/sui/keypairs/ed25519';
 import { Transaction } from '@mysten/sui/transactions';
 import { isDev } from '../constants';
 import { SuiTxParams } from '.';
+import { BalanceType } from '@/types';
 
 const RPC_URL = isDev ? getFullnodeUrl('testnet') : getFullnodeUrl('mainnet');
 
 const sui = new SuiClient({ url: RPC_URL });
 
-export const getSuiBalance = async (
-  address: string,
-  tokens: string[],
-): Promise<{
-  sui: number;
-  tokens: {
-    token: string;
-    balance: number;
-  }[];
-}> => {
+export const getSuiBalance = async (address: string, tokens: string[]): Promise<BalanceType> => {
   const suiToken = '0x2::sui::SUI';
   try {
     const allBalances = await sui.getAllBalances({
@@ -32,10 +24,16 @@ export const getSuiBalance = async (
         balance: Number(token.totalBalance) / 1_000_000_000,
       }));
 
-    const suiTotal = Number(suiBalance?.totalBalance) / 1_000_000_000;
+    const suiTotal = suiBalance ? Number(suiBalance?.totalBalance) / 1_000_000_000 : 0;
     return {
-      sui: suiTotal || 0,
-      tokens: tokensBalances,
+      native: suiTotal.toString() || '0',
+      tokens: tokensBalances.reduce(
+        (acc, token) => {
+          acc[token.token] = token.balance.toString();
+          return acc;
+        },
+        {} as Record<string, string>,
+      ),
     };
   } catch (error) {
     console.error(error);

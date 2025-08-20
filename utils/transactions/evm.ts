@@ -9,6 +9,7 @@ import {
 import { BaseTxParams } from '.';
 import { Chain } from 'viem/chains';
 import { createPublicClient, http } from 'viem';
+import { BalanceType } from '@/types';
 
 const providerCache: Record<string, JsonRpcProvider> = {};
 
@@ -35,7 +36,11 @@ const getFallbackFee = (tokenAddress: string | null): { feeInWei: bigint; feeInE
   };
 };
 
-export const getEthBalance = async (address: string, chain: Chain, tokens: string[]) => {
+export const getEthBalance = async (
+  address: string,
+  chain: Chain,
+  tokens: string[],
+): Promise<BalanceType> => {
   const ethClient = createPublicClient({
     chain: chain,
     transport: http(),
@@ -91,7 +96,7 @@ export const getEthBalance = async (address: string, chain: Chain, tokens: strin
 
   const balanceWei = await ethClient.getBalance({ address: address as `0x${string}` });
   return {
-    eth: ethers.formatEther(balanceWei),
+    native: ethers.formatEther(balanceWei),
     tokens: tokenData,
   };
 };

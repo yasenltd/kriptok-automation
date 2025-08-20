@@ -17,6 +17,7 @@ import { isDev } from '../constants';
 import { base58 } from '@scure/base';
 import { SolanaTxParams } from '.';
 import { getParsedAccountInBatch } from 'solana-batch-requests';
+import { BalanceType } from '@/types';
 
 const SOLANA_RPC = isDev ? 'https://api.testnet.solana.com' : 'https://api.mainnet-beta.solana.com';
 
@@ -24,7 +25,7 @@ export const getSolanaBalance = async (
   address: string,
   tokens: string[],
   connection?: Connection,
-) => {
+): Promise<BalanceType> => {
   try {
     const conn = connection ?? new Connection(SOLANA_RPC);
     const solBalance = await conn.getBalance(new PublicKey(address));
@@ -39,14 +40,14 @@ export const getSolanaBalance = async (
 
     const tokenBalances = tokens.map((mint, index) => {
       const accountData = tokenAccountsData[index];
-      let balance = 0;
+      let balance = '0';
 
       if (accountData && accountData.data) {
         try {
           const parsed = (accountData.data as ParsedAccountData).parsed;
-          balance = parsed?.info?.tokenAmount?.uiAmount || 0;
+          balance = (parsed?.info?.tokenAmount?.uiAmount || 0).toString();
         } catch {
-          balance = 0;
+          balance = '0';
         }
       }
 
@@ -54,8 +55,14 @@ export const getSolanaBalance = async (
     });
 
     return {
-      sol: solBalance / LAMPORTS_PER_SOL,
-      tokens: tokenBalances,
+      native: (solBalance / LAMPORTS_PER_SOL).toString(),
+      tokens: tokenBalances.reduce(
+        (acc, token) => {
+          acc[token.address] = token.balance;
+          return acc;
+        },
+        {} as Record<string, string>,
+      ),
     };
   } catch (error) {
     console.error(error);

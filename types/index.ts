@@ -73,13 +73,30 @@ export type RegisterType = {
   message: string;
 };
 
+export type BalanceType = {
+  native: string;
+  tokens: {
+    [key: string]: string;
+  };
+};
+
 export type BalancesType = {
-  eth: number;
-  polygon: number;
-  bnb: number;
-  btc: number;
-  sol: number;
-  sui: number;
+  eth: BalanceType;
+  polygon: BalanceType;
+  bnb: BalanceType;
+  btc: {
+    native: string;
+  };
+  sol: BalanceType;
+  sui: BalanceType;
+};
+
+export type Token = {
+  address: string;
+  name: string;
+  symbol: string;
+  decimals: number;
+  balance: string;
 };
 
 export type IUser = {
@@ -92,6 +109,14 @@ export type IUser = {
   biometricsEnabled?: boolean;
   hasBackedUp: boolean;
   balances: BalancesType;
+  tokens?: {
+    sol: Array<Token>;
+    eth: Array<Token>;
+    btc: Array<Token>;
+    sui: Array<Token>;
+    polygon: Array<Token>;
+    bnb: Array<Token>;
+  };
   createdAt?: string;
   updatedAt?: string;
   _id?: string;

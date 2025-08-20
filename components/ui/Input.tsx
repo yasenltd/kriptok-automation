@@ -3,8 +3,10 @@ import { typography } from '@/theme/typography';
 import { inputSizeMapping } from '@/utils';
 import { Icon, InputState, InputStyle, InputWidth } from '@/utils/types';
 import React, {
+  Dispatch,
   forwardRef,
   ReactElement,
+  SetStateAction,
   useCallback,
   useImperativeHandle,
   useMemo,
@@ -16,7 +18,7 @@ import { commonStyles } from '../styles/inputStyles';
 
 interface InputProps {
   value: string;
-  onChange: (text: string) => void;
+  setValue: Dispatch<SetStateAction<string>>;
   placeholder?: string;
   width?: InputWidth;
   variant?: InputStyle;
@@ -34,7 +36,7 @@ interface InputProps {
 const Input = forwardRef<TextInput, InputProps>(function Input(
   {
     value,
-    onChange,
+    setValue,
     width = 'screen',
     variant = 'stroke',
     label,
@@ -62,7 +64,6 @@ const Input = forwardRef<TextInput, InputProps>(function Input(
         ? 'focused'
         : 'default';
 
-  const handleChange = useCallback((text: string) => onChange(text), [onChange]);
   const handleFocus = useCallback(() => !disabled && setIsFocused(true), [disabled]);
   const handleBlur = useCallback(() => setIsFocused(false), []);
   useImperativeHandle(inputRef, () => innerRef.current as TextInput);
@@ -155,7 +156,7 @@ const Input = forwardRef<TextInput, InputProps>(function Input(
             ref={innerRef}
             style={[textAreaStyles.textInput, { flex: 1 }]}
             value={value}
-            onChangeText={handleChange}
+            onChangeText={setValue}
             placeholder={placeholder ?? ''}
             placeholderTextColor={placeholderStyle.color}
             autoCapitalize="none"

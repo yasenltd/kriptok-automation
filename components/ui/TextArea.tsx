@@ -144,12 +144,16 @@ const TextArea = forwardRef<TextInput, InputProps>(function Input(
 
       <View style={widthStyle}>
         <View style={[wrapperStyle, textAreaStyles.inputWrapper]}>
+          {/* <View pointerEvents="none">
+            {leftIcon && renderIcon(leftIcon, 20, textAreaStyles.textInput.color)}
+          </View> */}
+
           <TextInput
             multiline
             ref={innerRef}
             style={[textAreaStyles.textInput, { flex: 1 }]}
             value={value}
-            onChangeText={text => setValue(text)}
+            onChangeText={setValue}
             placeholder={placeholder ?? ''}
             placeholderTextColor={placeholderStyle.color}
             autoCapitalize="none"
@@ -171,6 +175,8 @@ const TextArea = forwardRef<TextInput, InputProps>(function Input(
                 top: 8,
                 width: '100%',
                 height: '100%',
+                // borderWidth: 1,
+                // borderColor: 'yellow',
               }}
             >
               <Link
@@ -218,7 +224,7 @@ const useTextAreaStyles = () => {
           flexDirection: 'column',
           justifyContent: 'space-between',
           alignItems: 'flex-end',
-          height: '100%',
+          height: '100%', // match inputWrapper height
           gap: 8,
         },
         textInput: {

@@ -218,7 +218,7 @@ const useTextAreaStyles = () => {
           flexDirection: 'column',
           justifyContent: 'space-between',
           alignItems: 'flex-end',
-          height: '100%', // match inputWrapper height
+          height: '100%',
           gap: 8,
         },
         textInput: {

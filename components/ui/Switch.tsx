@@ -8,17 +8,13 @@ interface SwitchProps {
   size?: 'L' | 'S';
 }
 
+const sizeMapping: Record<'L' | 'S', object> = {
+  L: { transform: [{ scaleX: 48 / 50 }, { scaleY: 1 }] },
+  S: { transform: [{ scaleX: 32 / 50 }, { scaleY: 20 / 28 }] },
+};
+
 const Switch: React.FC<SwitchProps> = ({ onValueChange, value, disabled = false, size = 'L' }) => {
   const { theme } = useTheme();
-
-  function getSizeStyles() {
-    switch (size) {
-      case 'L':
-        return { transform: [{ scaleX: 48 / 50 }, { scaleY: 1 }] };
-      case 'S':
-        return { transform: [{ scaleX: 32 / 50 }, { scaleY: 20 / 28 }] };
-    }
-  }
 
   function getTrackColor() {
     if (disabled) {
@@ -48,7 +44,7 @@ const Switch: React.FC<SwitchProps> = ({ onValueChange, value, disabled = false,
       trackColor={getTrackColor()}
       thumbColor={getThumbColor()}
       ios_backgroundColor={disabled ? theme.switch.off.inactive : theme.switch.off.default}
-      style={[getSizeStyles()]}
+      style={[sizeMapping[size]]}
     />
   );
 };

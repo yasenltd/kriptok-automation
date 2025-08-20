@@ -29,5 +29,9 @@
   "enterWallet": "Enter wallet name",
   "enterSeed": "Enter seed phrase",
   "importSeed": "Import Seed Phrase",
-  "seedWords": "Typically 12 (sometimes 18,24) words separated by single spaces"
+  "seedWords": "Typically 12 (sometimes 18,24) words separated by single spaces",
+  "goBack": "Go Back",
+  "retry": "Retry",
+  "wentWrong": "Something went wrong while saving your wallet. Please, try again.",
+  "importing": "Importing Wallet"
 }

@@ -73,17 +73,30 @@ export type RegisterType = {
   message: string;
 };
 
+export type BalanceType = {
+  native: string;
+  tokens: {
+    [key: string]: string;
+  };
+};
+
 export type BalancesType = {
-  eth: number;
-  linea: number;
-  polygon: number;
-  base: number;
-  optimism: number;
-  arbitrum: number;
-  bnb: number;
-  btc: number;
-  sol: number;
-  sui: number;
+  eth: BalanceType;
+  polygon: BalanceType;
+  bnb: BalanceType;
+  btc: {
+    native: string;
+  };
+  sol: BalanceType;
+  sui: BalanceType;
+};
+
+export type Token = {
+  address: string;
+  name: string;
+  symbol: string;
+  decimals: number;
+  balance: string;
 };
 
 export type IUser = {
@@ -97,6 +110,14 @@ export type IUser = {
   hasBackedUp: boolean;
   balances: BalancesType;
   wallet?: { evmAddress: string; walletName: string };
+  tokens?: {
+    sol: Array<Token>;
+    eth: Array<Token>;
+    btc: Array<Token>;
+    sui: Array<Token>;
+    polygon: Array<Token>;
+    bnb: Array<Token>;
+  };
   createdAt?: string;
   updatedAt?: string;
   _id?: string;
@@ -115,7 +136,7 @@ export const nativeCoins = ['eth', 'btc', 'sol', 'sui'];
 export type AssetMeta = {
   key: string;
   label: string;
-  ledgerId: 'ethereum' | 'bitcoin' | 'solana' | 'sui';
+  ledgerId: 'ethereum' | 'bitcoin' | 'solana' | 'sui' | 'bnb';
   isNative: boolean;
   tokenAddress?: string;
   decimals: number;

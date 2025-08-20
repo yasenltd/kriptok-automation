@@ -1,4 +1,4 @@
-import { IUser } from '@/types';
+import { IUser, Token } from '@/types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface UserState {
@@ -24,8 +24,26 @@ const userSlice = createSlice({
         state.data = { ...state.data, ...action.payload };
       }
     },
+    updateTokens: (
+      state,
+      action: PayloadAction<{
+        sol?: Array<Token>;
+        eth?: Array<Token>;
+        btc?: Array<Token>;
+        sui?: Array<Token>;
+        polygon?: Array<Token>;
+        bnb?: Array<Token>;
+      }>,
+    ) => {
+      if (state.data) {
+        if (!state.data.tokens) {
+          state.data.tokens = { sol: [], eth: [], btc: [], sui: [], polygon: [], bnb: [] };
+        }
+        state.data.tokens = { ...state.data.tokens, ...action.payload };
+      }
+    },
   },
 });
 
-export const { setUser, removeUser, updateUser } = userSlice.actions;
+export const { setUser, removeUser, updateUser, updateTokens } = userSlice.actions;
 export default userSlice.reducer;

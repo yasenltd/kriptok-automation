@@ -2,6 +2,7 @@ import {
   Connection,
   Keypair,
   LAMPORTS_PER_SOL,
+  ParsedAccountData,
   PublicKey,
   sendAndConfirmTransaction,
   SystemProgram,
@@ -15,21 +16,57 @@ import {
 import { isDev } from '../constants';
 import { base58 } from '@scure/base';
 import { SolanaTxParams } from '.';
+import { getParsedAccountInBatch } from 'solana-batch-requests';
+import { BalanceType } from '@/types';
 
 const SOLANA_RPC = isDev ? 'https://api.testnet.solana.com' : 'https://api.mainnet-beta.solana.com';
 
-export const getSolanaBalance = async (address: string, connection?: Connection) => {
+export const getSolanaBalance = async (
+  address: string,
+  tokens: string[],
+  connection?: Connection,
+): Promise<BalanceType> => {
   try {
     const conn = connection ?? new Connection(SOLANA_RPC);
-    const publicKey = new PublicKey(address);
+    const solBalance = await conn.getBalance(new PublicKey(address));
 
-    const lamports = await conn.getBalance(publicKey);
-    const sol = lamports / LAMPORTS_PER_SOL;
+    const tokenAccountAddresses = await Promise.all(
+      tokens.map(mint => getAssociatedTokenAddress(new PublicKey(mint), new PublicKey(address))),
+    );
 
-    return sol;
+    const tokenAccountsData = await Promise.all(
+      tokenAccountAddresses.map(addr => getParsedAccountInBatch(conn, addr)),
+    );
+
+    const tokenBalances = tokens.map((mint, index) => {
+      const accountData = tokenAccountsData[index];
+      let balance = '0';
+
+      if (accountData && accountData.data) {
+        try {
+          const parsed = (accountData.data as ParsedAccountData).parsed;
+          balance = (parsed?.info?.tokenAmount?.uiAmount || 0).toString();
+        } catch {
+          balance = '0';
+        }
+      }
+
+      return { address: mint, balance };
+    });
+
+    return {
+      native: (solBalance / LAMPORTS_PER_SOL).toString(),
+      tokens: tokenBalances.reduce(
+        (acc, token) => {
+          acc[token.address] = token.balance;
+          return acc;
+        },
+        {} as Record<string, string>,
+      ),
+    };
   } catch (error) {
     console.error(error);
-    throw new Error('Failed to get balance!');
+    throw new Error('Failed to get balances!');
   }
 };
 
@@ -61,7 +98,8 @@ export const sendSolanaTx = async (params: SolanaTxParams, privateKey: string) =
     const message = tx.compileMessage();
     const fee = await connection.getFeeForMessage(message);
     const estimatedFee = fee.value ?? 0;
-    const solBalance = await getSolanaBalance(params.fromAddress, connection);
+    const balances = await getSolanaBalance(params.fromAddress, [], connection);
+    const solBalance = Number(balances.native);
     const balanceLamports = Math.floor(solBalance * LAMPORTS_PER_SOL);
 
     if (balanceLamports < lamports + estimatedFee) {

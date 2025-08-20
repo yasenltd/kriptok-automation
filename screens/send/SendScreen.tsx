@@ -1,5 +1,4 @@
 import { BalancesType } from '@/types';
-import { useAllBalances } from '@/hooks/useGetBalances';
 import { RootState } from '@/stores/store';
 import AppLoader from '@components/ui/AppLoader';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
@@ -12,14 +11,8 @@ import { router } from 'expo-router';
 import { AssetMeta } from '@/types';
 
 const SendScreen = () => {
+  const balances = useSelector((state: RootState) => state.user.data?.balances);
   /* Hooks */
-  const user = useSelector((state: RootState) => state.user.data);
-  const { balances, balancesLoading } = useAllBalances({
-    eth: user?.address,
-    btc: user?.btc,
-    sol: user?.solana,
-    sui: user?.sui,
-  });
   const headerHeight = useHeaderHeight();
 
   /* State */
@@ -30,15 +23,7 @@ const SendScreen = () => {
     { key: 'btc', label: 'BTC', ledgerId: 'bitcoin', isNative: true, decimals: 8, balance: '' },
     { key: 'sol', label: 'SOL', ledgerId: 'solana', isNative: true, decimals: 9, balance: '' },
     { key: 'sui', label: 'SUI', ledgerId: 'sui', isNative: true, decimals: 9, balance: '' },
-    {
-      key: 'usdt-eth',
-      label: 'USDT',
-      ledgerId: 'ethereum',
-      isNative: false,
-      tokenAddress: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
-      decimals: 6,
-      balance: '',
-    },
+    { key: 'bnb', label: 'BNB', ledgerId: 'bnb', isNative: true, decimals: 18, balance: '' },
   ]);
 
   const filteredAssets = useMemo(
@@ -64,21 +49,7 @@ const SendScreen = () => {
     [balances],
   );
 
-  useEffect(() => {
-    if (!balancesLoading && balances) {
-      setAssetsMeta(prev =>
-        prev.map(asset => {
-          const key = asset.key as keyof BalancesType;
-          return {
-            ...asset,
-            balance: balances[key]?.toFixed(6) ?? '0.000000',
-          };
-        }),
-      );
-    }
-  }, [balancesLoading, balances]);
-
-  if (balancesLoading || !balances) {
+  if (!balances) {
     return (
       <View style={{ flex: 1, marginBottom: headerHeight }}>
         <AppLoader />
@@ -112,9 +83,7 @@ const SendScreen = () => {
             </View>
 
             <Text style={styles.assetBalance}>
-              {typeof balances[asset.key as keyof BalancesType] === 'number'
-                ? balances[asset.key as keyof BalancesType].toFixed(6).toString()
-                : '0.000000'}
+              {Number(balances[asset.key as keyof BalancesType].native).toFixed(6)}
             </Text>
           </Pressable>
         )}

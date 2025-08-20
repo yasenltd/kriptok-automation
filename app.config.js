@@ -13,6 +13,7 @@ export default ({ config }) => {
       EXPO_PUBLIC_DEV_HOST: process.env.EXPO_PUBLIC_DEV_HOST,
       EXPO_PUBLIC_HOST: process.env.EXPO_PUBLIC_HOST,
       EXPO_PUBLIC_INFURA_ID: process.env.EXPO_PUBLIC_INFURA_ID,
+      EXPO_PUBLIC_BALANCES_FETCH_INTERVAL: process.env.EXPO_PUBLIC_BALANCES_FETCH_INTERVAL,
     },
   };
 };

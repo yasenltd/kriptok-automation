@@ -10,11 +10,21 @@ import { useAuth } from '@/context/AuthContext';
 import axios from 'axios';
 import { useToast } from '@/hooks/useToast';
 import Constants from 'expo-constants';
-import { View } from 'react-native';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/stores/store';
+import { useBalances } from '@/hooks/useBalances';
 
 const statusBarHeight = Constants.statusBarHeight;
 
 const AuthGuard = ({ children }: { children: React.ReactNode }) => {
+  const user = useSelector((state: RootState) => state.user.data);
+
+  useBalances({
+    eth: user?.address,
+    btc: user?.btc,
+    sol: user?.solana,
+    sui: user?.sui,
+  });
   /* State */
   const [pin, setPin] = useState('');
   const [showPinModal, setShowPinModal] = useState(false);

@@ -32,6 +32,7 @@ const ImportSeedPhrase = ({
 }: Props) => {
   const { theme } = useTheme();
   const { t } = useTranslation();
+
   return (
     <KeyboardAvoidingView
       style={styles.root}

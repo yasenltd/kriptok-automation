@@ -161,12 +161,7 @@ const ImportWallet = ({
         toast.showSuccess('Success! Your wallet and PIN are secured.');
       } catch (err) {
         console.error('Error:', err);
-        if (retry) {
-          toast.showError('Could not import your wallet. Try again.');
-          await clearWalletSecurely();
-          router.replace('/');
-          return;
-        }
+        toast.showError('Could not import your wallet. Try again.');
         setShowErrorModal(true);
       } finally {
         if (retry) setIsRetryLoading(false);

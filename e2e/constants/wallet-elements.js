@@ -1,14 +1,15 @@
 const WALLET_TEXT = {
-  CREATE_NEW_WALLET: 'Create New Wallet',
-  IMPORT_EXISTING_WALLET: 'Import Existing Wallet',
+  ENTER_PIN: 'Enter PIN',
+  SECURE_WALLET_LABEL: 'This is used to secure your wallet on this device.',
+  PLEASE_REMEMBER_LABEL: 'Please remember it, as it cannot be recovered.',
+  CREATING_WALLET_LABEL: 'Creating new wallet',
 };
 
 const WALLET_ELEMENT_ID = {
-  SAVE_PIN: 'save-pin',
-  ENTER_PIN: 'enter-pin',
-  CONFIRM_PIN: 'confirm-pin',
-  IMPORT_WALLET: 'import-existing-mnemonic',
-  GENERATE_NEW_MNEMONIC: 'generate-new-mnemonic',
+  ENTER_PIN: 'enter-pin-cell-',
+  CONFIRM_PIN: 'verify-pin-cell-',
+  WALLET_NAME_INPUT: 'enter-wallet-name-input',
+  IMPORT_SEED_PHRASE_INPUT: 'import-seed-input',
 };
 
 module.exports = {

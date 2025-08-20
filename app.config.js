@@ -1,4 +1,10 @@
-import 'dotenv/config';
+// Optional .env loader for app config; safe to omit installing dotenv.
+try {
+  // eslint-disable-next-line global-require
+  require('dotenv').config();
+} catch (e) {
+  // Ignore if dotenv is not installed; rely on environment provided by shell/CI.
+}
 
 export default ({ config }) => {
   const mode = process.env.EXPO_PUBLIC_MODE;

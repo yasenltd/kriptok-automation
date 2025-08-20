@@ -1,10 +1,14 @@
+require('dotenv').config();
+const GLOBAL_TEST_PIN = process.env.TEST_PIN;
+const GLOBAL_WALLET_NAME = process.env.TEST_WALLET_NAME;
+const GLOBAL_TEST_SEED_PHRASE = process.env.TEST_SEED_PHRASE;
+
 const GLOBAL_TEXT = {
-  SERVER_URL: 'http://localhost:8081',
-  APP_TITLE: 'Kriptok Wallet',
+  SKIP: 'Skip',
   CONTINUE: 'Continue',
-  SELECT_LANGUAGE: 'Select Language',
-  CREATE_NEW_WALLET: 'Create New Wallet',
-  IMPORT_EXISTING_WALLET: 'Import Existing Wallet',
+  SERVER_URL: 'http://localhost:8082',
+  SUCCESS_MESSAGE: 'Success! Your wallet and PIN are secured.',
+  BACKUP_MESSAGE: 'Please, backup your secret recovery phrase!'
 };
 
 const GLOBAL_ELEMENT_ID = {
@@ -18,10 +22,10 @@ const GLOBAL_ELEMENT_ID = {
   ENTER_PIN_UNLOCK: 'enter-pin-unlock',
 };
 
-const GLOBAL_TEST_PIN = '123456';
-
 module.exports = {
   GLOBAL_TEXT,
   GLOBAL_TEST_PIN,
   GLOBAL_ELEMENT_ID,
+  GLOBAL_WALLET_NAME,
+  GLOBAL_TEST_SEED_PHRASE
 };

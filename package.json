@@ -7,9 +7,10 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "e2e:build": "detox build -c ios.sim.debug",
+    "e2e:build": "detox build -c ios.sim.debug && npx expo start",
     "e2e:setup": "detox test -c ios.sim.debug e2e/tests/setup.test.js",
-    "e2e:tests": "npm run e2e:setup && detox test -c ios.sim.debug --reuse e2e/tests/createWallet.test.js && detox test -c ios.sim.debug --reuse e2e/tests/seedBackup.test.js"
+    "e2e:importFlow:tests": "npm run e2e:setup && detox test -c ios.sim.debug --reuse e2e/tests/importWallet.test.js",
+    "e2e:createFlow:tests": "npm run e2e:setup && detox test -c ios.sim.debug --reuse e2e/tests/createWallet.test.js && detox test -c ios.sim.debug --reuse e2e/tests/seedBackup.test.js"
   },
   "dependencies": {
     "@bitcoinerlab/secp256k1": "^1.2.0",
@@ -25,7 +26,7 @@
     "@scure/bip32": "^1.7.0",
     "@solana/spl-token": "^0.4.13",
     "@solana/web3.js": "^1.98.2",
-    "axios": "^1.10.0",
+    "axios": "^1.11.0",
     "bip32": "5.0.0-rc.0",
     "bip39": "^3.1.0",
     "bitcoinjs-lib": "^6.1.7",

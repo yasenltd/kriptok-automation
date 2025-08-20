@@ -23,5 +23,15 @@
   "skip": "Skip",
   "enable": "Enable",
   "creating": "Creating a wallet",
-  "mightTake": "This might take a few seconds..."
+  "mightTake": "This might take a few seconds...",
+  "neverShare": "Never share your seed phrase with anyone. Anyone who has it can access and steal your funds immediately.",
+  "walletName": "Wallet Name",
+  "enterWallet": "Enter wallet name",
+  "enterSeed": "Enter seed phrase",
+  "importSeed": "Import Seed Phrase",
+  "seedWords": "Typically 12 (sometimes 18,24) words separated by single spaces",
+  "goBack": "Go Back",
+  "retry": "Retry",
+  "wentWrong": "Something went wrong while saving your wallet. Please, try again.",
+  "importing": "Importing Wallet"
 }

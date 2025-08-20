@@ -86,4 +86,40 @@ export const typography = {
       lineHeight: 20,
     },
   },
+
+  input: {
+    label: {
+      fontFamily: 'Satoshi-Medium',
+      fontSize: 14,
+      fontWeight: '500' as const,
+      lineHeight: 20,
+    },
+    placeholder: {
+      fontFamily: 'Satoshi-Regular',
+      fontSize: 14,
+      fontWeight: '400' as const,
+      lineHeight: 16,
+    },
+    hint: {
+      fontFamily: 'Satoshi-Regular',
+      fontSize: 12,
+      fontWeight: '400' as const,
+      lineHeight: 16,
+    },
+  },
+
+  swapInput: {
+    value: {
+      fontFamily: 'Satoshi-Medium',
+      fontSize: 18,
+      fontWeight: '500' as const,
+      lineHeight: 24.3,
+    },
+    balance: {
+      fontFamily: 'Satoshi-Medium',
+      fontSize: 14,
+      fontWeight: '500' as const,
+      lineHeight: 20,
+    },
+  },
 };

@@ -1,5 +1,4 @@
 import { useTheme } from '@/context/ThemeContext';
-import { colors } from '@/theme/colors';
 import { typography } from '@/theme/typography';
 import PinInput from '@components/ui/AppPinInput';
 import Button from '@components/ui/Button';
@@ -8,27 +7,18 @@ import { useTranslation } from 'react-i18next';
 import { KeyboardAvoidingView, Platform, StyleSheet, Text, View } from 'react-native';
 
 type Props = {
-  pin: string;
   onNext: () => void;
-  confirmPin: string;
-  setConfirmPin: (value: string) => void;
+  pin: string;
+  setPin: (value: string) => void;
 };
 
-const VerifyPin = ({ pin, confirmPin, setConfirmPin, onNext }: Props) => {
+const EnterPin = ({ onNext, pin, setPin }: Props) => {
   const { theme } = useTheme();
   const { t } = useTranslation();
 
-  const isWrong = useMemo(() => {
-    if (confirmPin.length === 6 && confirmPin !== pin) {
-      return true;
-    }
-    return false;
-  }, [pin, confirmPin]);
-
   const isButtonDisabled = useMemo(() => {
-    return !confirmPin || confirmPin.length < 6 || isWrong;
-  }, [confirmPin, setConfirmPin, isWrong]);
-
+    return !pin || pin.trim().length < 6;
+  }, [pin, setPin]);
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -43,25 +33,16 @@ const VerifyPin = ({ pin, confirmPin, setConfirmPin, onNext }: Props) => {
               { color: theme.text.primary, marginBottom: 50 },
             ]}
           >
-            {t('reEnter')}
+            {t('enterPin')}
           </Text>
-          <PinInput
-            length={6}
-            value={confirmPin}
-            onChange={setConfirmPin}
-            autoFocus
-            cellSize={42}
-            isWrong={isWrong}
-          />
+          <PinInput length={6} value={pin} onChange={setPin} autoFocus cellSize={42} />
 
-          {isWrong && (
-            <Text style={[styles.text, styles.title, { color: colors.error[40], marginTop: 10 }]}>
-              {t('matchPin')}
-            </Text>
-          )}
+          <Text style={[styles.text, styles.title, { color: theme.text.tertiary, marginTop: 5 }]}>
+            {t('secureYourWallet')}
+          </Text>
 
-          <Text style={[styles.text, styles.title, { color: theme.text.tertiary, marginTop: 10 }]}>
-            {t('beSure')}
+          <Text style={[styles.text, styles.title, { color: theme.text.tertiary }]}>
+            {t('pleaseRemember')}
           </Text>
         </View>
 
@@ -77,7 +58,7 @@ const VerifyPin = ({ pin, confirmPin, setConfirmPin, onNext }: Props) => {
   );
 };
 
-export default VerifyPin;
+export default EnterPin;
 
 const styles = StyleSheet.create({
   text: {

@@ -241,9 +241,15 @@ const ButtonContents: React.FC<ButtonContentsProps> = ({
 
   return (
     <View style={buttonStyles.content}>
-      {renderIcon(showLeftIcon)}
-      <Text style={[textStyles, { color: textColor }]}>{label}</Text>
-      {renderIcon(showRightIcon)}
+      {loading ? (
+        <LoaderIcon size={iconSize} color={textColor} />
+      ) : (
+        <>
+          {renderIcon(showLeftIcon)}
+          <Text style={[textStyles, { color: textColor }]}>{label}</Text>
+          {renderIcon(showRightIcon)}
+        </>
+      )}
     </View>
   );
 };

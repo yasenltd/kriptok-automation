@@ -4,6 +4,7 @@ import AuthGuard from '@/screens/AuthGuard';
 import { colors } from '@/theme/colors';
 import { typography } from '@/theme/typography';
 import ConcentricCircles from '@components/ConcentricCircles';
+import LoaderIcon from '@components/icons/LoaderIcon';
 import Button from '@components/ui/Button';
 import MaskedView from '@react-native-masked-view/masked-view';
 import { LinearGradient } from 'expo-linear-gradient';

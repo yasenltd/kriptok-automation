@@ -30,6 +30,11 @@ export const colors = {
     30: '#A2A2A2',
     20: '#959595',
     10: '#888888',
+    opacity: {
+      50: '#FFFFFF80',
+      25: '#FFFFFF40',
+      10: '#FFFFFF1A',
+    },
   },
 
   // Theme Colors

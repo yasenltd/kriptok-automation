@@ -9,6 +9,10 @@ export const DarkTheme = {
 
   // Button
   button: {
+    primary: {
+      default: colors.blue[10],
+      pressed: colors.blue[20],
+    },
     ghost: {
       default: colors.transparent,
       pressed: colors.grey.opacity[25],

@@ -1,4 +1,3 @@
-// import { Switch as ReactNativeSwitch } from "react-native";
 import { useTheme } from '@/context/ThemeContext';
 import { Switch as ReactNativeSwitch } from 'react-native-paper';
 
@@ -13,7 +12,6 @@ const Switch: React.FC<SwitchProps> = ({ onValueChange, value, disabled = false,
   const { theme } = useTheme();
 
   function getSizeStyles() {
-    // react native paper switch is 50x28 by default
     switch (size) {
       case 'L':
         return { transform: [{ scaleX: 48 / 50 }, { scaleY: 1 }] };

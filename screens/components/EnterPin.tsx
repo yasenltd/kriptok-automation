@@ -2,7 +2,7 @@ import { useTheme } from '@/context/ThemeContext';
 import { typography } from '@/theme/typography';
 import PinInput from '@components/ui/AppPinInput';
 import Button from '@components/ui/Button';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { KeyboardAvoidingView, Platform, StyleSheet, Text, View } from 'react-native';
 
@@ -17,7 +17,7 @@ const EnterPin = ({ onNext, pin, setPin }: Props) => {
   const { t } = useTranslation();
 
   const isButtonDisabled = useMemo(() => {
-    return !pin || pin.length < 6;
+    return !pin || pin.trim().length < 6;
   }, [pin, setPin]);
   return (
     <KeyboardAvoidingView

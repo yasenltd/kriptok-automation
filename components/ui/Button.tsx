@@ -1,6 +1,6 @@
 import { useButtonStyles } from '@/hooks/useButtonStyles';
 import { typography } from '@/theme/typography';
-import { ButtonSize, ButtonStyle as ButtonVariant, Icon } from '@/utils/types';
+import { ButtonSize, ButtonVariant, Icon, Wrapper } from '@/utils/types';
 import type { BlurViewProps } from 'expo-blur';
 import { BlurView } from 'expo-blur';
 import type { LinearGradientProps } from 'expo-linear-gradient';
@@ -9,25 +9,10 @@ import React, { useMemo, useState } from 'react';
 import { ColorValue, Pressable, Text, TextStyle, View, type ViewProps } from 'react-native';
 import LoaderIcon from '../icons/LoaderIcon';
 
-type GradientWrapper = {
-  kind: 'gradient';
-  props: Omit<LinearGradientProps, 'children'>;
-};
-type BlurWrapper = {
-  kind: 'blur';
-  props: Omit<BlurViewProps, 'children'>;
-};
-type ViewWrapper = {
-  kind: 'view';
-  props: ViewProps;
-};
-
-type Wrapper = GradientWrapper | BlurWrapper | ViewWrapper;
-
 interface ButtonProps {
   label: string;
   variant?: ButtonVariant;
-  size?: ButtonSize | { width: number; height: number; fontSize?: number; iconSize?: number };
+  size?: ButtonSize | CustomSize;
   onPress?: () => void;
   icon?: Icon;
   showLeftIcon?: boolean;
@@ -241,15 +226,9 @@ const ButtonContents: React.FC<ButtonContentsProps> = ({
 
   return (
     <View style={buttonStyles.content}>
-      {loading ? (
-        <LoaderIcon size={iconSize} color={textColor} />
-      ) : (
-        <>
-          {renderIcon(showLeftIcon)}
-          <Text style={[textStyles, { color: textColor }]}>{label}</Text>
-          {renderIcon(showRightIcon)}
-        </>
-      )}
+      {renderIcon(showLeftIcon)}
+      <Text style={[textStyles, { color: textColor }]}>{label}</Text>
+      {renderIcon(showRightIcon)}
     </View>
   );
 };

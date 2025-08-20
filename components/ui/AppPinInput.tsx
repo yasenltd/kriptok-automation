@@ -1,7 +1,14 @@
 import { useTheme } from '@/context/ThemeContext';
 import { colors } from '@/theme/colors';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
-import { TextInput, View, StyleSheet, TextInput as RNTextInput, Platform } from 'react-native';
+import {
+  Platform,
+  Pressable,
+  TextInput as RNTextInput,
+  StyleSheet,
+  TextInput,
+  View,
+} from 'react-native';
 
 type PinInputProps = {
   length?: number;
@@ -12,14 +19,6 @@ type PinInputProps = {
   cellSize?: number;
   isWrong?: boolean;
   revertedTheme?: boolean;
-};
-
-const toFixedArray = (s: string, length: number) =>
-  (s + ' '.repeat(length)).slice(0, length).split('');
-const isDigit = (c: string) => /\d/.test(c);
-const findNextEmpty = (arr: string[], startIdx: number) => {
-  for (let i = startIdx + 1; i < arr.length; i++) if (!isDigit(arr[i])) return i;
-  return -1;
 };
 
 const PinInput: React.FC<PinInputProps> = ({
@@ -36,10 +35,12 @@ const PinInput: React.FC<PinInputProps> = ({
 
   const refs = useRef<Array<RNTextInput | null>>([]);
 
-  const digits = useMemo(() => {
-    const arr = toFixedArray(value, length);
-    return arr.map(c => (isDigit(c) ? c : ''));
-  }, [value, length]);
+  const digits = useMemo(() => Array.from({ length }, (_, i) => value[i] ?? ''), [value, length]);
+
+  const firstEmptyIndex = useMemo(() => {
+    const emptyIndex = digits.findIndex(d => !d);
+    return emptyIndex === -1 ? length - 1 : emptyIndex;
+  }, [digits, length]);
 
   const setRef =
     (index: number): React.RefCallback<RNTextInput> =>
@@ -59,48 +60,31 @@ const PinInput: React.FC<PinInputProps> = ({
     const incoming = (sourceText ?? char).replace(/\D/g, '');
     if (!incoming) return;
 
-    const arr = toFixedArray(value, length);
-
-    if (incoming.length === 1) {
-      arr[index] = incoming;
-      onChange(arr.join(''));
-
-      const nextEmpty = findNextEmpty(arr, index);
-      if (nextEmpty !== -1) {
-        focusIndex(nextEmpty);
-      } else {
-        refs.current[length - 1]?.blur();
-        const compact = arr.join('').replace(/ /g, '');
-        if (onComplete && compact.length === length) onComplete(compact);
-      }
-      return;
-    }
-
+    let newVal = value.split('');
     let i = index;
     for (const c of incoming) {
       if (i >= length) break;
-      arr[i] = c;
+      newVal[i] = c;
       i++;
     }
-    onChange(arr.join(''));
+    const joined = newVal.join('').slice(0, length);
+    onChange(joined);
 
-    const nextEmpty = findNextEmpty(arr, index - 1 + incoming.length);
-    if (nextEmpty !== -1) {
-      focusIndex(nextEmpty);
+    if (i <= length - 1) {
+      focusIndex(i);
     } else {
       refs.current[length - 1]?.blur();
-      const compact = arr.join('').replace(/ /g, '');
-      if (onComplete && compact.length === length) onComplete(compact);
+      if (onComplete && joined.length === length) onComplete(joined);
     }
   };
 
   const clearAt = useCallback(
     (index: number) => {
-      const arr = toFixedArray(value, length);
-      arr[index] = ' ';
+      const arr = value.split('');
+      arr[index] = '';
       onChange(arr.join(''));
     },
-    [value, length, onChange],
+    [value],
   );
 
   useEffect(() => {
@@ -110,55 +94,57 @@ const PinInput: React.FC<PinInputProps> = ({
   }, [autoFocus]);
 
   return (
-    <View
-      style={[
-        styles.row,
-        isWrong && styles.wrong,
-        { borderColor: isWrong ? colors.error[40] : undefined },
-      ]}
-    >
-      {digits.map((digit, i) => (
-        <TextInput
-          key={i}
-          ref={setRef(i)}
-          testID={`pin-cell-${i}`}
-          style={[
-            styles.cell,
-            {
-              width: cellSize,
-              height: cellSize,
-              borderRadius: 2,
-              borderColor: revertedTheme ? theme.text.secondary : theme.text.primary,
-              color: revertedTheme ? theme.text.secondary : theme.text.primary,
-            },
-            digit ? styles.cellFilled : null,
-          ]}
-          value={digit ? '*' : ''}
-          onChangeText={txt => setCharAt(i, txt.slice(-1), txt)}
-          onKeyPress={({ nativeEvent }) => {
-            if (nativeEvent.key === 'Backspace') {
-              if (digits[i]) {
-                clearAt(i);
-              } else if (i > 0) {
-                const prev = i - 1;
-                focusIndex(prev);
-                const arr = value.split('');
-                arr[prev] = '';
-                onChange(arr.join(''));
+    <Pressable onPress={() => focusIndex(firstEmptyIndex)}>
+      <View
+        pointerEvents="none"
+        style={[
+          styles.row,
+          isWrong && styles.wrong,
+          { borderColor: isWrong ? colors.error[40] : undefined },
+        ]}
+      >
+        {digits.map((digit, i) => (
+          <TextInput
+            key={i}
+            ref={setRef(i)}
+            testID={`pin-cell-${i}`}
+            style={[
+              styles.cell,
+              {
+                width: cellSize,
+                height: cellSize,
+                borderRadius: 2,
+                borderColor: revertedTheme ? theme.text.secondary : theme.text.primary,
+                color: revertedTheme ? theme.text.secondary : theme.text.primary,
+              },
+              digit ? styles.cellFilled : null,
+            ]}
+            value={digit ? '*' : ''}
+            onChangeText={txt => setCharAt(i, txt.slice(-1), txt)}
+            onKeyPress={({ nativeEvent }) => {
+              if (nativeEvent.key === 'Backspace') {
+                if (digits[i]) {
+                  clearAt(i);
+                } else if (i > 0) {
+                  const prev = i - 1;
+                  focusIndex(prev);
+                  const arr = value.split('');
+                  arr[prev] = '';
+                  onChange(arr.join(''));
+                }
               }
-            }
-          }}
-          keyboardType={Platform.OS === 'ios' ? 'number-pad' : 'numeric'}
-          textContentType="oneTimeCode"
-          secureTextEntry={true}
-          maxLength={1}
-          autoCorrect={false}
-          autoCapitalize="none"
-          selection={{ start: 1, end: 1 }}
-          selectionColor={revertedTheme ? theme.text.secondary : theme.text.primary}
-        />
-      ))}
-    </View>
+            }}
+            keyboardType={Platform.OS === 'ios' ? 'number-pad' : 'numeric'}
+            textContentType="oneTimeCode"
+            secureTextEntry={true}
+            maxLength={1}
+            autoCorrect={false}
+            autoCapitalize="none"
+            selection={{ start: 1, end: 1 }}
+          />
+        ))}
+      </View>
+    </Pressable>
   );
 };
 

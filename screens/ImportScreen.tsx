@@ -134,7 +134,7 @@ export default function ImportScreen() {
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Kriptok Wallet</Text>
 
-      <Text style={styles.subtitle}>Import Existing Mnemonic</Text>
+      <Text testID="import-existing-mnemonic" style={styles.subtitle}>Import Existing Mnemonic</Text>
 
       <TextInput
         style={styles.input}

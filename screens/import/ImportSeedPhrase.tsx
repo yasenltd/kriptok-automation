@@ -119,16 +119,7 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     justifyContent: 'space-between',
-  },
-  rowButtons: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 10,
-  },
-  title: {
-    textAlign: 'center',
+    padding: 20,
   },
   text: {
     fontFamily: 'Satoshi-Regular',
@@ -141,11 +132,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingHorizontal: 10,
     paddingVertical: 12,
-  },
-  glow: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
   },
   warningRow: {
     flexDirection: 'row',

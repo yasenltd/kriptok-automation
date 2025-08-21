@@ -1,11 +1,11 @@
-import { BalancesType } from '@/types';
+import { BalancesType, BalanceType } from '@/types';
 import { RootState } from '@/stores/store';
 import AppLoader from '@components/ui/AppLoader';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSelector } from 'react-redux';
 import { useHeaderHeight } from '@react-navigation/elements';
 import AppInput from '@components/ui/AppInput';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import CryptoIcon from '@ledgerhq/crypto-icons/native';
 import { router } from 'expo-router';
 import { AssetMeta } from '@/types';
@@ -23,6 +23,15 @@ const SendScreen = () => {
     { key: 'btc', label: 'BTC', ledgerId: 'bitcoin', isNative: true, decimals: 8, balance: '' },
     { key: 'sol', label: 'SOL', ledgerId: 'solana', isNative: true, decimals: 9, balance: '' },
     { key: 'sui', label: 'SUI', ledgerId: 'sui', isNative: true, decimals: 9, balance: '' },
+    {
+      key: 'polygon',
+      label: 'MATIC',
+      ledgerId: 'polygon',
+      isNative: true,
+      decimals: 18,
+      balance: '',
+    },
+    { key: 'bnb', label: 'BNB', ledgerId: 'bsc', isNative: true, decimals: 18, balance: '' },
   ]);
 
   const filteredAssets = useMemo(
@@ -47,6 +56,31 @@ const SendScreen = () => {
     },
     [balances],
   );
+
+  useEffect(() => {
+    console.log(balances);
+    if (balances) {
+      setAssetsMeta(prev =>
+        prev.map(asset => {
+          let balance = '0';
+
+          if (asset.key === 'btc') {
+            balance = balances.btc?.native ?? '0';
+          } else {
+            const chainBalance = balances[asset.key as keyof BalancesType] as
+              | BalanceType
+              | undefined;
+            balance = chainBalance?.native ?? '0';
+          }
+
+          return {
+            ...asset,
+            balance,
+          };
+        }),
+      );
+    }
+  }, [balances]);
 
   if (!balances) {
     return (
@@ -81,9 +115,7 @@ const SendScreen = () => {
               <Text style={styles.assetLabel}>{asset.label}</Text>
             </View>
 
-            <Text style={styles.assetBalance}>
-              {Number(balances[asset.key as keyof BalancesType].native).toFixed(6)}
-            </Text>
+            <Text style={styles.assetBalance}>{Number(asset.balance).toFixed(6)}</Text>
           </Pressable>
         )}
       />

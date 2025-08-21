@@ -136,7 +136,7 @@ export const nativeCoins = ['eth', 'btc', 'sol', 'sui'];
 export type AssetMeta = {
   key: string;
   label: string;
-  ledgerId: 'ethereum' | 'bitcoin' | 'solana' | 'sui';
+  ledgerId: 'ethereum' | 'bitcoin' | 'solana' | 'sui' | 'polygon' | 'bsc';
   isNative: boolean;
   tokenAddress?: string;
   decimals: number;

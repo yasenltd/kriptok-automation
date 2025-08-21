@@ -25,21 +25,15 @@ export const BITCOIN_NETWORK = isDev ? bitcoin.networks.testnet : bitcoin.networ
 
 export const TEST_ETH_RPC_PROVIDER = {
   ethereum: `https://sepolia.infura.io/v3/${INFURA_ID}`,
-  linea: `https://linea-sepolia.infura.io/v3/${INFURA_ID}`,
   polygon: `https://polygon-amoy.infura.io/v3/${INFURA_ID}`,
   base: `https://base-sepolia.infura.io/v3/${INFURA_ID}`,
-  optimism: `https://optimism-sepolia.infura.io/v3/${INFURA_ID}`,
-  arbitrum: `https://arbitrum-sepolia.infura.io/v3/${INFURA_ID}`,
   bsc: `https://bsc-testnet.infura.io/v3/${INFURA_ID}`,
 };
 
 export const MAIN_ETH_RPC_PROVIDER = {
   ethereum: `https://mainnet.infura.io/v3/${INFURA_ID}`,
-  linea: `https://linea-mainnet.infura.io/v3/${INFURA_ID}`,
   polygon: `https://polygon-mainnet.infura.io/v3/${INFURA_ID}`,
   base: `https://base-mainnet.infura.io/v3/${INFURA_ID}`,
-  optimism: `https://optimism-mainnet.infura.io/v3/${INFURA_ID}`,
-  arbitrum: `https://arbitrum-mainnet.infura.io/v3/${INFURA_ID}`,
   bsc: `https://bsc-mainnet.infura.io/v3/${INFURA_ID}`,
 };
 

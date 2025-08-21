@@ -32,6 +32,8 @@ const LEDGER_TO_KEYTYPE = {
   ethereum: 'eth',
   solana: 'sol',
   sui: 'sui',
+  polygon: 'eth',
+  bsc: 'eth',
 } as const;
 
 type LedgerId = keyof typeof LEDGER_TO_KEYTYPE;
@@ -90,6 +92,10 @@ const TransactionScreen = ({ onComplete }: Props) => {
 
       if (['bitcoin', 'sui', 'solana'].includes(parsedToken.ledgerId)) {
         baseParams.fromAddress = getFromAddressByChain(parsedToken.ledgerId);
+      }
+
+      if (['ethereum', 'polygon', 'bsc'].includes(parsedToken.ledgerId)) {
+        baseParams.chain = parsedToken.ledgerId as 'ethereum' | 'polygon' | 'bsc';
       }
 
       if (parsedToken.ledgerId === 'bitcoin') {

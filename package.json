@@ -7,10 +7,16 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
+<<<<<<< HEAD
     "e2e:build": "detox build -c ios.sim.debug && npx expo start",
     "e2e:setup": "detox test -c ios.sim.debug e2e/tests/setup.test.js",
     "e2e:importFlow:tests": "npm run e2e:setup && detox test -c ios.sim.debug --reuse e2e/tests/importWallet.test.js",
     "e2e:createFlow:tests": "npm run e2e:setup && detox test -c ios.sim.debug --reuse e2e/tests/createWallet.test.js && detox test -c ios.sim.debug --reuse e2e/tests/seedBackup.test.js"
+=======
+    "e2e:ios": "detox test -c ios.sim.debug",
+    "lint": "eslint . --ext .ts,.tsx",
+    "lint:fix": "eslint . --ext .ts,.tsx --fix"
+>>>>>>> 962063d (feat: bnb tx, feat: polygon tx, fix: balances in SendScreen, feat: eslint)
   },
   "dependencies": {
     "@bitcoinerlab/secp256k1": "^1.2.0",
@@ -80,15 +86,21 @@
   "devDependencies": {
     "@babel/core": "^7.20.0",
     "@config-plugins/detox": "11.0.0",
+    "@eslint/js": "^9.33.0",
     "@types/pbkdf2": "^3.1.2",
     "@types/react": "~19.0.10",
     "detox": "20.40.2",
     "detox-expo-helpers": "0.6.0",
+    "eslint": "^9.33.0",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-native": "^5.0.0",
     "expo-detox-hook": "1.0.10",
     "jest": "30.0.5",
     "prettier": "^3.6.2",
     "react-native-svg-transformer": "^1.5.1",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.40.0"
   },
   "private": true
 }

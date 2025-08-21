@@ -11,9 +11,11 @@ import { Chain } from 'viem/chains';
 import { createPublicClient, http } from 'viem';
 import { BalanceType } from '@/types';
 
+export type EvmChains = 'ethereum' | 'polygon' | 'bsc' | 'base';
+
 const providerCache: Record<string, JsonRpcProvider> = {};
 
-export const getWalletProvider = (chain: 'ethereum', privateKey: string) => {
+export const getWalletProvider = (chain: EvmChains, privateKey: string) => {
   const rpc = isDev ? TEST_ETH_RPC_PROVIDER[chain] : MAIN_ETH_RPC_PROVIDER[chain];
   if (!providerCache[rpc]) {
     providerCache[rpc] = new JsonRpcProvider(rpc);
@@ -112,9 +114,10 @@ export const estimateGasFee = async (
   decimals: number,
   params: BaseTxParams,
   privateKey: string,
+  chain: EvmChains,
 ): Promise<{ feeInWei: bigint; feeInEth: string }> => {
   try {
-    const { wallet, provider } = getWalletProvider('ethereum', privateKey);
+    const { wallet, provider } = getWalletProvider(chain, privateKey);
 
     const { gasPrice } = await provider.getFeeData();
     if (!gasPrice) throw new Error('Could not fetch gas price');
@@ -145,9 +148,9 @@ export const estimateGasFee = async (
   }
 };
 
-const sendNativeEvmTx = async (params: BaseTxParams, privateKey: string) => {
+const sendNativeEvmTx = async (params: BaseTxParams, privateKey: string, chain: EvmChains) => {
   try {
-    const { wallet } = getWalletProvider('ethereum', privateKey);
+    const { wallet } = getWalletProvider(chain, privateKey);
 
     const tx = await wallet.sendTransaction({
       to: params.to,
@@ -165,9 +168,10 @@ const sendErc20Tx = async (
   decimals: number,
   params: BaseTxParams,
   privateKey: string,
+  chain: EvmChains,
 ) => {
   try {
-    const { wallet } = getWalletProvider('ethereum', privateKey);
+    const { wallet } = getWalletProvider(chain, privateKey);
     const contract = new ethers.Contract(tokenAddress, ERC20_ABI, wallet);
 
     const amount = ethers.parseUnits(params.amount.toString(), decimals);
@@ -184,11 +188,12 @@ export const sendEvmAsset = async (
   decimals: number,
   params: BaseTxParams,
   privateKey: string,
+  chain: EvmChains,
 ): Promise<string> => {
   if (!INFURA_ID) {
     throw new Error('You need to set infura id in .env!');
   }
   return tokenAddress === ethers.ZeroAddress
-    ? sendNativeEvmTx(params, privateKey)
-    : sendErc20Tx(tokenAddress, decimals, params, privateKey);
+    ? sendNativeEvmTx(params, privateKey, chain)
+    : sendErc20Tx(tokenAddress, decimals, params, privateKey, chain);
 };

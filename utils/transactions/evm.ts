@@ -11,7 +11,7 @@ import { Chain } from 'viem/chains';
 import { createPublicClient, http } from 'viem';
 import { BalanceType } from '@/types';
 
-export type EvmChains = 'ethereum' | 'polygon' | 'bsc' | 'base';
+export type EvmChains = 'ethereum' | 'polygon' | 'bsc';
 
 const providerCache: Record<string, JsonRpcProvider> = {};
 
@@ -24,6 +24,40 @@ export const getWalletProvider = (chain: EvmChains, privateKey: string) => {
   const provider = providerCache[rpc];
   const wallet = new Wallet(privateKey, provider);
   return { wallet, provider };
+};
+
+export const getPendingNonce = async (provider: JsonRpcProvider, address: string) => {
+  return provider.getTransactionCount(address, 'pending');
+};
+
+const getBumpedFeeData = async (provider: JsonRpcProvider, address: string) => {
+  const fee = await provider.getFeeData();
+  const pending = await provider.getTransactionCount(address, 'pending');
+  const latest = await provider.getTransactionCount(address, 'latest');
+  const needsBump = pending > latest;
+
+  const bump = (v?: bigint) => (v ? (v * 110n) / 100n : undefined);
+
+  if (fee.maxFeePerGas && fee.maxPriorityFeePerGas) {
+    return needsBump
+      ? {
+          maxFeePerGas: bump(fee.maxFeePerGas),
+          maxPriorityFeePerGas: bump(fee.maxPriorityFeePerGas),
+          gasPrice: undefined as bigint | undefined,
+        }
+      : {
+          maxFeePerGas: fee.maxFeePerGas,
+          maxPriorityFeePerGas: fee.maxPriorityFeePerGas,
+          gasPrice: undefined as bigint | undefined,
+        };
+  }
+
+  const gasPrice = fee.gasPrice ?? ethers.parseUnits('10', 'gwei');
+  return {
+    gasPrice: needsBump ? bump(gasPrice)! : gasPrice,
+    maxFeePerGas: undefined as bigint | undefined,
+    maxPriorityFeePerGas: undefined as bigint | undefined,
+  };
 };
 
 const getFallbackFee = (tokenAddress: string | null): { feeInWei: bigint; feeInEth: string } => {
@@ -119,11 +153,7 @@ export const estimateGasFee = async (
   try {
     const { wallet, provider } = getWalletProvider(chain, privateKey);
 
-    const { gasPrice } = await provider.getFeeData();
-    if (!gasPrice) throw new Error('Could not fetch gas price');
-
     let gasLimit: bigint;
-
     if (!tokenAddress || tokenAddress === ethers.ZeroAddress) {
       gasLimit = await provider.estimateGas({
         from: wallet.address,
@@ -134,14 +164,15 @@ export const estimateGasFee = async (
       const contract = new ethers.Contract(tokenAddress, ERC20_ABI, wallet);
       const amount = ethers.parseUnits(params.amount.toString(), decimals);
       const transferFn = contract.getFunction('transfer');
-      gasLimit = await transferFn.estimateGas(params.to, amount);
+      gasLimit = await transferFn.estimateGas(params.to, amount, { from: wallet.address });
     }
 
-    const totalFee = gasPrice * gasLimit;
-    return {
-      feeInWei: totalFee,
-      feeInEth: ethers.formatEther(totalFee),
-    };
+    const feeData = await getBumpedFeeData(provider, wallet.address);
+    const price = feeData.gasPrice ?? feeData.maxFeePerGas;
+    if (!price) throw new Error('Could not determine gas price');
+
+    const totalFee = price * gasLimit;
+    return { feeInWei: totalFee, feeInEth: ethers.formatEther(totalFee) };
   } catch (error) {
     console.error(error);
     return getFallbackFee(tokenAddress);
@@ -150,11 +181,20 @@ export const estimateGasFee = async (
 
 const sendNativeEvmTx = async (params: BaseTxParams, privateKey: string, chain: EvmChains) => {
   try {
-    const { wallet } = getWalletProvider(chain, privateKey);
+    const { wallet, provider } = getWalletProvider(chain, privateKey);
+
+    const [nonce, feeData] = await Promise.all([
+      getPendingNonce(provider, wallet.address),
+      getBumpedFeeData(provider, wallet.address),
+    ]);
 
     const tx = await wallet.sendTransaction({
       to: params.to,
       value: parseEther(params.amount as string),
+      nonce,
+      maxFeePerGas: feeData.maxFeePerGas,
+      maxPriorityFeePerGas: feeData.maxPriorityFeePerGas,
+      gasPrice: feeData.gasPrice,
     });
     return tx.hash;
   } catch (error) {
@@ -171,11 +211,21 @@ const sendErc20Tx = async (
   chain: EvmChains,
 ) => {
   try {
-    const { wallet } = getWalletProvider(chain, privateKey);
+    const { wallet, provider } = getWalletProvider(chain, privateKey);
     const contract = new ethers.Contract(tokenAddress, ERC20_ABI, wallet);
 
+    const [nonce, feeData] = await Promise.all([
+      getPendingNonce(provider, wallet.address),
+      getBumpedFeeData(provider, wallet.address),
+    ]);
+
     const amount = ethers.parseUnits(params.amount.toString(), decimals);
-    const tx = await contract.transfer(params.to, amount);
+    const tx = await contract.transfer(params.to, amount, {
+      nonce,
+      maxFeePerGas: feeData.maxFeePerGas,
+      maxPriorityFeePerGas: feeData.maxPriorityFeePerGas,
+      gasPrice: feeData.gasPrice,
+    });
     return tx.hash;
   } catch (error) {
     console.error(error);

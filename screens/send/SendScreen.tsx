@@ -58,7 +58,6 @@ const SendScreen = () => {
   );
 
   useEffect(() => {
-    console.log(balances);
     if (balances) {
       setAssetsMeta(prev =>
         prev.map(asset => {

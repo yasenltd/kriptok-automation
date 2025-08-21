@@ -34,7 +34,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
             style={{ marginBottom: 2 }}
           />
 
-          {label && <Text style={styles.label}>{label}</Text>}
+          {text && <Text style={styles.label}>{text}</Text>}
         </View>
         {description && (
           <View style={styles.descriptionContainer}>

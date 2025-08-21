@@ -122,4 +122,132 @@ export const typography = {
       lineHeight: 20,
     },
   },
+
+  selector: {
+    label: {
+      fontFamily: 'Satoshi-Medium',
+      fontSize: 14,
+      fontWeight: '500' as const,
+      lineHeight: 20,
+    },
+    option: {
+      fontFamily: 'Satoshi-Regular',
+      fontSize: 14,
+      fontWeight: '400' as const,
+      lineHeight: 20,
+    },
+  },
+
+  badge: {
+    small: {
+      fontFamily: 'Satoshi-Regular',
+      fontSize: 10,
+      fontWeight: '400' as const,
+      lineHeight: 13.6,
+    },
+    regular: {
+      fontFamily: 'Satoshi-Medium',
+      fontSize: 12,
+      fontWeight: '500' as const,
+      lineHeight: 16.32,
+    },
+  },
+
+  trendingDirection: {
+    fontFamily: 'Satoshi-Medium',
+    fontSize: 12,
+    fontWeight: '500' as const,
+    lineHeight: 16.32,
+  },
+
+  tokenChip: {
+    fontFamily: 'Satoshi-Medium',
+    fontSize: 14,
+    fontWeight: '500' as const,
+    lineHeight: 20,
+  },
+
+  transactionItem: {
+    directionLabel: {
+      fontFamily: 'Satoshi-Medium',
+      fontSize: 14,
+      fontWeight: '500' as const,
+      lineHeight: 20,
+    },
+    addressLabel: {
+      fontFamily: 'Satoshi-Regular',
+      fontSize: 14,
+      fontWeight: '400' as const,
+      lineHeight: 20,
+    },
+    valueLabel: {
+      fontFamily: 'Satoshi-Medium',
+      fontSize: 14,
+      fontWeight: '400' as const,
+      lineHeight: 20,
+    },
+  },
+
+  walletItem: {
+    label: {
+      fontFamily: 'Satoshi-Medium',
+      fontSize: 16,
+      fontWeight: '500' as const,
+      lineHeight: 24,
+    },
+    address: {
+      fontFamily: 'Satoshi-Regular',
+      fontSize: 14,
+      fontWeight: '400' as const,
+      lineHeight: 20,
+    },
+  },
+
+  tokenItem: {
+    label: {
+      fontFamily: 'Satoshi-Medium',
+      fontSize: 14,
+      fontWeight: '500' as const,
+      lineHeight: 20,
+    },
+    symbol: {
+      fontFamily: 'Satoshi-Regular',
+      fontSize: 14,
+      fontWeight: '400' as const,
+      lineHeight: 20,
+    },
+    fiatEquivalent: {
+      fontFamily: 'Satoshi-Regular',
+      fontSize: 12,
+      fontWeight: '400' as const,
+      lineHeight: 16.32,
+    },
+    ownedAmount: {
+      fontFamily: 'Satoshi-Medium',
+      fontSize: 14,
+      fontWeight: '500' as const,
+      lineHeight: 20,
+    },
+    tokenPrice: {
+      fontFamily: 'Satoshi-Medium',
+      fontSize: 14,
+      fontWeight: '500' as const,
+      lineHeight: 20,
+    },
+  },
+
+  focusNote: {
+    title: {
+      fontFamily: 'Satoshi-Medium',
+      fontSize: 14,
+      fontWeight: '500' as const,
+      lineHeight: 20,
+    },
+    description: {
+      fontFamily: 'Satoshi-Regular',
+      fontSize: 12,
+      fontWeight: '400' as const,
+      lineHeight: 16.32,
+    },
+  },
 };

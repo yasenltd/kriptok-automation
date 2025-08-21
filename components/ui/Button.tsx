@@ -1,6 +1,6 @@
 import { useButtonStyles } from '@/hooks/useButtonStyles';
 import { typography } from '@/theme/typography';
-import { ButtonSize, ButtonStyle as ButtonVariant, Icon } from '@/utils/types';
+import { ButtonSize, ButtonVariant, Icon } from '@/utils/types';
 import type { BlurViewProps } from 'expo-blur';
 import { BlurView } from 'expo-blur';
 import type { LinearGradientProps } from 'expo-linear-gradient';

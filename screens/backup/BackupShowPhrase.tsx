@@ -1,11 +1,11 @@
-import { StyleSheet, Text, View } from 'react-native';
-import { Button } from 'react-native-paper';
+import SeedPhrase from '@/components/ui/SeedPhrase';
+import { UseBackupReturn } from '@/hooks/useBackup';
+import { useToast } from '@/hooks/useToast';
+import { copyToClipboard } from '@/utils';
 import AppCheckbox from '@components/ui/AppCheckbox';
 import { useCallback } from 'react';
-import { copyToClipboard } from '@/utils';
-import { useToast } from '@/hooks/useToast';
-import { UseBackupReturn } from '@/hooks/useBackup';
-import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
+import { StyleSheet, Text, View } from 'react-native';
+import { Button } from 'react-native-paper';
 
 type Props = Pick<
   UseBackupReturn,
@@ -47,44 +47,11 @@ const BackupStepShowPhrase = ({
             keep it somewhere safe.
           </Text>
 
-          <View
-            style={[
-              styles.textContainer,
-              { borderWidth: 1, borderColor: 'gray', width: '100%', minHeight: 270 },
-            ]}
-          >
-            <View style={styles.controls}>
-              <Button onPress={() => setHideMnemonic(!hideMnemonic)}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3 }}>
-                  <MaterialCommunityIcons
-                    name={hideMnemonic ? 'eye-off' : 'eye'}
-                    size={18}
-                    color="white"
-                  />
-                  <Text testID="reveal-seed" style={{ color: 'white' }}>
-                    {hideMnemonic ? 'Show' : 'Hide'} seed phrase
-                  </Text>
-                </View>
-              </Button>
-              <Button onPress={() => handleCopy(mnemonic)}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3 }}>
-                  <MaterialCommunityIcons name="clipboard-outline" size={18} color="white" />
-                  <Text style={{ color: 'white' }}>Copy</Text>
-                </View>
-              </Button>
-            </View>
-
-            {!hideMnemonic && (
-              <View style={styles.mnemonicGrid}>
-                {mnemonic.split(' ').map((word: string, index: number) => (
-                  <View key={index} style={styles.wordBox}>
-                    <Text style={styles.wordIndex}>{index + 1}.</Text>
-                    <Text style={styles.wordText}>{word}</Text>
-                  </View>
-                ))}
-              </View>
-            )}
-          </View>
+          <SeedPhrase
+            mnemonic={mnemonic}
+            hideMnemonic={hideMnemonic}
+            setHideMnemonic={setHideMnemonic}
+          />
 
           <View style={styles.checkboxRow}>
             <AppCheckbox
@@ -93,7 +60,6 @@ const BackupStepShowPhrase = ({
               value={checkmark}
               onChange={() => setCheckmark(!checkmark)}
             />
-            <Text style={{ color: 'black' }}>I've backed up my Seed Phrase</Text>
           </View>
 
           <Button testID='confirm' onPress={() => setStep(2)} disabled={!checkmark}>

@@ -151,7 +151,7 @@ const TextArea = forwardRef<TextInput, InputProps>(function Input(
             ref={innerRef}
             style={[textAreaStyles.textInput, { flex: 1 }]}
             value={value}
-            onChangeText={text => setValue(text)}
+            onChangeText={setValue}
             placeholder={placeholder ?? ''}
             placeholderTextColor={placeholderStyle.color}
             autoCapitalize="none"

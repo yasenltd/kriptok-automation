@@ -13,6 +13,7 @@ import { useEffect, useState } from 'react';
 import { Pressable, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { useSelector } from 'react-redux';
 
+// NOTE: Intended for initial testing and development purposes, to be removed later
 const Home = () => {
   /* Hooks */
   const user = useSelector((state: RootState) => state.user.data);
@@ -20,7 +21,6 @@ const Home = () => {
   const { theme } = useTheme();
 
   const [evmWallet, setEvmWallet] = useState<{ address: string; privateKey: string } | null>(null);
-
   const handleLogin = async () => {
     if (!evmWallet) return;
     const { message } = await getLoginMessage(evmWallet.address);
@@ -108,95 +108,111 @@ const Home = () => {
   }, [user]);
 
   return (
-    <ScrollView style={{ flex: 1, padding: 20 }}>
-      <TouchableOpacity
-        style={{
-          backgroundColor: '#4f46e5',
-          padding: 14,
-          borderRadius: 8,
-          marginVertical: 8,
-          alignItems: 'center',
-        }}
-        onPress={() => router.push('/backup')}
-      >
-        <Text testID="backup" style={{ color: '#fff', fontWeight: '600', fontSize: 16 }}>Backup</Text>
-      </TouchableOpacity>
+    <>
+      <ScrollView style={{ flex: 1, padding: 20 }}>
+        <TouchableOpacity
+          style={{
+            backgroundColor: '#4f46e5',
+            padding: 14,
+            borderRadius: 8,
+            marginVertical: 8,
+            alignItems: 'center',
+          }}
+          onPress={() => router.push('/backup')}
+        >
+          <Text style={{ color: '#fff', fontWeight: '600', fontSize: 16 }}>Backup</Text>
+        </TouchableOpacity>
 
-      <TouchableOpacity
-        style={{
-          backgroundColor: '#4f46e5',
-          padding: 14,
-          borderRadius: 8,
-          marginVertical: 8,
-          alignItems: 'center',
-        }}
-        onPress={() => router.push('/send')}
-      >
-        <Text testID="send" style={{ color: '#fff', fontWeight: '600', fontSize: 16 }}>Send</Text>
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            backgroundColor: '#4f46e5',
+            padding: 14,
+            borderRadius: 8,
+            marginVertical: 8,
+            alignItems: 'center',
+          }}
+          onPress={() => router.push('/send')}
+        >
+          <Text style={{ color: '#fff', fontWeight: '600', fontSize: 16 }}>Send</Text>
+        </TouchableOpacity>
 
-      <TouchableOpacity
-        style={{
-          backgroundColor: '#4f46e5',
-          padding: 14,
-          borderRadius: 8,
-          marginVertical: 8,
-          alignItems: 'center',
-        }}
-        onPress={handleLogin}
-      >
-        <Text testID="login" style={{ color: '#fff', fontWeight: '600', fontSize: 16 }}>Login</Text>
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            backgroundColor: '#4f46e5',
+            padding: 14,
+            borderRadius: 8,
+            marginVertical: 8,
+            alignItems: 'center',
+          }}
+          onPress={handleLogin}
+        >
+          <Text style={{ color: '#fff', fontWeight: '600', fontSize: 16 }}>Login</Text>
+        </TouchableOpacity>
 
-      <TouchableOpacity
-        style={{
-          backgroundColor: '#4f46e5',
-          padding: 14,
-          borderRadius: 8,
-          marginVertical: 8,
-          alignItems: 'center',
-        }}
-        onPress={handleRefresh}
-      >
-        <Text testID="refresh" style={{ color: '#fff', fontWeight: '600', fontSize: 16 }}>Refresh</Text>
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            backgroundColor: '#4f46e5',
+            padding: 14,
+            borderRadius: 8,
+            marginVertical: 8,
+            alignItems: 'center',
+          }}
+          onPress={handleRefresh}
+        >
+          <Text style={{ color: '#fff', fontWeight: '600', fontSize: 16 }}>Refresh</Text>
+        </TouchableOpacity>
 
-      <TouchableOpacity
-        style={{
-          backgroundColor: '#dc2626',
-          padding: 14,
-          borderRadius: 8,
-          marginVertical: 8,
-          alignItems: 'center',
-        }}
-        onPress={handleLogout}
-      >
-        <Text testID="logout" style={{ color: '#fff', fontWeight: '600', fontSize: 16 }}>Logout</Text>
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            backgroundColor: '#dc2626',
+            padding: 14,
+            borderRadius: 8,
+            marginVertical: 8,
+            alignItems: 'center',
+          }}
+          onPress={handleLogout}
+        >
+          <Text style={{ color: '#fff', fontWeight: '600', fontSize: 16 }}>Logout</Text>
+        </TouchableOpacity>
 
-      <TouchableOpacity
-        style={{
-          backgroundColor: '#6b7280',
-          padding: 14,
-          borderRadius: 8,
-          marginVertical: 8,
-          alignItems: 'center',
-        }}
-        onPress={handleTestAccessToken}
-      >
-        <Text testID="test-token" style={{ color: '#fff', fontWeight: '600', fontSize: 16 }}>Test access token</Text>
-      </TouchableOpacity>
-      <Text style={{ color: theme.text.primary }}>EVM Wallet: {evmWallet?.address}</Text>
+        <TouchableOpacity
+          style={{
+            backgroundColor: '#6b7280',
+            padding: 14,
+            borderRadius: 8,
+            marginVertical: 8,
+            alignItems: 'center',
+          }}
+          onPress={handleTestAccessToken}
+        >
+          <Text style={{ color: '#fff', fontWeight: '600', fontSize: 16 }}>Test access token</Text>
+        </TouchableOpacity>
 
-      {evmWallet && evmWallet.address && (
-        <View style={{ gap: 5, marginTop: 5, alignItems: 'center' }}>
-          <WalletQr address={evmWallet.address} />
-          <Pressable onPress={() => onShare(evmWallet.address)} style={{ padding: 12 }}>
-            <Text style={{ color: theme.text.primary }}>Share Address</Text>
-          </Pressable>
-        </View>
-      )}
-    </ScrollView>
+        <TouchableOpacity
+          style={{
+            backgroundColor: '#4f46e5',
+            padding: 14,
+            borderRadius: 8,
+            marginVertical: 8,
+            alignItems: 'center',
+          }}
+          onPress={() => router.push('/components')}
+        >
+          <Text style={{ color: '#fff', fontWeight: '600', fontSize: 16 }}>View Components</Text>
+        </TouchableOpacity>
+
+        <Text style={{ color: theme.text.primary }}>EVM Wallet: {evmWallet?.address}</Text>
+
+        {evmWallet && evmWallet.address && (
+          <View style={{ gap: 5, marginTop: 5, alignItems: 'center' }}>
+            <WalletQr address={evmWallet.address} />
+            <Pressable onPress={() => onShare(evmWallet.address)} style={{ padding: 12 }}>
+              <Text style={{ color: theme.text.primary }}>Share Address</Text>
+            </Pressable>
+          </View>
+        )}
+      </ScrollView>
+    </>
   );
 };
 

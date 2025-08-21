@@ -1,11 +1,10 @@
 import { useTheme } from '@/context/ThemeContext';
 import { colors } from '@/theme/colors';
-import { ButtonState, ButtonStyle } from '@/utils/types';
+import { ButtonState, ButtonVariant } from '@/utils/types';
 import { ColorValue, StyleSheet, ViewStyle } from 'react-native';
 
-export const useButtonStyles = (useInvertedTheme = false) => {
-  const { theme: currentTheme, invertedTheme } = useTheme();
-  const theme = useInvertedTheme ? invertedTheme : currentTheme;
+export const useButtonStyles = () => {
+  const { theme } = useTheme();
 
   const buttonStyles = StyleSheet.create({
     button: {
@@ -168,7 +167,7 @@ export const useButtonStyles = (useInvertedTheme = false) => {
     return accentGradients[state] as [ColorValue, ColorValue];
   };
 
-  const getButtonTextColor: (state: ButtonState, style: ButtonStyle) => ColorValue = (
+  const getButtonTextColor: (state: ButtonState, style: ButtonVariant) => ColorValue = (
     state,
     style,
   ) => {
@@ -188,7 +187,7 @@ export const useButtonStyles = (useInvertedTheme = false) => {
     }
   };
 
-  const getStyles: (state: ButtonState, style: ButtonStyle) => ViewStyle = (state, style) => {
+  const getStyles: (state: ButtonState, style: ButtonVariant) => ViewStyle = (state, style) => {
     return specificStyles[style][state];
   };
 

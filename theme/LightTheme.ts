@@ -1,5 +1,6 @@
 import { colors } from './colors';
 
+// TODO Temporary light theme, update with actual light theme colors
 export const LightTheme = {
   // Action Sheet
   actionSheet: {
@@ -10,8 +11,8 @@ export const LightTheme = {
   // Button
   button: {
     primary: {
-      default: colors.blue[40],
-      pressed: colors.blue[50],
+      default: colors.blue[10],
+      pressed: colors.blue[20],
     },
     ghost: {
       default: colors.transparent,
@@ -27,9 +28,9 @@ export const LightTheme = {
       disabled: colors.transparent,
     },
     secondary: {
-      default: colors.blue[10],
-      pressed: colors.blue[20],
-      loading: colors.blue[30],
+      default: colors.blue[40],
+      pressed: colors.blue[50],
+      loading: colors.blue[60],
       disabled: colors.grey[20],
     },
     tertiary: {
@@ -60,7 +61,7 @@ export const LightTheme = {
     },
     // Stroke variant
     stroke: {
-      default: colors.grey.opacity[25],
+      default: colors.grey.opacity[50],
       pressed: colors.grey.opacity[50],
       pressedStroke: colors.blue[40],
       error: colors.error[40],
@@ -71,23 +72,23 @@ export const LightTheme = {
   // Link
   link: {
     create: {
-      default: colors.success[50],
-      pressed: colors.success[60],
+      default: colors.success[40],
+      pressed: colors.success[30],
       disabled: colors.grey[40],
     },
     destruct: {
-      default: colors.error[50],
-      pressed: colors.error[60],
+      default: colors.error[40],
+      pressed: colors.error[30],
       disabled: colors.grey[40],
     },
     primary: {
-      default: colors.blue[50],
+      default: colors.blue[40],
       pressed: colors.blue[60],
       disabled: colors.grey[40],
     },
     secondary: {
       default: colors.grey[70],
-      pressed: colors.grey[80],
+      pressed: colors.grey[90],
       disabled: colors.grey[40],
     },
   },
@@ -135,8 +136,8 @@ export const LightTheme = {
     on: {
       default: colors.blue[40],
       circleActive: colors.white[100],
-      inactive: colors.blue[30],
-      circleInactive: colors.blue[20],
+      inactive: colors.grey[50],
+      circleInactive: colors.grey[30],
     },
   },
 
@@ -147,8 +148,8 @@ export const LightTheme = {
     tertiary: colors.grey[50],
     inverted: colors.white[100],
     disabled: colors.grey[40],
-    success: colors.success[60],
-    error: colors.error[60],
-    warning: colors.warning[60],
+    success: colors.success[50],
+    error: colors.error[50],
+    warning: colors.warning[50],
   },
 };

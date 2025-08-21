@@ -19,7 +19,7 @@ type Props = {
   seedPhrase: string;
   setSeedPhrase: Dispatch<SetStateAction<string>>;
   walletName: string;
-  setWalletName: (value: string) => void;
+  setWalletName: Dispatch<SetStateAction<string>>;
   onNext: () => void;
 };
 
@@ -73,7 +73,7 @@ const ImportSeedPhrase = ({
           <View>
             <Input
               value={walletName}
-              onChange={setWalletName}
+              setValue={setWalletName}
               width="screen"
               label={t('walletName')}
               placeholder={t('enterWallet')}

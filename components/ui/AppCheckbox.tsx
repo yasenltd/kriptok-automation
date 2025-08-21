@@ -7,11 +7,12 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 type CheckboxProps = {
   value: boolean;
   onChange: (checked: boolean) => void;
-  label: string;
+  label?: string;
   description?: string;
   color?: string;
   testID?: string;
 };
+
 const Checkbox: React.FC<CheckboxProps> = ({
   value,
   onChange,
@@ -33,7 +34,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
             style={{ marginBottom: 2 }}
           />
 
-          {text && <Text style={styles.label}>{text}</Text>}
+          {label && <Text style={styles.label}>{label}</Text>}
         </View>
         {description && (
           <View style={styles.descriptionContainer}>

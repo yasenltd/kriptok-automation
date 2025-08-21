@@ -1,6 +1,7 @@
 import { useTheme } from '@/context/ThemeContext';
 import { typography } from '@/theme/typography';
 import { inputSizeMapping } from '@/utils';
+import { getFromClipboard } from '@/utils/stringUtils';
 import { Icon, InputState, InputStyle, InputWidth } from '@/utils/types';
 import React, {
   Dispatch,
@@ -13,7 +14,6 @@ import React, {
 } from 'react';
 import { ColorValue, StyleSheet, Text, TextInput, TextStyle, View, ViewStyle } from 'react-native';
 import { ExclamationCircleIcon } from 'react-native-heroicons/outline';
-import { getFromClipboard } from '@/utils/stringUtils';
 import { commonStyles } from '../styles/inputStyles';
 import Link from './Link';
 
@@ -149,7 +149,7 @@ const TextArea = forwardRef<TextInput, InputProps>(function Input(
           <TextInput
             multiline
             ref={innerRef}
-            style={[textAreaStyles.textInput, { flex: 1 }]}
+            style={[textAreaStyles.textInput, { flex: 1, paddingRight: error ? 28 : 0 }]}
             value={value}
             onChangeText={setValue}
             placeholder={placeholder ?? ''}
@@ -167,13 +167,9 @@ const TextArea = forwardRef<TextInput, InputProps>(function Input(
             <View
               pointerEvents="box-none"
               style={{
-                justifyContent: 'center',
-                alignItems: 'center',
                 position: 'absolute',
-                left: 7,
-                top: 8,
-                width: '100%',
-                height: '100%',
+                right: 10,
+                bottom: 8,
               }}
             >
               <Link
@@ -227,7 +223,6 @@ const useTextAreaStyles = () => {
         textInput: {
           ...commonStyles.textInput,
           color: theme.text.primary,
-          paddingRight: 26,
         },
         inputWrapper: {
           ...commonStyles.inputWrapper,
@@ -235,8 +230,7 @@ const useTextAreaStyles = () => {
           alignItems: 'stretch',
           alignContent: 'stretch',
           height: 120,
-          paddingLeft: 10,
-          paddingRight: 4,
+          paddingHorizontal: 12,
           paddingVertical: 8,
           borderRadius: 8,
         },

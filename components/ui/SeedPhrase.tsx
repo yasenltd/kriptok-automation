@@ -42,6 +42,7 @@ const SeedPhrase: React.FC<SeedPhraseProps> = ({
           onPress={() => setHideMnemonic(!hideMnemonic)}
           icon={hideMnemonic ? <EyeIcon /> : <EyeSlashIcon />}
           showLeftIcon={true}
+          testID={hideMnemonic ? 'reveal-seed' : undefined}
         />
 
         <Link

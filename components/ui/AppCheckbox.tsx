@@ -16,10 +16,10 @@ type CheckboxProps = {
 const Checkbox: React.FC<CheckboxProps> = ({
   value,
   onChange,
-  label: text,
+  label,
   description,
   color,
-  testID
+  testID,
 }) => {
   const styles = useCheckboxStyles();
 

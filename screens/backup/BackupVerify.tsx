@@ -21,9 +21,25 @@ const BackupStepVerify = ({
       </Text>
 
       <View style={styles.mnemonicGrid}>
+        <Text
+          testID="seed-phrase-indexes"
+          style={{ height: 0, width: 0, opacity: 0, position: 'absolute' }}
+          accessible={false}
+        >
+          {randomWordsToCheck.map(i => i.index + 1).join(',')}
+        </Text>
         {randomWordsToCheck.map((item: any, index: number) => (
-          <View key={`${item.word}-${index}`} style={styles.wordBox}>
-            <Text style={styles.wordIndex}>{item.index + 1}.</Text>
+          <View
+            key={`${item.word}-${index}`}
+            style={styles.wordBox}
+            testID={`seed-verify-box-${item.index + 1}`}
+          >
+            <Text
+              style={styles.wordIndex}
+              testID={`seed-verify-label-${item.index + 1}`}
+            >
+              {item.index + 1}.
+            </Text>
             <TextInput
               style={[styles.wordText, { width: '100%' }]}
               value={userInputs[index]}
@@ -32,12 +48,13 @@ const BackupStepVerify = ({
                 newInputs[index] = text.trim().toLowerCase();
                 setUserInputs(newInputs);
               }}
+              testID={`seed-verify-input-${item.index + 1}`}
             />
           </View>
         ))}
       </View>
 
-      <Button onPress={handleVerify}>
+      <Button testID='verify-seed-phrase' onPress={handleVerify}>
         <Text>Verify Seed Phrase</Text>
       </Button>
     </View>

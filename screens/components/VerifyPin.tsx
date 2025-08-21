@@ -19,10 +19,8 @@ const VerifyPin = ({ pin, confirmPin, setConfirmPin, onNext }: Props) => {
   const { t } = useTranslation();
 
   const isWrong = useMemo(() => {
-    if (confirmPin.trim().length === 6 && confirmPin !== pin) {
-      return true;
-    }
-    return false;
+    return confirmPin.trim().length === 6 && confirmPin !== pin;
+
   }, [pin, confirmPin]);
 
   const isButtonDisabled = useMemo(() => {
@@ -52,6 +50,7 @@ const VerifyPin = ({ pin, confirmPin, setConfirmPin, onNext }: Props) => {
             autoFocus
             cellSize={42}
             isWrong={isWrong}
+            cellTestIDPrefix='verify-pin-cell'
           />
 
           {isWrong && (

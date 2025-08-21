@@ -1,11 +1,11 @@
 import React, { useCallback, useState } from 'react';
-import { Text, TextInput, StyleSheet, ScrollView, Alert, Pressable } from 'react-native';
+import { Text, TextInput, StyleSheet, ScrollView, Pressable } from 'react-native';
 import {
   deriveAllWalletsFromMnemonic,
   saveToken,
   storeAllPrivKeys,
   validateMnemonic,
-} from '../utils';
+} from '@/utils';
 import AppModal from '@components/ui/AppModal';
 import { useToast } from '@/hooks/useToast';
 import { getLoginMessage, getSignupMessage, login, signSiweMessage, signup } from '@/utils/auth';
@@ -134,7 +134,7 @@ export default function ImportScreen() {
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Kriptok Wallet</Text>
 
-      <Text style={styles.subtitle}>Import Existing Mnemonic</Text>
+      <Text testID="import-existing-mnemonic" style={styles.subtitle}>Import Existing Mnemonic</Text>
 
       <TextInput
         style={styles.input}
@@ -160,7 +160,7 @@ export default function ImportScreen() {
       >
         <Text style={{ marginBottom: 10 }}>Enter a 6-digit PIN to protect your wallet.</Text>
         <TextInput
-          testID="enter-pin"
+          testID='enter-pin'
           style={styles.input}
           keyboardType="number-pad"
           maxLength={6}

@@ -13,7 +13,7 @@ import React, {
 } from 'react';
 import { ColorValue, StyleSheet, Text, TextInput, TextStyle, View, ViewStyle } from 'react-native';
 import { ExclamationCircleIcon } from 'react-native-heroicons/outline';
-import { getFromClipboard } from '../../utils/stringUtils';
+import { getFromClipboard } from '@/utils/stringUtils';
 import { commonStyles } from '../styles/inputStyles';
 import Link from './Link';
 
@@ -28,6 +28,7 @@ interface InputProps {
   hint?: string;
   error?: string;
   style?: ViewStyle;
+  testID?: string;
 }
 
 type IconElement = React.ReactElement<{ size?: number; color?: ColorValue }>;
@@ -44,6 +45,7 @@ const TextArea = forwardRef<TextInput, InputProps>(function Input(
     error,
     hint,
     style,
+    testID,
   },
   inputRef,
 ) {
@@ -159,6 +161,7 @@ const TextArea = forwardRef<TextInput, InputProps>(function Input(
             spellCheck={false}
             autoCorrect={false}
             textContentType="none"
+            testID={testID}
           />
           {!value && (
             <View

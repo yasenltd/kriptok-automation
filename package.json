@@ -7,16 +7,13 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
-<<<<<<< HEAD
     "e2e:build": "detox build -c ios.sim.debug && npx expo start",
     "e2e:setup": "detox test -c ios.sim.debug e2e/tests/setup.test.js",
     "e2e:importFlow:tests": "npm run e2e:setup && detox test -c ios.sim.debug --reuse e2e/tests/importWallet.test.js",
-    "e2e:createFlow:tests": "npm run e2e:setup && detox test -c ios.sim.debug --reuse e2e/tests/createWallet.test.js && detox test -c ios.sim.debug --reuse e2e/tests/seedBackup.test.js"
-=======
+    "e2e:createFlow:tests": "npm run e2e:setup && detox test -c ios.sim.debug --reuse e2e/tests/createWallet.test.js && detox test -c ios.sim.debug --reuse e2e/tests/seedBackup.test.js",
     "e2e:ios": "detox test -c ios.sim.debug",
     "lint": "eslint . --ext .ts,.tsx",
     "lint:fix": "eslint . --ext .ts,.tsx --fix"
->>>>>>> 962063d (feat: bnb tx, feat: polygon tx, fix: balances in SendScreen, feat: eslint)
   },
   "dependencies": {
     "@bitcoinerlab/secp256k1": "^1.2.0",

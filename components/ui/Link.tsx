@@ -2,7 +2,7 @@ import { typography } from '@/theme/typography';
 import { Icon, LinkSize, LinkVariant } from '@/utils/types';
 import React, { useCallback, useMemo, useState } from 'react';
 import { ColorValue, Pressable, StyleSheet, Text, TextStyle } from 'react-native';
-import { useTheme } from '../../context/ThemeContext';
+import { useTheme } from '@/context/ThemeContext';
 
 interface LinkProps {
   label?: string;
@@ -13,6 +13,8 @@ interface LinkProps {
   showLeftIcon?: boolean;
   showRightIcon?: boolean;
   disabled?: boolean;
+  testID?: string;
+  accessibilityLabel?: string;
 }
 
 const TEXT_STYLES: Record<LinkSize, TextStyle> = {
@@ -29,6 +31,8 @@ const Link: React.FC<LinkProps> = ({
   showLeftIcon,
   showRightIcon,
   disabled = false,
+  testID,
+  accessibilityLabel,
 }) => {
   const { linkStyles, getLinkTextColor } = useLinkStyles();
   const [pressed, setPressed] = useState(false);
@@ -66,6 +70,8 @@ const Link: React.FC<LinkProps> = ({
       style={[linkStyles.link]}
       onPressIn={() => setPressed(true)}
       onPressOut={() => setPressed(false)}
+      testID={testID}
+      accessibilityLabel={accessibilityLabel || label}
     >
       {renderIcon(showLeftIcon)}
       {label && <Text style={textStyle}>{label}</Text>}

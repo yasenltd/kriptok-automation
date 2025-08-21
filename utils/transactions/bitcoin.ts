@@ -6,7 +6,7 @@ import { getPublicRaw, postPublicRaw } from '@/services/apiClient';
 import axios from 'axios';
 import { BitcoinTxParams } from '.';
 
-bitcoin.initEccLib(ecc as any);
+bitcoin.initEccLib(ecc);
 const ECPair = ECPairFactory(ecc);
 
 const DUST_LIMIT = 546n;
@@ -17,7 +17,7 @@ interface BitcoinUtxo {
   txid: string;
   vout: number;
   value: number;
-  status?: any;
+  status?: unknown;
   scriptpubkey: string;
 }
 

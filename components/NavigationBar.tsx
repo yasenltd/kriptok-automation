@@ -4,8 +4,9 @@ import { colors } from '@/theme/colors';
 import { BlurView } from 'expo-blur';
 import { router, usePathname } from 'expo-router';
 import React, { useCallback, useMemo } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleProp, StyleSheet, Text, View, ViewStyle } from 'react-native';
 import { ArrowsUpDownIcon, GlobeEuropeAfricaIcon, WalletIcon } from 'react-native-heroicons/mini';
+import { IconElement } from './ui/ActionButton';
 
 type NavigationItem = {
   key: string;
@@ -40,7 +41,7 @@ const defaultNavigationItems: NavigationItem[] = [
 
 interface NavigationBarProps {
   items?: [NavigationItem, ...NavigationItem[]];
-  style?: any;
+  style?: StyleProp<ViewStyle>;
 }
 
 const NavigationBar: React.FC<NavigationBarProps> = ({
@@ -61,7 +62,7 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
   const renderIcon = useCallback(
     (icon: React.ReactNode, isActive: boolean) => {
       if (!icon || !React.isValidElement(icon)) return null;
-      return React.cloneElement(icon as React.ReactElement<any>, {
+      return React.cloneElement(icon as IconElement, {
         size: 20,
         color: isActive ? styles.labelActive.color : styles.label.color,
       });
@@ -69,7 +70,7 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
     [styles.labelActive.color, styles.label.color],
   );
 
-  const handlePress = useCallback((item: NavigationItem, index: number) => {
+  const handlePress = useCallback((item: NavigationItem) => {
     if (item.comingSoon) return;
     item.onPress();
   }, []);
@@ -78,7 +79,7 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
     <BlurView intensity={25} style={[styles.blurContainer, style]}>
       <View style={styles.container}>
         {memoizedItems.map((item: NavigationItem, index) => (
-          <Pressable key={index} style={styles.item} onPress={() => handlePress(item, index)}>
+          <Pressable key={index} style={styles.item} onPress={() => handlePress(item)}>
             {renderIcon(item.icon, isActive(item.key))}
             <Text style={isActive(item.key) ? styles.labelActive : styles.label}>{item.label}</Text>
             {item.comingSoon && <ComingSoonLabel />}

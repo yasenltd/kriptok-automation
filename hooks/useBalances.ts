@@ -2,7 +2,7 @@ import { useGetBalancesQuery } from '@/services/balanceApi';
 import { Addresses } from '@/services/balances';
 import { useDispatch } from 'react-redux';
 import { updateUser } from '@/stores/user/userSlice';
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { POLLING_CONFIG } from '@/config/polling';
 import { BalancesType } from '@/types';
 import { haveBalancesChanged } from '@/utils/balances';
@@ -12,8 +12,13 @@ export function useBalances(addresses: Addresses) {
   const dispatch = useDispatch();
   const lastBalancesRef = useRef<BalancesType | null>(null);
 
+  const shouldSkip = useMemo(
+    () => !addresses.eth || !addresses.btc || !addresses.sol || !addresses.sui,
+    [addresses.eth, addresses.btc, addresses.sol, addresses.sui],
+  );
+
   const { data: balances, refetch } = useGetBalancesQuery(addresses, {
-    skip: !addresses.eth || !addresses.btc || !addresses.sol || !addresses.sui,
+    skip: shouldSkip,
     pollingInterval: POLLING_CONFIG.BALANCE_POLLING_INTERVAL,
     refetchOnMountOrArgChange: POLLING_CONFIG.REFETCH_ON_MOUNT_OR_ARG_CHANGE,
   });
@@ -35,13 +40,12 @@ export function useBalances(addresses: Addresses) {
     if (!POLLING_CONFIG.STOP_POLLING_ON_BACKGROUND) return;
 
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
-      if (nextAppState === 'active') {
-        // App became active, maybe refetch
+      if (nextAppState === 'active' && !shouldSkip) {
         refetch();
       }
     };
 
     const subscription = AppState.addEventListener('change', handleAppStateChange);
     return () => subscription.remove();
-  }, [refetch]);
+  }, [refetch, shouldSkip]);
 }

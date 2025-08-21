@@ -1,12 +1,12 @@
 import SeedPhrase from '@/components/ui/SeedPhrase';
-import { UseBackupReturn } from '@/hooks/useBackup';
-import { useToast } from '@/hooks/useToast';
-import { copyToClipboard } from '@/utils';
 import AppCheckbox from '@components/ui/AppCheckbox';
 import { useCallback } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Button } from 'react-native-paper';
 import { useTheme } from '../../context/ThemeContext';
+import { copyToClipboard } from '@/utils';
+import { useToast } from '@/hooks/useToast';
+import { UseBackupReturn } from '@/hooks/useBackup';
 
 type Props = Pick<
   UseBackupReturn,

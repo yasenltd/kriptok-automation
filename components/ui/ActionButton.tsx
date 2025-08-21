@@ -19,6 +19,13 @@ interface ActionButtonContentsProps {
   icon?: Icon;
 }
 
+type IconVisualStyle = 'micro' | 'outline';
+export type IconElement = React.ReactElement<{
+  size?: number;
+  color?: ColorValue;
+  style?: IconVisualStyle | string;
+}>;
+
 const ActionButton: React.FC<ActionButtonProps> = ({
   label,
   onPress,
@@ -78,7 +85,7 @@ const ActionButtonContents: React.FC<ActionButtonContentsProps> = ({ label, text
   const styles = useActionButtonStyles();
   return (
     <View style={styles.content}>
-      {React.cloneElement(icon as React.ReactElement<any>, {
+      {React.cloneElement(icon as IconElement, {
         size: 24,
         style: 'outline',
         color: textColor,

@@ -1,7 +1,7 @@
 import { BlurViewProps } from 'expo-blur';
 import { LinearGradientProps } from 'expo-linear-gradient';
 import { ReactElement } from 'react';
-import { ColorValue, ViewProps } from 'react-native';
+import { ColorValue, StyleProp, ViewProps, ViewStyle } from 'react-native';
 
 export type ButtonVariant = 'accent' | 'secondary' | 'tertiary' | 'outline' | 'ghost';
 export type ButtonState = 'default' | 'pressed' | 'loading' | 'disabled';
@@ -32,7 +32,7 @@ export interface IconProps {
   color?: ColorValue;
   size?: number;
   iconStyle?: 'micro' | 'mini' | 'outline' | 'solid';
-  style?: any;
+  style?: StyleProp<ViewStyle>;
 }
 export type InputStyle = 'fill' | 'stroke';
 export type InputSize = 'normal' | 'big';

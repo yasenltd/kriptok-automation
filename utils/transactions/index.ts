@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import { sendEvmAsset } from './evm';
+import { EvmChains, sendEvmAsset } from './evm';
 import { sendBitcoinTx } from './bitcoin';
 import { sendSuiTx } from './sui';
 import { sendSolanaAsset } from './solana';
@@ -12,6 +12,7 @@ export interface BaseTxParams {
   fee?: string | number | bigint;
   memo?: string;
   fromAddress?: string;
+  chain?: EvmChains;
 }
 
 export interface BitcoinTxParams extends BaseTxParams {
@@ -27,18 +28,50 @@ export interface SuiTxParams extends BaseTxParams {
   fromAddress: string;
 }
 
-type SupportedChain = 'ethereum' | 'bitcoin' | 'sui' | 'solana';
+type SupportedChain = 'ethereum' | 'bitcoin' | 'sui' | 'solana' | 'polygon' | 'bsc';
 
 type ChainTxHandler = (params: BaseTxParams, privateKey: string) => Promise<string>;
 
 const chainTxHandlers: Record<SupportedChain, ChainTxHandler> = {
-  ethereum: (params, privateKey) =>
-    sendEvmAsset(
+  ethereum: (params, privateKey) => {
+    if (!params.chain) {
+      console.warn('EVM transaction requires chain param!');
+      throw new Error('EVM transaction requires chain param!');
+    }
+    return sendEvmAsset(
       params.tokenAddress ?? ethers.ZeroAddress, // native or erc20 token
       params.decimals ?? 18,
       params,
       privateKey,
-    ),
+      params.chain,
+    );
+  },
+  polygon: (params, privateKey) => {
+    if (!params.chain) {
+      console.warn('EVM transaction requires chain param!');
+      throw new Error('EVM transaction requires chain param!');
+    }
+    return sendEvmAsset(
+      params.tokenAddress ?? ethers.ZeroAddress, // native or erc20 token
+      params.decimals ?? 18,
+      params,
+      privateKey,
+      params.chain,
+    );
+  },
+  bsc: (params, privateKey) => {
+    if (!params.chain) {
+      console.warn('EVM transaction requires chain param!');
+      throw new Error('EVM transaction requires chain param!');
+    }
+    return sendEvmAsset(
+      params.tokenAddress ?? ethers.ZeroAddress, // native or erc20 token
+      params.decimals ?? 18,
+      params,
+      privateKey,
+      params.chain,
+    );
+  },
   bitcoin: (params, privateKey) => {
     if (!params.fromAddress || !params.fee) {
       console.warn('Bitcoin transaction requires fromAddress and fee!');

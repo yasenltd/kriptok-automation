@@ -13,8 +13,8 @@ export enum REQUEST_METHOD {
 }
 
 export interface RequestOptions {
-  params?: Record<string, any>;
-  body?: any;
+  params?: Record<string, unknown>;
+  body?: unknown;
   headers?: Record<string, string>;
   signal?: AbortSignal;
 }
@@ -49,7 +49,7 @@ export const publicApi: AxiosInstance = axios.create({
 });
 export const refreshAccessToken = async (): Promise<string | null> => {
   try {
-    const savedTokenData: Record<string, any> | null = await getToken();
+    const savedTokenData: Record<string, unknown> | null = await getToken();
     if (!savedTokenData) return null;
 
     const response = await refreshInstance.post<AuthRefreshResponse>(
@@ -84,6 +84,7 @@ export const refreshAccessToken = async (): Promise<string | null> => {
 
     return access_token;
   } catch (error) {
+    console.error(error);
     if (externalForceAuth) {
       externalForceAuth();
     }

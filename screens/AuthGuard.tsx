@@ -9,12 +9,9 @@ import { getLoginMessage, login, signSiweMessage } from '@/utils/auth';
 import { useAuth } from '@/context/AuthContext';
 import axios from 'axios';
 import { useToast } from '@/hooks/useToast';
-import Constants from 'expo-constants';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/stores/store';
 import { useBalances } from '@/hooks/useBalances';
-
-const statusBarHeight = Constants.statusBarHeight;
 
 const AuthGuard = ({ children }: { children: React.ReactNode }) => {
   const user = useSelector((state: RootState) => state.user.data);

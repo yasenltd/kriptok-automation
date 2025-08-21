@@ -4,6 +4,7 @@ import { BlurView, BlurViewProps } from 'expo-blur';
 import { LinearGradient, LinearGradientProps } from 'expo-linear-gradient';
 import React, { useMemo, useState } from 'react';
 import { ColorValue, Pressable, View, ViewProps } from 'react-native';
+import { IconElement } from './ActionButton';
 
 interface IconButtonProps {
   variant?: ButtonVariant;
@@ -158,7 +159,7 @@ const IconButtonContents: React.FC<IconButtonContentsProps> = ({
   const { buttonStyles } = useButtonStyles();
   return (
     <View style={buttonStyles.content}>
-      {React.cloneElement(icon as React.ReactElement<any>, {
+      {React.cloneElement(icon as IconElement, {
         size: iconSize,
         style: iconStyle,
         color: textColor,

@@ -1,6 +1,7 @@
 const { GLOBAL_ELEMENT_ID, GLOBAL_TEST_PIN, GLOBAL_TEXT } = require('../constants/global-elements');
 const { BACKUP_ELEMENT_ID, BACKUP_TEXT } = require('../constants/backup-elements');
-const { waitForIdVisible, tapId, typeIntoId, tapText, waitForTexts, fillSeedPhraseFields, getSeedPhraseIndexesAttributes, getTextById } = require('../utils');
+const { waitForIdVisible, tapId, typeIntoId, tapText, waitForTexts, getTextById } = require('../utils');
+const { fillSeedPhraseFields, getSeedPhraseIndexesAttributes } = require('../steps');
 
 describe('Seed Phrase Backup', () => {
   beforeAll(async () => {

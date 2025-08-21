@@ -53,18 +53,6 @@ async function tapText(text) {
   await el.tap();
 }
 
-async function fillSeedPhraseFields(indices, seedPhrase, BACKUP_ELEMENT_ID) {
-  for (let i = 0; i < indices.length; i++) {
-    const position = indices[i];
-    const word = seedPhrase[position - 1];
-    await element(by.id(`${BACKUP_ELEMENT_ID.SEED_PHRASE_VERIFY_INPUT}-${position}`)).replaceText(word);
-  }
-}
-
-async function getSeedPhraseIndexesAttributes(BACKUP_ELEMENT_ID) {
-  const indexesText = await getTextById(BACKUP_ELEMENT_ID.SEED_PHRASE_INDEXES);
-  return indexesText.split(',').map(Number);
-}
 
 module.exports = {
   tapId,
@@ -76,6 +64,4 @@ module.exports = {
   waitForTexts,
   multiTapIntoId,
   waitForIdVisible,
-  fillSeedPhraseFields,
-  getSeedPhraseIndexesAttributes,
 };

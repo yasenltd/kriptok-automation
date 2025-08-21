@@ -11,7 +11,7 @@ interface TrendingDirectionProps {
   price?: number;
 }
 
-const TrendingDirection = ({ percentageChange, price }: TrendingDirectionProps) => {
+const TrendingDirection = ({ percentageChange }: TrendingDirectionProps) => {
   const isPositive = percentageChange >= 0;
   const { style, getTextStyle, getContainerStyle } = useTrendingDirectionStyles();
 

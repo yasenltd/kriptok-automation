@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { LanguageType } from '@/types';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/stores/store';

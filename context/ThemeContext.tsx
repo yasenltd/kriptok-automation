@@ -10,7 +10,6 @@ import React, {
   useMemo,
   useState,
 } from 'react';
-import { useColorScheme } from 'react-native';
 
 type Scheme = 'light' | 'dark';
 

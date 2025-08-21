@@ -157,7 +157,7 @@ export const secureSave = async (key: string, data: unknown) => {
   }
 };
 
-export const secureGet = async <T = any>(key: string): Promise<T | string | null> => {
+export const secureGet = async <T = unknown>(key: string): Promise<T | string | null> => {
   try {
     const raw = await SecureStore.getItemAsync(key);
     if (!raw) return null;

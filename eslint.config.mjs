@@ -62,15 +62,15 @@ export default [
         'warn',
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
       ],
-      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-explicit-any': 'error',
 
-      'react-hooks/rules-of-hooks': 'off',
-      'react-hooks/exhaustive-deps': 'warn',
+      'react-hooks/rules-of-hooks': 'warn',
+      'react-hooks/exhaustive-deps': 'off',
 
       'react/react-in-jsx-scope': 'off',
       'react/jsx-uses-react': 'off',
 
-      'react-native/no-unused-styles': 'warn',
+      'react-native/no-unused-styles': 'off',
       'react-native/no-inline-styles': 'off',
       'react-native/no-raw-text': 'off',
     },

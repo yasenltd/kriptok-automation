@@ -28,16 +28,13 @@ const BackupStepVerify = ({
         >
           {randomWordsToCheck.map(i => i.index + 1).join(',')}
         </Text>
-        {randomWordsToCheck.map((item: any, index: number) => (
+        {randomWordsToCheck.map((item: { index: number; word: string }, index: number) => (
           <View
             key={`${item.word}-${index}`}
             style={styles.wordBox}
             testID={`seed-verify-box-${item.index + 1}`}
           >
-            <Text
-              style={styles.wordIndex}
-              testID={`seed-verify-label-${item.index + 1}`}
-            >
+            <Text style={styles.wordIndex} testID={`seed-verify-label-${item.index + 1}`}>
               {item.index + 1}.
             </Text>
             <TextInput
@@ -54,7 +51,7 @@ const BackupStepVerify = ({
         ))}
       </View>
 
-      <Button testID='verify-seed-phrase' onPress={handleVerify}>
+      <Button testID="verify-seed-phrase" onPress={handleVerify}>
         <Text>Verify Seed Phrase</Text>
       </Button>
     </View>

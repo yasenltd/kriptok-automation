@@ -8,6 +8,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import React, { useMemo, useState } from 'react';
 import { ColorValue, Pressable, Text, TextStyle, View, type ViewProps } from 'react-native';
 import LoaderIcon from '../icons/LoaderIcon';
+import { IconElement } from './ActionButton';
 
 type GradientWrapper = {
   kind: 'gradient';
@@ -231,7 +232,7 @@ const ButtonContents: React.FC<ButtonContentsProps> = ({
     if (!visible) return null;
     if (loading) return <LoaderIcon size={iconSize} color={textColor} />;
     if (icon && React.isValidElement(icon)) {
-      return React.cloneElement(icon as React.ReactElement<any>, {
+      return React.cloneElement(icon as IconElement, {
         size: iconSize,
         color: textColor,
       });

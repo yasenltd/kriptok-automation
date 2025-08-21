@@ -34,6 +34,8 @@ interface InputProps {
   testID?: string;
 }
 
+type WrapperStyle = ViewStyle & { borderColor?: ColorValue };
+
 const Input = forwardRef<TextInput, InputProps>(function Input(
   {
     value,
@@ -112,7 +114,7 @@ const Input = forwardRef<TextInput, InputProps>(function Input(
     };
 
     return {
-      getWrapperFor(variant: InputStyle, state: InputState): ViewStyle {
+      getWrapperFor(variant: InputStyle, state: InputState): WrapperStyle {
         return variant === 'fill'
           ? { ...fillBase, ...fillState[state] }
           : { ...strokeBase, ...strokeState[state] };
@@ -128,7 +130,7 @@ const Input = forwardRef<TextInput, InputProps>(function Input(
     };
   }, [theme]);
 
-  const wrapperStyle = useMemo(
+  const wrapperStyle = useMemo<WrapperStyle>(
     () => styles.getWrapperFor(variant, derivedState),
     [styles, variant, derivedState],
   );
@@ -172,7 +174,11 @@ const Input = forwardRef<TextInput, InputProps>(function Input(
           />
           <View style={textAreaStyles.rightSection}>
             {derivedState === 'error' &&
-              renderIcon(<ExclamationCircleIcon />, 20, (wrapperStyle as any).borderColor)}
+              renderIcon(
+                <ExclamationCircleIcon />,
+                20,
+                wrapperStyle.borderColor ?? theme.text.error,
+              )}
             {actionButton}
             {firstRightButton}
             {secondRightButton}

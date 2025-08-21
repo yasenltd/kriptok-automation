@@ -2,7 +2,7 @@ import { useTheme } from '@/context/ThemeContext';
 import { useToast } from '@/hooks/useToast';
 import { api, refreshInstance } from '@/services/apiClient';
 import { RootState } from '@/stores/store';
-import { AuthLogoutResponse, AuthRefreshResponse } from '@/types';
+import { AuthLogoutResponse, AuthRefreshResponse, TokenObj } from '@/types';
 import { deriveEVMWalletFromMnemonic, shareText } from '@/utils';
 import { getLoginMessage, login, signSiweMessage } from '@/utils/auth';
 import { loadWalletSecurely } from '@/utils/secureStore';
@@ -19,8 +19,6 @@ const Home = () => {
   const user = useSelector((state: RootState) => state.user.data);
   const toast = useToast();
   const { theme } = useTheme();
-
-  const [text, setText] = useState('');
 
   const [evmWallet, setEvmWallet] = useState<{ address: string; privateKey: string } | null>(null);
   const handleLogin = async () => {
@@ -40,7 +38,7 @@ const Home = () => {
     });
   };
   const handleRefresh = async () => {
-    const savedTokenData: Record<string, any> | null = await getToken();
+    const savedTokenData: TokenObj | null = await getToken();
     if (!savedTokenData) return null;
 
     const response = await refreshInstance.post<AuthRefreshResponse>(
@@ -66,7 +64,7 @@ const Home = () => {
     await saveToken(tokenData);
   };
   const handleLogout = async () => {
-    const savedTokenData: Record<string, any> | null = await getToken();
+    const savedTokenData: TokenObj | null = await getToken();
     if (!savedTokenData) return null;
     const response = await api.post<AuthLogoutResponse>('/auth/logout', {
       headers: {
@@ -76,9 +74,9 @@ const Home = () => {
     console.log('response logout', response.data);
   };
   const handleTestAccessToken = async () => {
-    const savedTokenData: Record<string, any> | null = await getToken();
+    const savedTokenData: Record<string, unknown> | null = await getToken();
     if (!savedTokenData) return null;
-    const response = await api.post<any>(
+    const response = await api.post<unknown>(
       '/auth/test',
       {},
       {

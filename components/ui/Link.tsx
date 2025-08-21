@@ -17,6 +17,8 @@ interface LinkProps {
   accessibilityLabel?: string;
 }
 
+type IconElement = React.ReactElement<{ size?: number; color?: ColorValue }>;
+
 const TEXT_STYLES: Record<LinkSize, TextStyle> = {
   S: typography.button.xsToL,
   L: typography.button.xl,
@@ -53,7 +55,7 @@ const Link: React.FC<LinkProps> = ({
     (visible?: boolean) => {
       if (!visible) return null;
       if (icon && React.isValidElement(icon)) {
-        return React.cloneElement(icon as React.ReactElement<any>, {
+        return React.cloneElement(icon as IconElement, {
           size: 20,
           color: textStyle.color,
         });

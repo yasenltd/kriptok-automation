@@ -15,7 +15,7 @@ import TrendingDirection from '@/components/ui/TrendingDirection';
 import WalletItem from '@/components/WalletItem';
 import { useTheme } from '@/context/ThemeContext';
 import { useMemo, useRef, useState } from 'react';
-import { Image, ScrollView, Text, TextInput, View } from 'react-native';
+import { ScrollView, Text, TextInput, View } from 'react-native';
 import { ArrowUpIcon, ExclamationCircleIcon, PlusIcon } from 'react-native-heroicons/micro';
 import { ClipboardIcon } from 'react-native-heroicons/outline';
 import AppPinInput from '../../components/ui/AppPinInput';
@@ -27,84 +27,13 @@ const Components: React.FC = () => {
 
   const [checkboxValue, setCheckboxValue] = useState(false);
   const [pinValue, setPinValue] = useState('');
-  const [pinError, setPinError] = useState<string | undefined>(undefined);
   const myPinValue = useMemo(() => '123456', []);
-  const pinInputRef = useRef<TextInput>(null);
 
   const [inputValue, setInputValue] = useState('');
   const [inputError, setInputError] = useState<string | undefined>(undefined);
   const inputRef = useRef<TextInput>(null);
 
-  const [swapInputValue, setSwapInputValue] = useState('');
-  const [swapInputError, setSwapInputError] = useState<string | undefined>(undefined);
-
-  const balance = 10;
   const [tokenOn, setTokenOn] = useState(false);
-
-  const tokenData = [
-    {
-      label: 'Bitcoin',
-      value: 'btc',
-      icon: () => (
-        <Image
-          source={require('assets/usdc.png')}
-          style={{ width: 24, height: 24, borderRadius: 12 }}
-        />
-      ),
-    },
-    {
-      label: 'USDC',
-      value: 'eth',
-      icon: () => (
-        <Image
-          source={require('assets/usdc.png')}
-          style={{ width: 24, height: 24, borderRadius: 12 }}
-        />
-      ),
-    },
-    {
-      label: 'Solana',
-      value: 'sol',
-      icon: () => (
-        <Image
-          source={require('assets/usdc.png')}
-          style={{ width: 24, height: 24, borderRadius: 12 }}
-        />
-      ),
-    },
-    {
-      label: 'Bitcoin',
-      value: 'btc2',
-      icon: () => (
-        <Image
-          source={require('assets/usdc.png')}
-          style={{ width: 24, height: 24, borderRadius: 12 }}
-        />
-      ),
-    },
-    {
-      label: 'USDC',
-      value: 'eth2',
-      icon: () => (
-        <Image
-          source={require('assets/usdc.png')}
-          style={{ width: 24, height: 24, borderRadius: 12 }}
-        />
-      ),
-    },
-    {
-      label: 'Solana',
-      value: 'sol2',
-      icon: () => (
-        <Image
-          source={require('assets/usdc.png')}
-          style={{ width: 24, height: 24, borderRadius: 12 }}
-        />
-      ),
-    },
-  ];
-  const [selectorItems, setSelectorItems] = useState(tokenData);
-  const [selectorValue, setSelectorValue] = useState<string | null>(null);
 
   return (
     <>

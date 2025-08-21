@@ -16,6 +16,7 @@ import { ColorValue, StyleSheet, Text, TextInput, TextStyle, View, ViewStyle } f
 import { ExclamationCircleIcon } from 'react-native-heroicons/outline';
 import { commonStyles } from '../styles/inputStyles';
 import Link from './Link';
+import { IconElement } from './ActionButton';
 
 interface InputProps {
   value: string;
@@ -30,8 +31,7 @@ interface InputProps {
   style?: ViewStyle;
   testID?: string;
 }
-
-type IconElement = React.ReactElement<{ size?: number; color?: ColorValue }>;
+type WrapperStyle = ViewStyle & { borderColor?: ColorValue };
 
 const TextArea = forwardRef<TextInput, InputProps>(function Input(
   {
@@ -107,7 +107,7 @@ const TextArea = forwardRef<TextInput, InputProps>(function Input(
     };
 
     return {
-      getWrapperFor(variant: InputStyle, state: InputState): ViewStyle {
+      getWrapperFor(variant: InputStyle, state: InputState): WrapperStyle {
         return variant === 'fill'
           ? { ...fillBase, ...fillState[state] }
           : { ...strokeBase, ...strokeState[state] };
@@ -123,7 +123,7 @@ const TextArea = forwardRef<TextInput, InputProps>(function Input(
     };
   }, [theme]);
 
-  const wrapperStyle = useMemo(
+  const wrapperStyle = useMemo<WrapperStyle>(
     () => styles.getWrapperFor(variant, derivedState),
     [styles, variant, derivedState],
   );
@@ -184,7 +184,11 @@ const TextArea = forwardRef<TextInput, InputProps>(function Input(
           )}
           <View style={textAreaStyles.rightSection}>
             {derivedState === 'error' &&
-              renderIcon(<ExclamationCircleIcon />, 20, (wrapperStyle as any).borderColor)}
+              renderIcon(
+                <ExclamationCircleIcon />,
+                20,
+                wrapperStyle.borderColor ?? theme.text.error,
+              )}
           </View>
         </View>
       </View>

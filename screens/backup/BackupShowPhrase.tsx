@@ -6,6 +6,7 @@ import AppCheckbox from '@components/ui/AppCheckbox';
 import { useCallback } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Button } from 'react-native-paper';
+import { useTheme } from '../../context/ThemeContext';
 
 type Props = Pick<
   UseBackupReturn,
@@ -28,6 +29,7 @@ const BackupStepShowPhrase = ({
     },
     [mnemonic],
   );
+  const { theme } = useTheme();
   return (
     <View>
       {mnemonic && (
@@ -55,15 +57,16 @@ const BackupStepShowPhrase = ({
 
           <View style={styles.checkboxRow}>
             <AppCheckbox
-              testID='check-backed-seed'
+              label="I have written down my seed phrase"
+              testID="check-backed-seed"
               color="black"
               value={checkmark}
               onChange={() => setCheckmark(!checkmark)}
             />
           </View>
 
-          <Button testID='confirm' onPress={() => setStep(2)} disabled={!checkmark}>
-            <Text>Confirm</Text>
+          <Button testID="confirm" onPress={() => setStep(2)} disabled={!checkmark}>
+            <Text style={{ color: theme.text.primary }}>Confirm</Text>
           </Button>
         </>
       )}

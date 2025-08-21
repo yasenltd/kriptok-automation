@@ -479,9 +479,33 @@ const Components: React.FC = () => {
         />
         {/* <Chart /> */}
         <TextArea
+          variant="stroke"
           placeholder="Placeholder"
           value={inputValue}
-          setValue={setInputValue}
+          error={inputError}
+          setValue={newValue => {
+            if (newValue.length > 100) {
+              setInputError('Input too long');
+            } else {
+              setInputError(undefined);
+            }
+            setInputValue(newValue);
+          }}
+          style={{ alignSelf: 'stretch' }}
+        />
+        <TextArea
+          variant="fill"
+          placeholder="Placeholder"
+          value={inputValue}
+          error={inputError}
+          setValue={newValue => {
+            if (newValue.length > 100) {
+              setInputError('Input too long');
+            } else {
+              setInputError(undefined);
+            }
+            setInputValue(newValue);
+          }}
           style={{ alignSelf: 'stretch' }}
         />
       </ScrollView>

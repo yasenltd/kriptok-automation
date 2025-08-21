@@ -5,6 +5,8 @@ const GLOBAL_TEST_SEED_PHRASE = process.env.TEST_SEED_PHRASE;
 
 const GLOBAL_TEXT = {
   SKIP: 'Skip',
+  COPY: 'Copy',
+  PASTE: 'Paste',
   CONTINUE: 'Continue',
   SERVER_URL: 'http://localhost:8082',
   SUCCESS_MESSAGE: 'Success! Your wallet and PIN are secured.',

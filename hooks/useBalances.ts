@@ -40,10 +40,8 @@ export function useBalances(addresses: Addresses) {
     if (!POLLING_CONFIG.STOP_POLLING_ON_BACKGROUND) return;
 
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
-      if (nextAppState === 'active') {
-        if (!shouldSkip) {
-          refetch();
-        }
+      if (nextAppState === 'active' && !shouldSkip) {
+        refetch();
       }
     };
 

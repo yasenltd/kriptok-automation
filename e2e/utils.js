@@ -25,6 +25,17 @@ async function typeIntoId(id, text, { replace = true } = {}) {
   else await el.typeText(text);
 }
 
+async function multiTapIntoId(id, times = 2) {
+  const el = element(by.id(id));
+  await el.multiTap(times);
+}
+
+async function clearIntoId(id) {
+  const el = element(by.id(id));
+  await el.tap();
+  await el.clearText();
+}
+
 async function getTextById(id) {
   const { text } = await element(by.id(id)).getAttributes();
   return text || '';
@@ -60,8 +71,10 @@ module.exports = {
   tapText,
   fillPin,
   typeIntoId,
+  clearIntoId,
   getTextById,
   waitForTexts,
+  multiTapIntoId,
   waitForIdVisible,
   fillSeedPhraseFields,
   getSeedPhraseIndexesAttributes,

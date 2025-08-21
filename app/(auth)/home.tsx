@@ -120,7 +120,7 @@ const Home = () => {
           }}
           onPress={() => router.push('/backup')}
         >
-          <Text style={{ color: '#fff', fontWeight: '600', fontSize: 16 }}>Backup</Text>
+          <Text testID='backup' style={{ color: '#fff', fontWeight: '600', fontSize: 16 }}>Backup</Text>
         </TouchableOpacity>
 
         <TouchableOpacity

@@ -168,7 +168,7 @@ const TextArea = forwardRef<TextInput, InputProps>(function Input(
               pointerEvents="box-none"
               style={{
                 position: 'absolute',
-                right: 10,
+                right: 12,
                 bottom: 8,
               }}
             >

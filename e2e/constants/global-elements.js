@@ -8,7 +8,7 @@ const GLOBAL_TEXT = {
   COPY: 'Copy',
   PASTE: 'Paste',
   CONTINUE: 'Continue',
-  SERVER_URL: 'http://localhost:8082',
+  SERVER_URL: 'http://localhost:8081',
   SUCCESS_MESSAGE: 'Success! Your wallet and PIN are secured.',
   BACKUP_MESSAGE: 'Please, backup your secret recovery phrase!'
 };

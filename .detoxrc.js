@@ -17,7 +17,7 @@ module.exports = {
       build:
         'xcodebuild -workspace ios/kriptokwallet.xcworkspace -scheme kriptokwallet ' +
         '-configuration Debug -sdk iphonesimulator ' +
-        "-destination 'generic/platform=iOS Simulator' " +
+        '-destination "platform=iOS Simulator,name=iPhone 15" ' +
         '-derivedDataPath ios/build',
     },
     'ios.release': {
@@ -26,7 +26,7 @@ module.exports = {
       build:
         'xcodebuild -workspace ios/kriptokwallet.xcworkspace -scheme kriptokwallet ' +
         '-configuration Release -sdk iphonesimulator ' +
-        "-destination 'generic/platform=iOS Simulator' " +
+        '-destination "platform=iOS Simulator,name=iPhone 15" ' +
         '-derivedDataPath ios/build',
     },
   },
@@ -34,7 +34,7 @@ module.exports = {
   devices: {
     simulator: {
       type: 'ios.simulator',
-      device: { type: 'iPhone 15' }, // safer default for CI images
+      device: { type: 'iPhone 15' },
     },
   },
 

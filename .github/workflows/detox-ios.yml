@@ -152,8 +152,7 @@ jobs:
             ~/Library/Detox/Artifacts
           if-no-files-found: ignore
 
-      - name: Stop background services
+      - name: Stop mock API
         if: always()
         run: |
-          kill $(cat metro.pid) 2>/dev/null || true
-          kill $(cat mock_api.pid) 2>/dev/null || true
+            [ -f mock_api.pid ] && kill "$(cat mock_api.pid)" 2>/dev/null || true

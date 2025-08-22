@@ -28,6 +28,7 @@ jobs:
       EXPO_PUBLIC_HOST: ${{ secrets.EXPO_PUBLIC_HOST }}           # e.g. http
       EXPO_PUBLIC_INFURA_ID: ${{ secrets.EXPO_PUBLIC_INFURA_ID }}
       EXPO_PUBLIC_MODE: ${{ secrets.EXPO_PUBLIC_MODE }}
+      EXPO_DEV_CLIENT_SCHEME: ${{ vars.EXPO_DEV_CLIENT_SCHEME }}
 
       # --- Test data (Secrets) ---
       TEST_PIN: ${{ secrets.TEST_PIN }}

@@ -25,7 +25,6 @@ jobs:
       CI: true
       TERM: xterm
       NODE_OPTIONS: --max_old_space_size=4096
-      DETOX_CONFIG: ${{ matrix.detox_config }}
       EXPO_NO_TELEMETRY: 1
 
       # --- EXPO PUBLIC CONFIG (from Secrets as you set them) ---
@@ -108,7 +107,7 @@ jobs:
         run: xcrun simctl list devices
 
       - name: Build app (Detox)
-        run: npx detox build -c "$DETOX_CONFIG"
+        run: detox build -c ios.sim.debug && npx expo start
 
       - name: Start mock API (optional)
         run: |

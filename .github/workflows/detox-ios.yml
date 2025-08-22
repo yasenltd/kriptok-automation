@@ -38,35 +38,37 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Use Xcode 16.4 if present (fallback to best available)
+      - name: Select Xcode (prefer 16.4, else best available)
         shell: bash
         run: |
           set -euo pipefail
-          
-          # Preferred candidates (exact 16.4 names), then any 16.x (sorted), then Xcode.app
-          CANDIDATES=()
-          for C in /Applications/Xcode_16.4.app /Applications/Xcode_16.4.0.app; do
-            [ -d "$C" ] && CANDIDATES+=("$C")
+          candidates=(
+            /Applications/Xcode_16.4.app
+            /Applications/Xcode_16.4.0.app
+            /Applications/Xcode_16.3.app
+            /Applications/Xcode_16.3.0.app
+            /Applications/Xcode_16.2.app
+            /Applications/Xcode_16.2.0.app
+            /Applications/Xcode_16.1.app
+            /Applications/Xcode_16.1.0.app
+            /Applications/Xcode_16.0.app
+            /Applications/Xcode_16.0.0.app
+            /Applications/Xcode_16.app
+            /Applications/Xcode.app
+          )
+          selected=""
+          for x in "${candidates[@]}"; do
+            if [ -d "$x" ]; then selected="$x"; break; fi
           done
-          # add all 16.x variants (if any), newest first
-          mapfile -t X16 < <(ls -1d /Applications/Xcode_16*.app 2>/dev/null | sort -Vr)
-          CANDIDATES+=("${X16[@]}")
-          # final fallback
-          [ -d /Applications/Xcode.app ] && CANDIDATES+=("/Applications/Xcode.app")
-          
-          if [ ${#CANDIDATES[@]} -eq 0 ]; then
+          if [ -z "$selected" ]; then
             echo "::error::No Xcode installations found under /Applications"
             ls -1 /Applications | sed -n '/Xcode/p' || true
             exit 1
           fi
-          
-          SELECTED="${CANDIDATES[0]}"
-          echo "Using Xcode at: $SELECTED"
-          echo "DEVELOPER_DIR=$SELECTED/Contents/Developer" >> "$GITHUB_ENV"
-          
-          # Show what runtimes & device types are available
-          DEVELOPER_DIR="$SELECTED/Contents/Developer" xcrun simctl list runtimes
-          DEVELOPER_DIR="$SELECTED/Contents/Developer" xcrun simctl list devicetypes
+          echo "Using Xcode at: $selected"
+          echo "DEVELOPER_DIR=$selected/Contents/Developer" >> "$GITHUB_ENV"
+          DEVELOPER_DIR="$selected/Contents/Developer" xcrun simctl list runtimes || true
+          DEVELOPER_DIR="$selected/Contents/Developer" xcrun simctl list devicetypes || true
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v3

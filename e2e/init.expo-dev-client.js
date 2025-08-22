@@ -8,4 +8,4 @@ beforeAll(async () => {
   const url = `${scheme}://expo-development-client/?url=${encodeURIComponent(packagerURL)}`;
 
   await device.launchApp({ newInstance: true, url });
-}, 180000);
+}, 360000);

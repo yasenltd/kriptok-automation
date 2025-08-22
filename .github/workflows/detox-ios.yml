@@ -59,17 +59,7 @@ jobs:
           brew install watchman
 
       - name: Install JS deps
-        run: |
-          corepack enable
-          if [ -f pnpm-lock.yaml ]; then
-            corepack prepare pnpm@latest --activate
-            pnpm i --frozen-lockfile
-          elif [ -f yarn.lock ]; then
-            corepack prepare yarn@4.4.1 --activate
-            yarn install --immutable
-          else
-            npm ci
-          fi
+        run: pnpm install --frozen-lockfile
 
       - name: Expo Prebuild
         run: npx expo prebuild --platform ios --no-install

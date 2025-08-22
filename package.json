@@ -11,7 +11,8 @@
     "e2e:setup": "detox test -c ios.sim.debug e2e/tests/setup.test.js",
     "e2e:importFlow:tests": "npm run e2e:setup && detox test -c ios.sim.debug --reuse e2e/tests/importWallet.test.js",
     "e2e:createFlow:tests": "npm run e2e:setup && detox test -c ios.sim.debug --reuse e2e/tests/createWallet.test.js && detox test -c ios.sim.debug --reuse e2e/tests/seedBackup.test.js",
-    "e2e:createFlow:tests:ci": "npx expo start && npm run e2e:setup && detox test -c ios.sim.debug --headless --record-logs all --take-screenshots all --reuse e2e/tests/createWallet.test.js && detox test -c ios.sim.debug --headless --record-logs all --take-screenshots all --reuse e2e/tests/seedBackup.test.js",
+    "e2e:setup:ci": "npx -y detox@20.40.2 test -c ios.sim.debug e2e/tests/setup.test.js",
+    "e2e:createFlow:tests:ci": "bash -eo pipefail -c 'npx expo start --no-interactive --dev-client --clear --max-workers 1 & METRO_PID=$!; npx -y wait-on tcp:127.0.0.1:8081; npm run e2e:setup:ci; npx -y detox@20.40.2 test -c ios.sim.debug --headless --record-logs all --take-screenshots all --reuse e2e/tests/createWallet.test.js; npx -y detox@20.40.2 test -c ios.sim.debug --headless --record-logs all --take-screenshots all --reuse e2e/tests/seedBackup.test.js; kill $METRO_PID 2>/dev/null || true'",
     "lint": "eslint . --ext .ts,.tsx",
     "lint:fix": "eslint . --ext .ts,.tsx --fix"
   },

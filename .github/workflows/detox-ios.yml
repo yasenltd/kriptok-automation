@@ -13,24 +13,21 @@ on:
 
 jobs:
   e2e:
-    runs-on: macos-latest
+    runs-on: macos-14             # Apple Silicon, stable image
     timeout-minutes: 60
 
-    # All your repo SECRETS pulled into the environment
     env:
       CI: true
       TERM: xterm
       NODE_OPTIONS: --max_old_space_size=4096
       EXPO_NO_TELEMETRY: 1
-
-      # --- EXPO PUBLIC CONFIG (from Secrets as you set them) ---
+      # FE env (from Secrets you created)
       EXPO_PUBLIC_BALANCES_FETCH_INTERVAL: ${{ secrets.EXPO_PUBLIC_BALANCES_FETCH_INTERVAL }}
-      EXPO_PUBLIC_DEV_HOST: ${{ secrets.EXPO_PUBLIC_DEV_HOST }}              # e.g. 127.0.0.1:3000
-      EXPO_PUBLIC_HOST: ${{ secrets.EXPO_PUBLIC_HOST }}                      # e.g. http
+      EXPO_PUBLIC_DEV_HOST: ${{ secrets.EXPO_PUBLIC_DEV_HOST }}      # e.g. 127.0.0.1:3000
+      EXPO_PUBLIC_HOST: ${{ secrets.EXPO_PUBLIC_HOST }}              # e.g. http
       EXPO_PUBLIC_INFURA_ID: ${{ secrets.EXPO_PUBLIC_INFURA_ID }}
       EXPO_PUBLIC_MODE: ${{ secrets.EXPO_PUBLIC_MODE }}
-
-      # --- TEST DATA (Secrets) ---
+      # Test data
       TEST_PIN: ${{ secrets.TEST_PIN }}
       TEST_SEED_PHRASE: ${{ secrets.TEST_SEED_PHRASE }}
       TEST_WALLET_NAME: ${{ secrets.TEST_WALLET_NAME }}
@@ -38,6 +35,38 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      # Pick an installed Xcode that ALREADY has an iOS Simulator runtime
+      - name: Select Xcode that has iOS Simulator runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          has_ios_runtime() {
+            DEVELOPER_DIR="$1/Contents/Developer" xcrun simctl list runtimes 2>/dev/null \
+              | grep -qE '^iOS .*\(available\)$'
+          }
+          CANDIDATES=(
+            /Applications/Xcode.app
+            /Applications/Xcode_16.4.app
+            /Applications/Xcode_16.3.app
+            /Applications/Xcode_16.2.app
+            /Applications/Xcode_16.1.app
+            /Applications/Xcode_16.0.app
+            /Applications/Xcode_16.app
+          )
+          SELECTED=""
+          for X in "${CANDIDATES[@]}"; do
+            if [ -d "$X" ] && has_ios_runtime "$X"; then SELECTED="$X"; break; fi
+          done
+          if [ -z "$SELECTED" ]; then
+            echo "::error::No Xcode with an available iOS Simulator runtime found on this runner."
+            xcrun simctl list runtimes || true
+            exit 1
+          fi
+          echo "Using Xcode at: $SELECTED"
+          echo "DEVELOPER_DIR=$SELECTED/Contents/Developer" >> "$GITHUB_ENV"
+          DEVELOPER_DIR="$SELECTED/Contents/Developer" xcrun simctl list runtimes
+          DEVELOPER_DIR="$SELECTED/Contents/Developer" xcrun simctl list devicetypes
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v3
@@ -51,55 +80,20 @@ jobs:
           node-version: 20.19.4
           cache: pnpm
 
-      - name: Select Xcode (15.x if present, else 16 + install iOS runtime)
-        run: |
-          set -euo pipefail
-          ls -1 /Applications | sed -n '/Xcode/p' || true
-          
-          # Prefer a 15.x toolchain with iOS 17 sims preinstalled
-          if [ -d /Applications/Xcode_15.4.app ]; then
-            sudo xcode-select -s /Applications/Xcode_15.4.app
-            echo "Using Xcode 15.4"
-          elif [ -d /Applications/Xcode_15.3.app ]; then
-            sudo xcode-select -s /Applications/Xcode_15.3.app
-            echo "Using Xcode 15.3"
-          elif [ -d /Applications/Xcode_15.2.app ]; then
-            sudo xcode-select -s /Applications/Xcode_15.2.app
-            echo "Using Xcode 15.2"
-          else
-            # Fall back to Xcode 16; ensure the iOS simulator runtime is available
-            if [ -d /Applications/Xcode_16.app ]; then
-              sudo xcode-select -s /Applications/Xcode_16.app
-            else
-              sudo xcode-select -s /Applications/Xcode.app
-            fi
-            echo "Using Xcode $(xcodebuild -version | head -n1); ensuring iOS simulator runtime…"
-            sudo xcodebuild -downloadPlatform iOS
-          fi
-          
-          xcodebuild -version
-          xcrun simctl list runtimes
-          xcrun simctl list devicetypes
-
       - name: Install Apple tools needed by Detox
         run: |
           brew update
           brew tap wix/brew
-          brew install applesimutils
-          brew install watchman
+          brew install applesimutils watchman
 
       - name: Install JS deps
         run: pnpm install --frozen-lockfile
 
-      - name: Expo Prebuild
+      # Generate/refresh ios/ if you don't commit it. Skips auto-installs for speed.
+      - name: Expo prebuild (no install)
         run: npx expo prebuild --platform ios --no-install
 
-      - name: Install CocoaPods
-        working-directory: ios
-        run: |
-          sudo gem install cocoapods -N
-          pod install
-
+      # Cache Pods BEFORE install (so they restore properly)
       - name: Cache CocoaPods
         uses: actions/cache@v4
         with:
@@ -110,6 +104,12 @@ jobs:
           key: ${{ runner.os }}-pods-${{ hashFiles('ios/Podfile.lock') }}
           restore-keys: |
             ${{ runner.os }}-pods-
+
+      - name: Install CocoaPods
+        working-directory: ios
+        run: |
+          sudo gem install cocoapods -N
+          pod install
 
       - name: Cache DerivedData
         uses: actions/cache@v4
@@ -123,24 +123,29 @@ jobs:
         run: xcrun simctl list devices
 
       - name: Build app (Detox)
-        run: npx detox build -c ios.sim.debug && npx expo start
+        run: pnpm exec detox build -c ios.sim.debug
 
+      # Optional: start a tiny mock API the simulator can reach on 127.0.0.1:3000
       - name: Start mock API (optional)
         run: |
           npx http-server -p 3000 --silent &
           echo $! > mock_api.pid
 
       - name: Run Detox tests (headless)
-        run: npm run e2e:createFlow:tests:ci
+        run: pnpm run e2e:createFlow:tests:ci
 
       - name: Upload Detox artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: detox-artifacts
-          path: e2e/artifacts
+          path: |
+            e2e/artifacts
+            ~/Library/Detox/Artifacts
           if-no-files-found: ignore
 
-      - name: Stop mock API
+      - name: Stop background services
         if: always()
-        run: kill $(cat mock_api.pid) 2>/dev/null || true
+        run: |
+          kill $(cat metro.pid) 2>/dev/null || true
+          kill $(cat mock_api.pid) 2>/dev/null || true

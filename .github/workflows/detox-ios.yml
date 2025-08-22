@@ -13,7 +13,7 @@ on:
 
 jobs:
   e2e:
-    runs-on: macos-14             # Apple Silicon, stable image
+    runs-on: macos-14
     timeout-minutes: 60
 
     env:
@@ -21,13 +21,15 @@ jobs:
       TERM: xterm
       NODE_OPTIONS: --max_old_space_size=4096
       EXPO_NO_TELEMETRY: 1
-      # FE env (from Secrets you created)
+
+      # --- FE config (from your repository Secrets) ---
       EXPO_PUBLIC_BALANCES_FETCH_INTERVAL: ${{ secrets.EXPO_PUBLIC_BALANCES_FETCH_INTERVAL }}
-      EXPO_PUBLIC_DEV_HOST: ${{ secrets.EXPO_PUBLIC_DEV_HOST }}      # e.g. 127.0.0.1:3000
-      EXPO_PUBLIC_HOST: ${{ secrets.EXPO_PUBLIC_HOST }}              # e.g. http
+      EXPO_PUBLIC_DEV_HOST: ${{ secrets.EXPO_PUBLIC_DEV_HOST }}   # e.g. 127.0.0.1:3000
+      EXPO_PUBLIC_HOST: ${{ secrets.EXPO_PUBLIC_HOST }}           # e.g. http
       EXPO_PUBLIC_INFURA_ID: ${{ secrets.EXPO_PUBLIC_INFURA_ID }}
       EXPO_PUBLIC_MODE: ${{ secrets.EXPO_PUBLIC_MODE }}
-      # Test data
+
+      # --- Test data (Secrets) ---
       TEST_PIN: ${{ secrets.TEST_PIN }}
       TEST_SEED_PHRASE: ${{ secrets.TEST_SEED_PHRASE }}
       TEST_WALLET_NAME: ${{ secrets.TEST_WALLET_NAME }}
@@ -36,15 +38,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Pick an installed Xcode that ALREADY has an iOS Simulator runtime
-      - name: Select Xcode that has iOS Simulator runtime
+      # Robust Xcode selection: just pick an installed Xcode and export DEVELOPER_DIR.
+      # No “(available)” grep — we only need iOS runtimes listed.
+      - name: Select Xcode and show runtimes
         shell: bash
         run: |
           set -euo pipefail
-          has_ios_runtime() {
-            DEVELOPER_DIR="$1/Contents/Developer" xcrun simctl list runtimes 2>/dev/null \
-              | grep -qE '^iOS .*\(available\)$'
-          }
           CANDIDATES=(
             /Applications/Xcode.app
             /Applications/Xcode_16.4.app
@@ -54,19 +53,16 @@ jobs:
             /Applications/Xcode_16.0.app
             /Applications/Xcode_16.app
           )
-          SELECTED=""
           for X in "${CANDIDATES[@]}"; do
-            if [ -d "$X" ] && has_ios_runtime "$X"; then SELECTED="$X"; break; fi
+            if [ -d "$X" ]; then
+              echo "Using Xcode at: $X"
+              echo "DEVELOPER_DIR=$X/Contents/Developer" >> "$GITHUB_ENV"
+              break
+            fi
           done
-          if [ -z "$SELECTED" ]; then
-            echo "::error::No Xcode with an available iOS Simulator runtime found on this runner."
-            xcrun simctl list runtimes || true
-            exit 1
-          fi
-          echo "Using Xcode at: $SELECTED"
-          echo "DEVELOPER_DIR=$SELECTED/Contents/Developer" >> "$GITHUB_ENV"
-          DEVELOPER_DIR="$SELECTED/Contents/Developer" xcrun simctl list runtimes
-          DEVELOPER_DIR="$SELECTED/Contents/Developer" xcrun simctl list devicetypes
+          # Debug info
+          xcrun simctl list runtimes || true
+          xcrun simctl list devicetypes || true
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v3
@@ -89,11 +85,11 @@ jobs:
       - name: Install JS deps
         run: pnpm install --frozen-lockfile
 
-      # Generate/refresh ios/ if you don't commit it. Skips auto-installs for speed.
+      # Generate/refresh ios/ if it isn't committed. Keep --no-install for speed & caching.
       - name: Expo prebuild (no install)
         run: npx expo prebuild --platform ios --no-install
 
-      # Cache Pods BEFORE install (so they restore properly)
+      # Cache Pods BEFORE install
       - name: Cache CocoaPods
         uses: actions/cache@v4
         with:
@@ -125,7 +121,7 @@ jobs:
       - name: Build app (Detox)
         run: pnpm exec detox build -c ios.sim.debug
 
-      # Optional: start a tiny mock API the simulator can reach on 127.0.0.1:3000
+      # Optional mock API the simulator can reach at 127.0.0.1:3000
       - name: Start mock API (optional)
         run: |
           npx http-server -p 3000 --silent &

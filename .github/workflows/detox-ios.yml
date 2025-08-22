@@ -82,11 +82,6 @@ jobs:
           DEVELOPER_DIR="$selected/Contents/Developer" xcrun simctl list runtimes || true
           DEVELOPER_DIR="$selected/Contents/Developer" xcrun simctl list devicetypes || true
 
-      - name: Build Detox iOS framework cache
-        run: |
-          pnpm exec detox clean-framework-cache || true
-          pnpm exec detox build-framework-cache
-
       - name: Install Apple tools needed by Detox
         run: |
           brew update
@@ -95,6 +90,12 @@ jobs:
 
       - name: Install JS deps
         run: pnpm install --frozen-lockfile
+
+      # put this AFTER you select Xcode / set DEVELOPER_DIR and AFTER "Install JS deps"
+      - name: Build Detox iOS framework cache
+        run: |
+         npx -y detox@20.40.2 clean-framework-cache || true
+         npx -y detox@20.40.2 build-framework-cache
 
       # Generate/refresh ios/ if it isn't committed. Keep --no-install for speed & caching.
       - name: Expo prebuild (no install)

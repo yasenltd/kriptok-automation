@@ -40,29 +40,17 @@ jobs:
 
       # Robust Xcode selection: just pick an installed Xcode and export DEVELOPER_DIR.
       # No “(available)” grep — we only need iOS runtimes listed.
-      - name: Select Xcode and show runtimes
+      - name: Use Xcode 16.4
         shell: bash
         run: |
-          set -euo pipefail
-          CANDIDATES=(
-            /Applications/Xcode.app
-            /Applications/Xcode_16.4.app
-            /Applications/Xcode_16.3.app
-            /Applications/Xcode_16.2.app
-            /Applications/Xcode_16.1.app
-            /Applications/Xcode_16.0.app
-            /Applications/Xcode_16.app
-          )
-          for X in "${CANDIDATES[@]}"; do
-            if [ -d "$X" ]; then
-              echo "Using Xcode at: $X"
-              echo "DEVELOPER_DIR=$X/Contents/Developer" >> "$GITHUB_ENV"
-              break
-            fi
-          done
-          # Debug info
-          xcrun simctl list runtimes || true
-          xcrun simctl list devicetypes || true
+          if [ -d /Applications/Xcode_16.4.app ]; then
+            echo "DEVELOPER_DIR=/Applications/Xcode_16.4.app/Contents/Developer" >> "$GITHUB_ENV"
+            /Applications/Xcode_16.4.app/Contents/Developer/usr/bin/xcodebuild -version
+            DEVELOPER_DIR=/Applications/Xcode_16.4.app/Contents/Developer xcrun simctl list runtimes
+            DEVELOPER_DIR=/Applications/Xcode_16.4.app/Contents/Developer xcrun simctl list devicetypes
+          else
+            echo "::error::Xcode_16.4.app not found on this runner"; exit 1
+          fi
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v3

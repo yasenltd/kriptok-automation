@@ -107,7 +107,7 @@ jobs:
         run: xcrun simctl list devices
 
       - name: Build app (Detox)
-        run: detox build -c ios.sim.debug && npx expo start
+        run: npx detox build -c ios.sim.debug && npx expo start
 
       - name: Start mock API (optional)
         run: |

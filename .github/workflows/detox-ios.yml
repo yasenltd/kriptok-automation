@@ -51,9 +51,32 @@ jobs:
           node-version: 20.19.4
           cache: pnpm
 
-      - name: Use Xcode 15.4 (with iOS 17.5 sims)
+      - name: Select Xcode (15.x if present, else 16 + install iOS runtime)
         run: |
-          sudo xcode-select -s /Applications/Xcode_15.4.app
+          set -euo pipefail
+          ls -1 /Applications | sed -n '/Xcode/p' || true
+          
+          # Prefer a 15.x toolchain with iOS 17 sims preinstalled
+          if [ -d /Applications/Xcode_15.4.app ]; then
+            sudo xcode-select -s /Applications/Xcode_15.4.app
+            echo "Using Xcode 15.4"
+          elif [ -d /Applications/Xcode_15.3.app ]; then
+            sudo xcode-select -s /Applications/Xcode_15.3.app
+            echo "Using Xcode 15.3"
+          elif [ -d /Applications/Xcode_15.2.app ]; then
+            sudo xcode-select -s /Applications/Xcode_15.2.app
+            echo "Using Xcode 15.2"
+          else
+            # Fall back to Xcode 16; ensure the iOS simulator runtime is available
+            if [ -d /Applications/Xcode_16.app ]; then
+              sudo xcode-select -s /Applications/Xcode_16.app
+            else
+              sudo xcode-select -s /Applications/Xcode.app
+            fi
+            echo "Using Xcode $(xcodebuild -version | head -n1); ensuring iOS simulator runtime…"
+            sudo xcodebuild -downloadPlatform iOS
+          fi
+          
           xcodebuild -version
           xcrun simctl list runtimes
           xcrun simctl list devicetypes

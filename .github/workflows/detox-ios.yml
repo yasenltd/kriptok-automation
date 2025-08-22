@@ -20,12 +20,25 @@ jobs:
       matrix:
         detox_config: [ios.sim.debug]
 
+    # All your repo SECRETS pulled into the environment
     env:
       CI: true
       TERM: xterm
       NODE_OPTIONS: --max_old_space_size=4096
       DETOX_CONFIG: ${{ matrix.detox_config }}
       EXPO_NO_TELEMETRY: 1
+
+      # --- EXPO PUBLIC CONFIG (from Secrets as you set them) ---
+      EXPO_PUBLIC_BALANCES_FETCH_INTERVAL: ${{ secrets.EXPO_PUBLIC_BALANCES_FETCH_INTERVAL }}
+      EXPO_PUBLIC_DEV_HOST: ${{ secrets.EXPO_PUBLIC_DEV_HOST }}              # e.g. 127.0.0.1:3000
+      EXPO_PUBLIC_HOST: ${{ secrets.EXPO_PUBLIC_HOST }}                      # e.g. http
+      EXPO_PUBLIC_INFURA_ID: ${{ secrets.EXPO_PUBLIC_INFURA_ID }}
+      EXPO_PUBLIC_MODE: ${{ secrets.EXPO_PUBLIC_MODE }}
+
+      # --- TEST DATA (Secrets) ---
+      TEST_PIN: ${{ secrets.TEST_PIN }}
+      TEST_SEED_PHRASE: ${{ secrets.TEST_SEED_PHRASE }}
+      TEST_WALLET_NAME: ${{ secrets.TEST_WALLET_NAME }}
 
     steps:
       - name: Checkout
@@ -91,6 +104,11 @@ jobs:
       - name: Build app (Detox)
         run: npx detox build -c "$DETOX_CONFIG"
 
+      - name: Start mock API (optional)
+        run: |
+          npx http-server -p 3000 --silent &
+          echo $! > mock_api.pid
+
       - name: Run Detox tests (headless)
         run: npm run e2e:createFlow:tests:ci
 
@@ -101,3 +119,7 @@ jobs:
           name: detox-artifacts
           path: e2e/artifacts
           if-no-files-found: ignore
+
+      - name: Stop mock API
+        if: always()
+        run: kill $(cat mock_api.pid) 2>/dev/null || true

@@ -70,6 +70,11 @@ jobs:
           DEVELOPER_DIR="$selected/Contents/Developer" xcrun simctl list runtimes || true
           DEVELOPER_DIR="$selected/Contents/Developer" xcrun simctl list devicetypes || true
 
+      - name: Build Detox iOS framework cache
+        run: |
+          pnpm exec detox clean-framework-cache || true
+          pnpm exec detox build-framework-cache
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v3
         with:

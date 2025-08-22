@@ -16,10 +16,6 @@ jobs:
     runs-on: macos-latest
     timeout-minutes: 60
 
-    strategy:
-      matrix:
-        detox_config: [ios.sim.debug]
-
     # All your repo SECRETS pulled into the environment
     env:
       CI: true

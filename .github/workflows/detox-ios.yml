@@ -1,0 +1,103 @@
+name: Detox iOS
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "ios/**"
+      - "e2e/**"
+      - "detox.config.*"
+      - "package.json"
+      - "yarn.lock"
+      - "pnpm-lock.yaml"
+
+jobs:
+  e2e:
+    runs-on: macos-14
+    timeout-minutes: 60
+
+    strategy:
+      matrix:
+        detox_config: [ios.sim.debug]
+
+    env:
+      CI: true
+      TERM: xterm
+      NODE_OPTIONS: --max_old_space_size=4096
+      DETOX_CONFIG: ${{ matrix.detox_config }}
+      EXPO_NO_TELEMETRY: 1
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install Apple tools needed by Detox
+        run: |
+          brew update
+          brew tap wix/brew
+          brew install applesimutils
+          brew install watchman
+
+      - name: Install JS deps
+        run: |
+          corepack enable
+          if [ -f pnpm-lock.yaml ]; then
+            corepack prepare pnpm@latest --activate
+            pnpm i --frozen-lockfile
+          elif [ -f yarn.lock ]; then
+            corepack prepare yarn@4.4.1 --activate
+            yarn install --immutable
+          else
+            npm ci
+          fi
+
+      - name: Expo Prebuild
+        run: npx expo prebuild --platform ios --no-install
+
+      - name: Install CocoaPods
+        working-directory: ios
+        run: |
+          sudo gem install cocoapods -N
+          pod install
+
+      - name: Cache CocoaPods
+        uses: actions/cache@v4
+        with:
+          path: |
+            ios/Pods
+            ~/Library/Caches/CocoaPods
+            ~/.cocoapods
+          key: ${{ runner.os }}-pods-${{ hashFiles('ios/Podfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pods-
+
+      - name: Cache DerivedData
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Developer/Xcode/DerivedData
+          key: ${{ runner.os }}-derived-${{ hashFiles('ios/Podfile.lock', 'ios/**.xcodeproj/**', 'ios/**.xcworkspace/**') }}
+          restore-keys: |
+            ${{ runner.os }}-derived-
+
+      - name: List simulators (debug aid)
+        run: xcrun simctl list devices
+
+      - name: Build app (Detox)
+        run: npx detox build -c "$DETOX_CONFIG"
+
+      - name: Run Detox tests (headless)
+        run: npm run e2e:createFlow:tests:ci
+
+      - name: Upload Detox artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: detox-artifacts
+          path: e2e/artifacts
+          if-no-files-found: ignore

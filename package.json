@@ -11,7 +11,7 @@
     "e2e:setup": "detox test -c ios.sim.debug e2e/tests/setup.test.js",
     "e2e:importFlow:tests": "npm run e2e:setup && detox test -c ios.sim.debug --reuse e2e/tests/importWallet.test.js",
     "e2e:createFlow:tests": "npm run e2e:setup && detox test -c ios.sim.debug --reuse e2e/tests/createWallet.test.js && detox test -c ios.sim.debug --reuse e2e/tests/seedBackup.test.js",
-    "e2e:ios": "detox test -c ios.sim.debug",
+    "e2e:createFlow:tests:ci": "npm run e2e:setup && detox test -c ios.sim.debug --headless --record-logs all --take-screenshots all --reuse e2e/tests/createWallet.test.js && detox test -c ios.sim.debug --headless --record-logs all --take-screenshots all --reuse e2e/tests/seedBackup.test.js",
     "lint": "eslint . --ext .ts,.tsx",
     "lint:fix": "eslint . --ext .ts,.tsx --fix"
   },

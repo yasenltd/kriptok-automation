@@ -23,6 +23,8 @@ jobs:
       EXPO_NO_TELEMETRY: 1
       # Ensure the app and Metro agree on the port used for the JS bundle
       RCT_METRO_PORT: 8081
+      # Instruct e2e/utils.launchAppWithOptionalDevClientUrl to launch via Expo Dev Client URL
+      E2E_USE_DEV_CLIENT_URL: "true"
 
       # --- FE config (from your repository Secrets) ---
       EXPO_PUBLIC_BALANCES_FETCH_INTERVAL: ${{ secrets.EXPO_PUBLIC_BALANCES_FETCH_INTERVAL }}

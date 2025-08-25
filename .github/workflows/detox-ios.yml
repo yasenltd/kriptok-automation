@@ -136,36 +136,23 @@ jobs:
       - name: Build app (Detox)
         run: pnpm exec detox build -c ios.sim.debug
 
-      - name: Start Metro (Expo) bundler
-        shell: bash
+  # Optional mock API the simulator can reach at 127.0.0.1:3000
+      - name: Start mock API (optional)
         run: |
-          set -euo pipefail
-          echo "Starting Metro bundler..."
-          PORT="${RCT_METRO_PORT:-8081}"
-          STATUS_URL="http://localhost:${PORT}/status"
-          # Start Expo (Metro) in background; output goes to metro.log for debugging
-          nohup npx expo start --dev-client --no-interactive --clear --port "$PORT" > metro.log 2>&1 &
-
-          echo "Waiting for Metro to be ready on ${STATUS_URL} ..."
-          # Give it a brief moment to start
-          sleep 3
-          # Wait up to ~2 minutes for Metro to report running
-          ready="false"
-          for i in {1..60}; do
-            # Do not let curl failures abort the script; capture output safely
-            STATUS=$(curl -fs "$STATUS_URL" || true)
-            if echo "$STATUS" | grep -q "packager-status:running"; then
-              echo "Metro is running."
-              ready="true"
-              break
-            fi
-            sleep 2
-          done
-          if [ "$ready" != "true" ]; then
-            echo "Metro did not become ready in time. Dumping last 200 lines of metro.log for diagnostics:" >&2
-            tail -n 200 metro.log || true
-            exit 1
-          fi
+          npx http-server -p 3000 --silent &
+          echo $! > mock_api.pid
 
       - name: Run Detox tests (create flow covers setup)
         run: pnpm run e2e:createFlow:tests
+
+      - name: Upload Detox artifacts
+        if: always()
+
+        uses: actions/upload-artifact@v4
+        with:
+          name: detox-artifacts
+          path: |
+            e2e/artifacts
+            ~/Library/Detox/Artifacts
+            ~/Library/Detox/ios.sim.debug.log
+          if-no-files-found: ignore

@@ -15,6 +15,6 @@ describe('Initial Test', () => {
       WELCOME_TEXT.PRIVACY_POLICY_LABEL,
       WELCOME_TEXT.CREATE_NEW_WALLET,
       WELCOME_TEXT.IMPORT_EXISTING_WALLET,
-    ]);
+    ], 30000);
   });
 });

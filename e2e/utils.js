@@ -47,12 +47,11 @@ async function waitForTexts(texts, timeout = 5000) {
   }
 }
 
-async function tapText(text) {
+async function tapText(text, timeout = 5000) {
   const el = element(by.text(text));
-  await expect(el).toBeVisible();
+  await waitFor(el).toBeVisible().withTimeout(timeout);
   await el.tap();
 }
-
 
 module.exports = {
   tapId,

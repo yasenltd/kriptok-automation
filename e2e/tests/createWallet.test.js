@@ -5,7 +5,7 @@ const { setupPinAndSkipFaceId } = require('../steps');
 
 describe('Create Wallet flow', () => {
 it('creates new wallet', async () => {
-    await tapText(WELCOME_TEXT.CREATE_NEW_WALLET);
+    await tapText(WELCOME_TEXT.CREATE_NEW_WALLET, 30000);
     await setupPinAndSkipFaceId();
     await waitForTexts([GLOBAL_TEXT.BACKUP_MESSAGE]);
   });

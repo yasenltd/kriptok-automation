@@ -10,7 +10,6 @@ describe('Initial Test', () => {
   });
 
   it('runs KriptoK Wallet app successfully', async () => {
-    await tapText(GLOBAL_TEXT.CONTINUE);
     await waitForTexts([
       WELCOME_TEXT.WELCOME_TITLE,
       WELCOME_TEXT.WELCOME_SUB_TITLE_CREATE_LABEL,

@@ -4,6 +4,11 @@ const { waitForIdVisible, tapId, typeIntoId, tapText, waitForTexts, getTextById 
 const { fillSeedPhraseFields, getSeedPhraseIndexesAttributes } = require('../steps');
 
 describe('Seed Phrase Backup', () => {
+  beforeAll(async () => {
+    await device.launchApp({ newInstance: true });
+    await device.shake();
+  });
+
   it('unlocks application', async () => {
     await waitForIdVisible(GLOBAL_ELEMENT_ID.ENTER_PIN_UNLOCK, 5000);
     await typeIntoId(GLOBAL_ELEMENT_ID.ENTER_PIN_UNLOCK, GLOBAL_TEST_PIN, { replace: true });
@@ -26,5 +31,9 @@ describe('Seed Phrase Backup', () => {
     await fillSeedPhraseFields(indices, seedPhrase, BACKUP_ELEMENT_ID);
     await tapId(BACKUP_ELEMENT_ID.VERIFY_BACKUP);
     await waitForTexts([BACKUP_TEXT.SUCCESS, BACKUP_TEXT.SUCCESS_MESSAGE], 1000);
+  });
+
+  afterAll(async () => {
+    await device.terminateApp();
   });
 });

@@ -5,11 +5,6 @@ const { multiTapIntoId, clearIntoId, tapText, waitForTexts, typeIntoId } = requi
 const { setupPinAndSkipFaceId } = require('../steps');
 
 describe('Import Wallet flow', () => {
-  beforeAll(async () => {
-    await device.launchApp({ newInstance: true });
-    await device.shake();
-  });
-
   it('imports new wallet', async () => {
     await tapText(WELCOME_TEXT.IMPORT_EXISTING_WALLET);
     await setupPinAndSkipFaceId();
@@ -22,9 +17,5 @@ describe('Import Wallet flow', () => {
     await tapText(GLOBAL_TEXT.PASTE);
     await tapText(GLOBAL_TEXT.CONTINUE);
     await waitForTexts([GLOBAL_TEXT.SUCCESS_MESSAGE]);
-  });
-
-  afterAll(async () => {
-    await device.terminateApp();
   });
 });

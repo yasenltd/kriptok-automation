@@ -21,8 +21,4 @@ describe('Initial Test', () => {
       WELCOME_TEXT.IMPORT_EXISTING_WALLET,
     ]);
   });
-
-  afterAll(async () => {
-    await device.terminateApp();
-  });
 });

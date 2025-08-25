@@ -13,22 +13,22 @@ module.exports = {
   apps: {
     'ios.debug': {
       type: 'ios.app',
-      binaryPath: 'ios/build/Build/Products/Debug-iphonesimulator/KriptoKWallet.app',
-      bundleId: 'com.test.kriptok',
+      binaryPath: 'ios/build/Build/Products/Debug-iphonesimulator/kriptokwallet.app', // exact .app name
+      bundleId: 'com.test.kriptok',                                                   // from your Info.plist
       build:
         'xcodebuild -workspace ios/kriptokwallet.xcworkspace -scheme kriptokwallet ' +
         '-configuration Debug -sdk iphonesimulator ' +
-        '-destination "platform=iOS Simulator,OS=18.2,name=iPhone 16 Pro" ' +
+        '-destination "platform=iOS Simulator,OS=latest,name=iPhone 16 Pro" ' +
         '-derivedDataPath ios/build',
     },
     'ios.release': {
       type: 'ios.app',
-      binaryPath: 'ios/build/Build/Products/Release-iphonesimulator/KriptoKWallet.app',
+      binaryPath: 'ios/build/Build/Products/Release-iphonesimulator/kriptokwallet.app',
       bundleId: 'com.test.kriptok',
       build:
         'xcodebuild -workspace ios/kriptokwallet.xcworkspace -scheme kriptokwallet ' +
         '-configuration Release -sdk iphonesimulator ' +
-        '-destination "platform=iOS Simulator,OS=18.2,name=iPhone 16 Pro" ' +
+        '-destination "platform=iOS Simulator,OS=latest,name=iPhone 16 Pro" ' +
         '-derivedDataPath ios/build',
     },
   },

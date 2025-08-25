@@ -47,10 +47,33 @@ async function waitForTexts(texts, timeout = 5000) {
   }
 }
 
-async function tapText(text, timeout = 5000) {
+async function tapText(text) {
   const el = element(by.text(text));
-  await waitFor(el).toBeVisible().withTimeout(timeout);
+  await expect(el).toBeVisible();
   await el.tap();
+}
+
+
+async function launchAppWithOptionalDevClientUrl() {
+  const useDevUrl = String(process.env.E2E_USE_DEV_CLIENT_URL || '').toLowerCase();
+  const shouldUse = useDevUrl === '1' || useDevUrl === 'true';
+  if (shouldUse) {
+    let appScheme = 'kriptok';
+    try {
+      // Derive default scheme from app.json for robustness
+      const appJson = require('../app.json');
+      appScheme = appJson?.expo?.scheme || appScheme;
+    } catch (e) {
+      // noop – keep fallback
+    }
+    const scheme = process.env.EXPO_DEV_CLIENT_SCHEME || appScheme;
+    const port = process.env.RCT_METRO_PORT || '8081';
+    const devUrl = `http://127.0.0.1:${port}`;
+    const url = `${scheme}://expo-development-client/?url=${encodeURIComponent(devUrl)}`;
+    await device.launchApp({ newInstance: true, url });
+  } else {
+    await device.launchApp({ newInstance: true });
+  }
 }
 
 module.exports = {
@@ -63,4 +86,5 @@ module.exports = {
   waitForTexts,
   multiTapIntoId,
   waitForIdVisible,
+  launchAppWithOptionalDevClientUrl,
 };

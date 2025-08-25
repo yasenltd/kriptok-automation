@@ -1,10 +1,15 @@
 const { GLOBAL_TEXT } = require('../constants/global-elements');
 const { WELCOME_TEXT } = require('../constants/welcome-elements');
-const { waitForTexts, tapText } = require('../utils');
+const { waitForTexts, launchAppWithOptionalDevClientUrl } = require('../utils');
 
 describe('Initial Test', () => {
+  beforeAll(async () => {
+    await launchAppWithOptionalDevClientUrl();
+    await element(by.text(GLOBAL_TEXT.SERVER_URL)).tap();
+    await device.shake();
+  });
+
   it('runs KriptoK Wallet app successfully', async () => {
-    await tapText(GLOBAL_TEXT.SERVER_URL);
     await waitForTexts([
       WELCOME_TEXT.WELCOME_TITLE,
       WELCOME_TEXT.WELCOME_SUB_TITLE_CREATE_LABEL,
@@ -15,6 +20,10 @@ describe('Initial Test', () => {
       WELCOME_TEXT.PRIVACY_POLICY_LABEL,
       WELCOME_TEXT.CREATE_NEW_WALLET,
       WELCOME_TEXT.IMPORT_EXISTING_WALLET,
-    ], 30000);
+    ]);
+  });
+
+  afterAll(async () => {
+    await device.terminateApp();
   });
 });

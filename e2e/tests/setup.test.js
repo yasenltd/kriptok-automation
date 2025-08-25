@@ -4,7 +4,6 @@ const { waitForTexts, tapText } = require('../utils');
 
 describe('Initial Test', () => {
   beforeAll(async () => {
-    await device.launchApp({ newInstance: true });
     await tapText(GLOBAL_TEXT.SERVER_URL);
     await device.shake();
   });
@@ -21,9 +20,5 @@ describe('Initial Test', () => {
       WELCOME_TEXT.CREATE_NEW_WALLET,
       WELCOME_TEXT.IMPORT_EXISTING_WALLET,
     ]);
-  });
-
-  afterAll(async () => {
-    await device.terminateApp();
   });
 });

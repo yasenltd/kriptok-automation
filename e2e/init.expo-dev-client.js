@@ -1,5 +1,3 @@
-
-
 beforeEach(async () => {
   const scheme = process.env.EXPO_DEV_CLIENT_SCHEME || 'kriptokwallet';
   const packagerURL = 'http://127.0.0.1:8081';

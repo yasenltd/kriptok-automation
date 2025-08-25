@@ -9,8 +9,9 @@ module.exports = {
   reporters: ['detox/runners/jest/reporter'],
   testEnvironment: 'detox/runners/jest/testEnvironment',
   verbose: true,
-  setupFilesAfterEnv: [
-    '<rootDir>/e2e/init.expo-dev-client.js',   // <-- add this line
+  // setupFilesAfterEnv: [
+  //   '<rootDir>/e2e/init.expo-dev-client.js',
+    // <-- add this line
     // keep any of your other setup files here
-  ],
+  // ],
 };

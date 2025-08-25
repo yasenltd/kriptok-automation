@@ -1,4 +1,4 @@
-const scheme = process.env.EXPO_DEV_CLIENT_SCHEME || 'kriptokwallet';
+const scheme = process.env.EXPO_DEV_CLIENT_SCHEME || 'kriptok';
 const url = `${scheme}://expo-development-client/?url=${encodeURIComponent('http://127.0.0.1:8081')}`;
 
 beforeEach(async () => {

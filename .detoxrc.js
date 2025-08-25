@@ -13,8 +13,8 @@ module.exports = {
   apps: {
     'ios.debug': {
       type: 'ios.app',
-      binaryPath: 'ios/build/Build/Products/Debug-iphonesimulator/kriptokwallet.app', // exact .app name
-      bundleId: 'com.test.kriptok',                                                   // from your Info.plist
+      binaryPath: 'ios/build/Build/Products/Debug-iphonesimulator/kriptokwallet.app',
+      bundleId: 'com.test.kriptok',
       build:
         'xcodebuild -workspace ios/kriptokwallet.xcworkspace -scheme kriptokwallet ' +
         '-configuration Debug -sdk iphonesimulator ' +

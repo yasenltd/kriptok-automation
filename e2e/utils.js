@@ -53,7 +53,6 @@ async function tapText(text) {
   await el.tap();
 }
 
-
 async function launchAppWithOptionalDevClientUrl() {
   const useDevUrl = String(process.env.E2E_USE_DEV_CLIENT_URL || '').toLowerCase();
   const shouldUse = useDevUrl === '1' || useDevUrl === 'true';

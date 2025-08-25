@@ -145,7 +145,7 @@ jobs:
           echo $! > mock_api.pid
 
       - name: Run Detox tests (create flow covers setup)
-        run: pnpm run e2e:createFlow:tests
+        run: pnpm run e2e:createFlow:tests:ci
 
       - name: Upload Detox artifacts
         if: always()
